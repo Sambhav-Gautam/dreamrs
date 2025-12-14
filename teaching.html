@@ -1,27 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teaching | DREAMRS Lab</title>
+    <meta name="description" content="Courses offered by DREAMRS Lab at IIIT Delhi">
     <link rel="icon" href="images/nnlogo.png" type="image/png">
+    <link href="./custom.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900">
 
-    <section id="Courses" class="min-h-screen flex items-center justify-center px-6 pt-28 pb-[56px] bg-gray-100 dark:bg-gray-900">
-        <div class="container mx-auto">
-            <!-- Heading -->
-            <h1 class="text-center text-3xl md:text-4xl font-medium text-gray-800 dark:text-white">
-                <span class="text-fuchsia-500">Courses</span> Offered
-            </h1>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
 
-            <p class="mt-4 text-base sm:text-lg text-gray-600 dark:text-gray-400 text-center max-w-4xl mx-auto">
-                The <span class="text-fuchsia-500">DREAMRS</span> Lab offers following courses designed to equip students with the knowledge and skills needed to excel in design research and human factors.
-            </p>
+    <section id="Courses" class="py-8 pt-32 px-6 bg-gray-50 dark:bg-gray-900">
+        <div class="container mx-auto max-w-6xl">
+            <!-- Section Header -->
+            <div class="text-center mb-10">
+                <span class="inline-block px-4 py-1 bg-leaf/10 text-leaf rounded-full text-sm font-medium mb-4">Academic
+                    Programs</span>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">
+                    <span class="gradient-text">Courses</span> Offered
+                </h1>
+                <p class="mt-4 text-lg text-gray-500 dark:text-gray-400 max-w-3xl mx-auto">
+                    The <span class="text-leaf font-medium">DREAMRS</span> Lab offers courses designed to equip students
+                    with the knowledge and skills needed to excel in design research and human factors.
+                </p>
+            </div>
 
             <!-- Course Cards -->
-            <div id="course-cards" class="mt-8 flex flex-col md:flex-row gap-4">
+            <div id="course-cards" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Course cards will be dynamically generated here -->
             </div>
         </div>
@@ -29,4 +40,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>

@@ -1,145 +1,300 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PI | DREAMRS Lab</title>
+    <title>Principal Investigator | DREAMRS Lab</title>
+    <meta name="description" content="Dr. Sonal Keshwani - Principal Investigator at DREAMRS Lab, IIIT Delhi">
     <link rel="icon" href="images/nnlogo.png" type="image/png">
+    <link href="./custom.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for Icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900">
 
-    <!-- Professor Bio Section -->
-    <section id="Pi" class="flex justify-center items-center px-6 md:px-12 lg:px-24 xl:px-44 bg-gray-100 dark:bg-gray-900">
-        <div class="container mx-auto py-12 pt-44">
-            <!-- Section 1: Photo with Bio -->
-            <div class="text-center">
-                <h1 class="text-3xl md:text-4xl font-medium text-gray-800 dark:text-gray-50">
-                    Principal <span class="text-fuchsia-500">Investigator</span>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+
+    <!-- Hero Section -->
+    <section id="Pi" class="py-8 pt-32 px-6 bg-gray-50 dark:bg-gray-900">
+        <div class="container mx-auto max-w-6xl">
+            <!-- Section Header -->
+            <div class="text-center mb-10">
+                <span class="inline-block px-4 py-1 bg-leaf/10 text-leaf rounded-full text-sm font-medium mb-4">Lab
+                    Leadership</span>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">
+                    Principal <span class="gradient-text">Investigator</span>
                 </h1>
             </div>
 
-            <!-- Two-Column Layout -->
-            <div class="flex flex-col md:flex-row items-center mt-8 space-y-8 md:space-y-0">
-                <!-- Left: Photo and Social Links -->
-                <div class="md:w-1/3 text-center">
-                    <!-- Photo -->
-                    <img src="images/prof.png" alt="Dr. Sonal Keshwani" class="w-48 sm:w-64 h-auto mx-auto shadow-lg rounded-lg">
-                    <!-- Name and Title -->
-                    <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-gray-400 mt-4">Dr. Sonal Keshwani</h2>
-                    <p class="text-lg text-gray-500">Assistant Professor, IIIT Delhi</p>
-                    <p class="text-lg text-gray-500">Principal Investigator</p>
-                    <!-- Social Links -->
-                    <div class="flex justify-center mt-4 space-x-4">
-                        <!-- LinkedIn -->
-                        <a rel="noopener" href="https://www.linkedin.com/in/sonal-keshwani-5a2034322/" target="_blank" class="text-gray-500 hover:text-fuchsia-800">
-                            <span class="[&>svg]:h-5 [&>svg]:w-5">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 448 512">
-                                    <path d="M100.3 448H7.4V148.9h92.9zM53.8 108.1C24.1 108.1 0 83.5 0 53.8a53.8 53.8 0 0 1 107.6 0c0 29.7-24.1 54.3-53.8 54.3zM447.9 448h-92.7V302.4c0-34.7-.7-79.2-48.3-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.8V148.9h89.1v40.8h1.3c12.4-23.5 42.7-48.3 87.9-48.3 94 0 111.3 61.9 111.3 142.3V448z" />
-                                </svg>
-                            </span>
-                        </a>
-                        <!-- Google Scholar -->
-                        <a rel="noopener" href="https://scholar.google.co.in/citations?user=NLPFhkMAAAAJ&hl=en" target="_blank" class="text-gray-500 hover:text-fuchsia-800">
-                            <span class="[&>svg]:h-5 [&>svg]:w-5">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 488 512">
-                                    <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
-                                </svg>
-                            </span>
-                        </a>
-                    </div>
-                </div>
+            <!-- Profile Card -->
+            <div class="glass-card rounded-3xl p-8 md:p-12">
+                <div class="flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12">
+                    <!-- Photo Column -->
+                    <div class="flex-shrink-0 text-center">
+                        <div class="relative">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-br from-leaf to-green-400 rounded-2xl transform rotate-3">
+                            </div>
+                            <img src="images/prof.png" alt="Dr. Sonal Keshwani"
+                                class="relative w-48 md:w-64 h-auto rounded-2xl shadow-2xl">
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mt-6">Dr. Sonal Keshwani</h2>
+                        <p class="text-gray-600 dark:text-gray-400 mt-1">Assistant Professor, IIIT Delhi</p>
+                        <p class="text-leaf font-medium">Principal Investigator</p>
 
-                <!-- Right: Bio Text -->
-                <div class="md:w-2/3 md:pl-8 mt-6 md:mt-0 px-2 text-lg text-center md:text-left">
-                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        <span class="text-fuchsia-500">Dr. Sonal Keshwani</span> is the Founder and Principal Investigator of the Design Research and Human Factors Lab (<span class="text-fuchsia-500">DREAMRS</span> Lab),
-                        Department of Human-Centered Design, IIIT-Delhi. She holds a Ph.D. and an MSc in Design from <a href="https://dm.iisc.ac.in/cpdm/ideaslab/index.html#:~:text=Innovation%2C%20Design%20Study%20and%20Sustainability%20Laboratory%20(IDeaS%20Lab)%20has,training%20and%20supporting%20product%20development" class="text-fuchsia-500 hover:underline">IDeaS Lab, </a><a href="https://dm.iisc.ac.in/dm/" class="text-fuchsia-500 hover:underline">Department of Design and
-                            Manufacturing, </a><a href="https://iisc.ac.in/" class="text-fuchsia-500 hover:underline">Indian
-                            Institute of Science (IISc), Bangalore</a> (2018), and a B.Tech in Production Engineering from G.B. Pant
-                        University, Pantnagar (2008). Dr. Keshwani serves on the review boards of several leading publications,
-                        including the Journal of Engineering Design (Taylor and Francis), Research in Engineering Design
-                        (Springer), and the ASME IDETC conference. Her research has been published in five international
-                        peer-reviewed SCI journals. She was also a guest researcher at the Japan Advanced Institute of Science
-                        and Technology, where she received the prestigious JASSO scholarship.
-                    </p>
-                    <p class="text-gray-600 dark:text-gray-400 mt-4 leading-relaxed">
-                        In addition to her research, Dr. Keshwani has fostered international collaborations with institutions
-                        such as the Technical University of Denmark, Politecnico di Milano, and Ariel University. She was a
-                        founding member of the School of Design and Digital Transmedia at Dayananda Sagar University (DSU),
-                        Bangalore, where she served from 2021 to 2023. Before transitioning to academia, Dr. Keshwani gained
-                        industry experience working with Tata Motors Ltd. from 2008 to 2011.
-                    </p>
+                        <!-- Social Links -->
+                        <div class="flex justify-center gap-3 mt-4">
+                            <a rel="noopener" href="https://www.linkedin.com/in/sonal-keshwani-5a2034322/"
+                                target="_blank" class="social-link">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 448 512">
+                                    <path
+                                        d="M100.3 448H7.4V148.9h92.9zM53.8 108.1C24.1 108.1 0 83.5 0 53.8a53.8 53.8 0 0 1 107.6 0c0 29.7-24.1 54.3-53.8 54.3zM447.9 448h-92.7V302.4c0-34.7-.7-79.2-48.3-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.8V148.9h89.1v40.8h1.3c12.4-23.5 42.7-48.3 87.9-48.3 94 0 111.3 61.9 111.3 142.3V448z" />
+                                </svg>
+                            </a>
+                            <a rel="noopener" href="https://scholar.google.co.in/citations?user=NLPFhkMAAAAJ&hl=en"
+                                target="_blank" class="social-link">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 488 512">
+                                    <path
+                                        d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Bio Column - Creative Layout -->
+                    <div class="flex-1 space-y-6 text-center lg:text-left">
+                        <!-- Main Intro with Highlight -->
+                        <div class="relative">
+                            <div
+                                class="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-leaf to-green-400 rounded-full hidden lg:block">
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-200 text-xl leading-relaxed font-medium">
+                                <span class="text-leaf font-bold">Dr. Sonal Keshwani</span> is the Founder and Principal
+                                Investigator of the <span class="text-leaf font-semibold">DREAMRS Lab</span>, Department
+                                of Human-Centered Design, IIIT-Delhi.
+                            </p>
+                        </div>
+
+                        <!-- Stats Row -->
+                        <div class="grid grid-cols-3 gap-2 sm:gap-4 py-4">
+                            <div
+                                class="text-center p-2 sm:p-4 rounded-xl bg-leaf/5 dark:bg-leaf/10 border border-leaf/20">
+                                <div class="text-xl sm:text-2xl font-bold text-leaf">5+</div>
+                                <div class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1">SCI Pubs</div>
+                            </div>
+                            <div
+                                class="text-center p-2 sm:p-4 rounded-xl bg-leaf/5 dark:bg-leaf/10 border border-leaf/20">
+                                <div class="text-xl sm:text-2xl font-bold text-leaf">3+</div>
+                                <div class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1">Collabs</div>
+                            </div>
+                            <div
+                                class="text-center p-2 sm:p-4 rounded-xl bg-leaf/5 dark:bg-leaf/10 border border-leaf/20">
+                                <div class="text-xl sm:text-2xl font-bold text-leaf">10+</div>
+                                <div class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1">Years Exp
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info Cards -->
+                        <div class="space-y-3 sm:space-y-4">
+                            <!-- Education Card -->
+                            <div
+                                class="group p-3 sm:p-4 rounded-xl bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 hover:border-leaf/50 hover:shadow-md transition-all duration-300">
+                                <div class="flex items-start gap-3 sm:gap-4">
+                                    <div
+                                        class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-leaf to-green-400 flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4
+                                            class="font-semibold text-gray-800 dark:text-white group-hover:text-leaf transition-colors">
+                                            Education</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                            Ph.D. & MSc in Design from <a href="https://dm.iisc.ac.in/cpdm/ideaslab/"
+                                                class="text-leaf hover:underline font-medium">IDeaS Lab, IISc
+                                                Bangalore</a> (2018) • B.Tech from G.B. Pant University (2008)
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Review Boards Card -->
+                            <div
+                                class="group p-3 sm:p-4 rounded-xl bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 hover:border-leaf/50 hover:shadow-md transition-all duration-300">
+                                <div class="flex items-start gap-3 sm:gap-4">
+                                    <div
+                                        class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-leaf to-green-400 flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4
+                                            class="font-semibold text-gray-800 dark:text-white group-hover:text-leaf transition-colors">
+                                            Review Boards</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                            <span class="text-leaf font-medium">Journal of Engineering Design</span>
+                                            (Taylor & Francis) • <span class="text-leaf font-medium">Research in
+                                                Engineering Design</span> (Springer) • ASME IDETC Conference
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recognition Card -->
+                            <div
+                                class="group p-3 sm:p-4 rounded-xl bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 hover:border-leaf/50 hover:shadow-md transition-all duration-300">
+                                <div class="flex items-start gap-3 sm:gap-4">
+                                    <div
+                                        class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-leaf to-green-400 flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4
+                                            class="font-semibold text-gray-800 dark:text-white group-hover:text-leaf transition-colors">
+                                            Recognition</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                            Guest Researcher at <span class="text-leaf font-medium">Japan Advanced
+                                                Institute of Science and Technology</span> • Recipient of prestigious
+                                            <span class="text-leaf font-medium">JASSO Scholarship</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Collaborations Card -->
+                            <div
+                                class="group p-3 sm:p-4 rounded-xl bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 hover:border-leaf/50 hover:shadow-md transition-all duration-300">
+                                <div class="flex items-start gap-3 sm:gap-4">
+                                    <div
+                                        class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-leaf to-green-400 flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4
+                                            class="font-semibold text-gray-800 dark:text-white group-hover:text-leaf transition-colors">
+                                            International Collaborations</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                            <span class="text-leaf font-medium">Technical University of Denmark</span> •
+                                            <span class="text-leaf font-medium">Politecnico di Milano</span> • <span
+                                                class="text-leaf font-medium">Ariel University</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Section 2: Education, Academic Experience, Research Interests, Awards -->
-            <div class="mt-16">
+            <!-- Timeline Section -->
+            <div class="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Education -->
-                <h2 class="text-2xl font-medium text-gray-800 dark:text-gray-50">Education</h2>
-                <div class="mt-4 space-y-4">
-                    <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md">
-                        <h3 class="text-xl font-medium text-gray-700 dark:text-gray-200">Doctor of Philosophy (Ph.D.)</h3>
-                        <p class="mt-2 text-gray-600 dark:text-gray-400">Department of Design and Manufacturing, Indian Institute of Science, Bangalore (2011–2018)</p>
-                        <p class="text-gray-500 dark:text-gray-300">Thesis: <em>Supporting Designers in Generating Novel Ideas at the Conceptual Stage using Analogies from the Biological Domain</em></p>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md">
-                        <h3 class="text-xl font-medium text-gray-700 dark:text-gray-200">Master of Science (M.Sc.)</h3>
-                        <p class="mt-2 text-gray-600 dark:text-gray-400">Centre for Product Design and Manufacturing, Indian Institute of Science, Bangalore</p>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md">
-                        <h3 class="text-xl font-medium text-gray-700 dark:text-gray-200">Bachelor of Technology (B.Tech.)</h3>
-                        <p class="mt-2 text-gray-600 dark:text-gray-400">Production Engineering, G.B. Pant University of Agriculture and Technology, Pantnagar</p>
-                    </div>
-                </div>
-
-                <!-- Academic Experience -->
-                <div class="mt-12">
-                    <h2 class="text-2xl font-medium text-gray-800 dark:text-gray-50">Academic Experience</h2>
-                    <div class="mt-4 space-y-4">
-                        <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md">
-                            <h3 class="text-xl font-medium text-gray-700 dark:text-gray-200">Full-Time Visiting Faculty</h3>
-                            <p class="mt-2 text-gray-600 dark:text-gray-400">Department of Human-Centered Design, IIIT Delhi (July 2023 – Present)</p>
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-leaf/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-leaf" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                                <path
+                                    d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222">
+                                </path>
+                            </svg>
                         </div>
-                        <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md">
-                            <h3 class="text-xl font-medium text-gray-700 dark:text-gray-200">Founding Member and Assistant Professor</h3>
-                            <p class="mt-2 text-gray-600 dark:text-gray-400">School of Design and Digital Transmedia, Dayananda Sagar University, Bengaluru (Sep 2021 – July 2023)</p>
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Education</h2>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="card-enhanced">
+                            <p class="font-semibold text-gray-800 dark:text-white">Ph.D. in Design</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">IISc Bangalore (2011–2018)</p>
                         </div>
-                        <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md">
-                            <h3 class="text-xl font-medium text-gray-700 dark:text-gray-200">Guest Researcher</h3>
-                            <p class="mt-2 text-gray-600 dark:text-gray-400">Japan Advanced Institute of Science and Technology, Japan (May 2018 – July 2018)</p>
+                        <div class="card-enhanced">
+                            <p class="font-semibold text-gray-800 dark:text-white">M.Sc. in Design</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">IISc Bangalore</p>
+                        </div>
+                        <div class="card-enhanced">
+                            <p class="font-semibold text-gray-800 dark:text-white">B.Tech in Production Engineering</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">G.B. Pant University (2008)</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Awards and Recognition -->
-                <div class="mt-12">
-                    <h2 class="text-2xl font-medium text-gray-800 dark:text-gray-50">Awards and Recognition</h2>
-                    <div class="mt-4 bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md">
-                        <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-4">
-                            <!-- Award 1 -->
-                            <li>Recipient of JASSO Scholarship (2018)</li>
-                            <!-- Award 2 -->
-                            <li>
-                                Certificate of Merit for the following papers:
-                                <ul class="list-disc list-inside pl-6 mt-2 space-y-3">
-                                    <li>
-                                        <strong>Keshwani S, and Chakrabarti A (2017)</strong>: 
-                                        Towards automatic classification of description of analogies into SAPPhIRE constructs. 
-                                        In: <em>Proceedings of 6th International Conference on Research in Design</em>, Guwahati, India, 9-11 January.
-                                    </li>
-                                    <li>
-                                        <strong>Keshwani S, Lenau TA, Ahmed-Kristensen S, Chakrabarti A (2013)</strong>: 
-                                        Benchmarking bio-inspired designs with brainstorming in terms of novelty of design outcomes. 
-                                        In: <em>Proceedings of 19th International Conference on Engineering Design</em>, Seoul, Korea, 19-22 August.
-                                    </li>
-                                </ul>
-                            </li>
-                            <!-- Award 3 -->
-                            <li>GATE All India Rank 33 (2008, Production and Industrial Engineering)</li>
-                        </ul>
+                <!-- Experience -->
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-leaf/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-leaf" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Experience</h2>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="card-enhanced">
+                            <p class="font-semibold text-gray-800 dark:text-white">Full-Time Visiting Faculty</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">IIIT Delhi (2023 – Present)</p>
+                        </div>
+                        <div class="card-enhanced">
+                            <p class="font-semibold text-gray-800 dark:text-white">Assistant Professor</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">DSU Bengaluru (2021 – 2023)</p>
+                        </div>
+                        <div class="card-enhanced">
+                            <p class="font-semibold text-gray-800 dark:text-white">Guest Researcher</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">JAIST Japan (2018)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Awards -->
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-leaf/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-leaf" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Awards</h2>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="card-enhanced">
+                            <p class="font-semibold text-gray-800 dark:text-white">JASSO Scholarship</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Japan (2018)</p>
+                        </div>
+                        <div class="card-enhanced">
+                            <p class="font-semibold text-gray-800 dark:text-white">Certificate of Merit</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">ICED Conference Papers</p>
+                        </div>
+                        <div class="card-enhanced">
+                            <p class="font-semibold text-gray-800 dark:text-white">GATE AIR 33</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Production Engineering (2008)</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -148,4 +303,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>

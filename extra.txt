@@ -1,8 +1,8 @@
 <!-- Index | PI -->
 <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-    <span class="text-fuchsia-500">Dr. Sonal Keshwani</span> is the Founder and Principal Investigator of the Design Research and Human Factors Lab (<span class="text-fuchsia-500">DREAMRS</span> Lab),
-    Department of Human-Centered Design, IIIT-Delhi. She holds a Ph.D. and an MSc in Design from <a href="https://dm.iisc.ac.in/cpdm/ideaslab/index.html#:~:text=Innovation%2C%20Design%20Study%20and%20Sustainability%20Laboratory%20(IDeaS%20Lab)%20has,training%20and%20supporting%20product%20development" class="text-fuchsia-500 hover:underline">IDeaS Lab, </a><a href="https://dm.iisc.ac.in/dm/" class="text-fuchsia-500 hover:underline">Department of Design and
-        Manufacturing, </a><a href="https://iisc.ac.in/" class="text-fuchsia-500 hover:underline">Indian
+    <span class="text-leaf">Dr. Sonal Keshwani</span> is the Founder and Principal Investigator of the Design Research and Human Factors Lab (<span class="text-leaf">DREAMRS</span> Lab),
+    Department of Human-Centered Design, IIIT-Delhi. She holds a Ph.D. and an MSc in Design from <a href="https://dm.iisc.ac.in/cpdm/ideaslab/index.html#:~:text=Innovation%2C%20Design%20Study%20and%20Sustainability%20Laboratory%20(IDeaS%20Lab)%20has,training%20and%20supporting%20product%20development" class="text-leaf hover:underline">IDeaS Lab, </a><a href="https://dm.iisc.ac.in/dm/" class="text-leaf hover:underline">Department of Design and
+        Manufacturing, </a><a href="https://iisc.ac.in/" class="text-leaf hover:underline">Indian
         Institute of Science (IISc), Bangalore</a> (2018), and a B.Tech in Production Engineering from G.B. Pant
     University, Pantnagar (2008). Dr. Keshwani serves on the review boards of several leading publications,
     including the Journal of Engineering Design (Taylor and Francis), Research in Engineering Design
@@ -24,8 +24,8 @@
 <!-- <section class="min-min-h-screen flex items-center px-6">
     <div class="container py-32">
         <div class="text-center">
-            <h2 class="text-4xl font-bold text-gray-800 dark:text-white">Conference <span class="text-fuchsia-500">Presentations</span></h2>
-            <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">Conference presentations by <a href="pi.html" class="text-fuchsia-500 hover:underline">Dr. Sonal Keshwani</a></p> 
+            <h2 class="text-4xl font-bold text-gray-800 dark:text-white">Conference <span class="text-leaf">Presentations</span></h2>
+            <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">Conference presentations by <a href="pi.html" class="text-leaf hover:underline">Dr. Sonal Keshwani</a></p> 
         </div>
 
         <ol id="conference-presentations" class="py-8 px-12 mt-8 bg-gray-50 dark:bg-gray-800 flex flex-col gap-y-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">

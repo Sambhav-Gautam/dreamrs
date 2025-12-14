@@ -5,9 +5,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        lavender: '#ca6be5',
+        leaf: '#0b8043',
         navy: '#0e2675',
-        emerald: '#008000'
+        accent: '#2a9d8f'
       }
     },
   },  

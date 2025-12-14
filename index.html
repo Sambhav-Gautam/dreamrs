@@ -1,159 +1,374 @@
 <!doctype html>
 <html lang="en" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="DREAMRS Lab - Design Research and Human Factors at IIIT Delhi">
     <link href="./output.css" rel="stylesheet">
+    <link href="./custom.css" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <title>DREAMRS Lab</title>
-    <link rel="icon" href="images/nnlogo.png" type="image/png">
+    <link rel="icon" href="images/logo.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
 </head>
 
-<body>
-    <main class="">
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <main>
         <!-- Hero Section -->
-        <section id="Hero" class="relative h-screen flex items-center justify-center overflow-hidden px-6">
-            <!-- Video Background -->
-            <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-contain translate-y-20 px-6">
-                <source src="images/video.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>    
-            <!-- Overlay -->
-            <div class="absolute inset-0 bg-black/40"></div>
-            <!-- Content -->
-            <div class="relative z-10 text-center px-4 md:px-6 md:mt-40 md:mb-16 -translate-y-24">
-                <h1 class="text-3xl md:text-6xl font-semibold text-white drop-shadow-lg">Welcome to DREAMRS Lab</h1>
-                <p class="mt-4 text-base md:text-xl font-medium text-gray-100 drop-shadow-lg max-w-2xl mx-auto">
-                    Researching Design Creativity and Ergonomics to support Designing
-                </p>
-            </div>
-        </section>
+        <section id="Hero" class="relative bg-white dark:bg-gray-900">
+            <!-- Video Container - min-height on mobile, aspect ratio on desktop -->
+            <div class="relative w-full min-h-[80vh] sm:min-h-0 sm:aspect-video">
+                <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover">
+                    <source src="images/video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <!-- Theme-Adaptive Overlay -->
+                <div class="hero-overlay absolute inset-0"></div>
 
-        <!-- About DREAMRS Lab -->
-        <section id="About" class="min-h-screen flex items-center bg-gray-50 dark:bg-gray-900 py-16 px-6">
-            <div class="container text-center mx-auto">
-                <!-- Heading -->
-                <h2 class="text-2xl md:text-4xl font-medium text-gray-800 dark:text-white">
-                    About <span class="text-fuchsia-500">DREAMRS </span>Lab
-                </h2>
-                <!-- Content -->
-                <div class="mt-6 space-y-4 text-base md:text-xl text-gray-600 dark:text-gray-400 max-w-6xl mx-auto">
-                    <p>
-                        The <span class="text-fuchsia-500">D</span>esign 
-                        <span class="text-fuchsia-500">R</span>es<span class="text-fuchsia-500">ea</span>rch and 
-                        Hu<span class="text-fuchsia-500">m</span>an 
-                        Facto<span class="text-fuchsia-500">rs</span> (<span class="text-fuchsia-500">DREAMRS</span>) Lab focuses on two areas – <span class="text-fuchsia-500">Design Research</span> and <span class="text-fuchsia-500">Human Factors</span>.
-                    </p>
-                    <p>
-                        In the domain of <span class="text-fuchsia-500">Design Research</span>, we work on Design Creativity, Biologically Inspired Design, Analogical Reasoning, Knowledge-Based Systems, Design Methods, and Tools.
-                    </p>
-                    <p>
-                        In the domain of <span class="text-fuchsia-500">Human Factors</span>, we work on developing ergonomic solutions for technical products.
-                    </p>
-                    <p>
-                        <span class="text-fuchsia-500">DREAMRS</span> lab is founded and led by <a href="pi.html" class="text-fuchsia-500 hover:underline">Dr. Sonal Keshwani</a> (Ph.D., IISc Bangalore). It is associated with <a href="https://hcd.iiitd.ac.in/" class="text-fuchsia-500 hover:underline">Human Centred Design</a> at <a href="https://iiitd.ac.in/" class="text-fuchsia-500 hover:underline">IIIT Delhi</a>.
-                    </p>
-                    <p>
-                        <a href="research.html" class="text-fuchsia-500 hover:underline">Know more about research at DREAMRS Lab</a>
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Principal Investigator Section -->
-        <section id="PrincipalInvestigator" class="min-h-screen flex items-center bg-gray-50 bg-opacity-70 dark:bg-gray-900 py-16 px-6">
-            <div class="container mx-auto">
-                <!-- Heading -->
-                <div class="text-center">
-                    <h1 class="text-2xl md:text-4xl font-medium text-gray-800 dark:text-white"><span class="text-fuchsia-500">Principal</span> Investigator</h1>
-                </div>
-                <!-- Two-Column Layout -->
-                <div class="flex flex-col md:flex-row items-center mt-8 space-y-8 md:space-y-0">
-                    <!-- Left: Photo and Social Links -->
-                    <div class="md:w-1/3 text-center">
-                        <img src="images/prof.png" alt="Dr. Sonal Keshwani" class="w-48 md:w-64 h-auto mx-auto shadow-lg rounded-lg">
-                        <h2 class="text-xl md:text-2xl font-semibold text-gray-800 dark:text-gray-400 mt-4">Dr. Sonal Keshwani</h2>
-                        <p class="text-lg text-gray-500">Assistant Professor, IIIT Delhi</p>
-                        <p class="text-lg text-gray-500">Principal Investigator</p>
-                        <div class="flex justify-center mt-4 space-x-4">
-                            <a rel="noopener" href="https://www.linkedin.com/in/sonal-keshwani-5a2034322/" target="_blank" class="text-gray-500 hover:text-fuchsia-800">
-                                <span class="[&>svg]:h-5 [&>svg]:w-5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 448 512">
-                                        <path d="M100.3 448H7.4V148.9h92.9zM53.8 108.1C24.1 108.1 0 83.5 0 53.8a53.8 53.8 0 0 1 107.6 0c0 29.7-24.1 54.3-53.8 54.3zM447.9 448h-92.7V302.4c0-34.7-.7-79.2-48.3-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.8V148.9h89.1v40.8h1.3c12.4-23.5 42.7-48.3 87.9-48.3 94 0 111.3 61.9 111.3 142.3V448z" />
-                                    </svg>
-                                </span>
+                <!-- Content Overlay -->
+                <div class="absolute inset-0 flex items-center justify-center pt-16">
+                    <div class="text-center px-4 sm:px-6">
+                        <div
+                            class="inline-block mb-4 sm:mb-6 px-3 sm:px-4 py-1.5 sm:py-2 bg-white/10 dark:bg-black/30 backdrop-blur-sm rounded-full border border-white/20">
+                            <span class="text-white/80 text-xs sm:text-sm font-medium">🔬 IIIT Delhi Research Lab</span>
+                        </div>
+                        <h1 class="text-3xl sm:text-4xl md:text-7xl font-bold text-white drop-shadow-2xl mb-4 sm:mb-6">
+                            Welcome to <span class="gradient-text-hero">DREAMRS</span> Lab
+                        </h1>
+                        <p
+                            class="text-sm sm:text-lg md:text-2xl font-medium text-white/90 drop-shadow-lg max-w-3xl mx-auto mb-6 sm:mb-10">
+                            Researching Design Creativity and Ergonomics to support Designing
+                        </p>
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+                            <a href="#About"
+                                class="btn-hero-primary inline-flex items-center gap-2 text-sm sm:text-base px-4 sm:px-6 py-2.5 sm:py-3">
+                                Explore Our Work
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                </svg>
                             </a>
-                            <a rel="noopener" href="https://scholar.google.co.in/citations?user=NLPFhkMAAAAJ&hl=en" target="_blank" class="text-gray-500 hover:text-fuchsia-800">
-                                <span class="[&>svg]:h-5 [&>svg]:w-5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 488 512">
-                                        <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
-                                    </svg>
-                                </span>
+                            <a href="research.html"
+                                class="btn-hero-secondary inline-flex items-center gap-2 text-sm sm:text-base px-4 sm:px-6 py-2.5 sm:py-3">
+                                View Research
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7">
+                                    </path>
+                                </svg>
                             </a>
                         </div>
                     </div>
-                    <!-- Right: Bio Text -->
-                    <div class="md:w-2/3 md:pl-8 mt-6 md:mt-0 text-base md:text-xl text-center md:text-left">
-                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-                            <span class="text-fuchsia-500">Dr. Sonal Keshwani</span> is the Founder and Principal Investigator of the Design Research and Human Factors Lab (<span class="text-fuchsia-500">DREAMRS</span> Lab),
-                            Department of Human-Centered Design, IIIT-Delhi. She holds a Ph.D. and an MSc in Design from <a href="https://dm.iisc.ac.in/cpdm/ideaslab/index.html#:~:text=Innovation%2C%20Design%20Study%20and%20Sustainability%20Laboratory%20(IDeaS%20Lab)%20has,training%20and%20supporting%20product%20development" class="text-fuchsia-500 hover:underline">IDeaS Lab, </a><a href="https://dm.iisc.ac.in/dm/" class="text-fuchsia-500 hover:underline">Department of Design and
-                                Manufacturing, </a><a href="https://iisc.ac.in/" class="text-fuchsia-500 hover:underline">Indian
-                                Institute of Science (IISc), Bangalore</a> (2018), and a B.Tech in Production Engineering from G.B. Pant
-                            University, Pantnagar (2008). Dr. Keshwani serves on the review boards of several leading publications,
-                            including the Journal of Engineering Design (Taylor and Francis), Research in Engineering Design
-                            (Springer), and the ASME IDETC conference. Her research has been published in five international
-                            peer-reviewed SCI journals. She was also a guest researcher at the Japan Advanced Institute of Science
-                            and Technology, where she received the prestigious JASSO scholarship.
+                </div>
+
+                <!-- Scroll Indicator - Hidden on mobile -->
+                <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce hidden sm:block">
+                    <svg class="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- About DREAMRS Lab - Creative Redesign -->
+        <section id="About" class="py-12 sm:py-20 px-6 bg-gray-50 dark:bg-gray-900">
+            <div class="container mx-auto max-w-6xl">
+                <!-- Section Header -->
+                <div class="text-center mb-8 sm:mb-16" data-aos="fade-up">
+                    <span class="inline-block px-4 py-1 bg-leaf/10 text-leaf rounded-full text-sm font-medium mb-4">Who
+                        We Are</span>
+                    <h2 class="text-3xl md:text-5xl font-bold text-gray-800 dark:text-white">
+                        About <span class="gradient-shimmer">DREAMRS</span> Lab
+                    </h2>
+                    <p class="mt-4 text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+                        <span class="font-semibold text-leaf">D</span>esign
+                        <span class="font-semibold text-leaf">R</span>es<span
+                            class="font-semibold text-leaf">ea</span>rch and
+                        Hu<span class="font-semibold text-leaf">m</span>an
+                        Facto<span class="font-semibold text-leaf">rs</span>
+                    </p>
+                </div>
+
+                <!-- Two Focus Areas Cards -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                    <!-- Design Research Card -->
+                    <div class="glass-card card-3d rounded-3xl p-8 group hover:shadow-2xl transition-all duration-300"
+                        data-aos="fade-up" data-aos-delay="100">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-gradient-to-br from-leaf to-green-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Design Research</h3>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 bg-leaf/10 text-leaf text-sm rounded-full">Design Creativity</span>
+                            <span class="px-3 py-1 bg-leaf/10 text-leaf text-sm rounded-full">Bio-Inspired Design</span>
+                            <span class="px-3 py-1 bg-leaf/10 text-leaf text-sm rounded-full">Analogical
+                                Reasoning</span>
+                            <span class="px-3 py-1 bg-leaf/10 text-leaf text-sm rounded-full">Knowledge-Based
+                                Systems</span>
+                            <span class="px-3 py-1 bg-leaf/10 text-leaf text-sm rounded-full">Design Methods &
+                                Tools</span>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Exploring innovative approaches to enhance creativity and systematic methodologies in design
+                            processes.
                         </p>
-                        <p class="text-gray-600 dark:text-gray-400 mt-4 leading-relaxed"><a href="pi.html" class="text-fuchsia-500 hover:underline">Know more about Dr. Sonal Keshwani</a></p>
+                    </div>
+
+                    <!-- Human Factors Card -->
+                    <div class="glass-card rounded-3xl p-8 group hover:shadow-2xl transition-all duration-300">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-gradient-to-br from-leaf to-green-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Human Factors</h3>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 bg-leaf/10 text-leaf text-sm rounded-full">Ergonomics</span>
+                            <span class="px-3 py-1 bg-leaf/10 text-leaf text-sm rounded-full">User-Centered
+                                Design</span>
+                            <span class="px-3 py-1 bg-leaf/10 text-leaf text-sm rounded-full">Technical Products</span>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Developing ergonomic solutions that enhance usability and comfort in technical product
+                            design.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Lab Info Bar -->
+                <div
+                    class="glass-card rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-leaf/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-leaf" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">Founded & Led by</p>
+                            <a href="pi.html"
+                                class="font-semibold text-gray-800 dark:text-white hover:text-leaf transition-colors">Dr.
+                                Sonal Keshwani</a>
+                            <span class="text-gray-500 dark:text-gray-400 text-sm">(Ph.D., IISc Bangalore)</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-leaf/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-leaf" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">Associated with</p>
+                            <a href="https://hcd.iiitd.ac.in/" target="_blank"
+                                class="font-semibold text-gray-800 dark:text-white hover:text-leaf transition-colors">Human
+                                Centred Design</a>
+                            <span class="text-gray-500 dark:text-gray-400 text-sm">at <a href="https://iiitd.ac.in/"
+                                    target="_blank" class="hover:text-leaf">IIIT Delhi</a></span>
+                        </div>
+                    </div>
+                    <a href="research.html" class="btn-primary inline-flex items-center gap-2 whitespace-nowrap">
+                        Explore Research
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Principal Investigator Section - Creative Redesign -->
+        <section id="PrincipalInvestigator" class="py-12 sm:py-20 px-6 bg-white dark:bg-gray-800/50">
+            <div class="container mx-auto max-w-6xl">
+                <!-- Section Header -->
+                <div class="text-center mb-8 sm:mb-12">
+                    <span class="inline-block px-4 py-1 bg-leaf/10 text-leaf rounded-full text-sm font-medium mb-4">Lab
+                        Leadership</span>
+                    <h2 class="text-3xl md:text-5xl font-bold text-gray-800 dark:text-white">
+                        <span class="gradient-text">Principal</span> Investigator
+                    </h2>
+                </div>
+
+                <!-- Profile Card -->
+                <div class="glass-card rounded-3xl overflow-hidden">
+                    <div class="flex flex-col lg:flex-row">
+                        <!-- Photo Side with Gradient -->
+                        <div
+                            class="lg:w-1/3 bg-gradient-to-br from-leaf/10 to-green-400/10 dark:from-leaf/5 dark:to-green-400/5 p-8 flex flex-col items-center justify-center">
+                            <div class="relative">
+                                <div
+                                    class="absolute -inset-2 bg-gradient-to-br from-leaf to-green-400 rounded-2xl opacity-20 blur-lg">
+                                </div>
+                                <img src="images/prof.png" alt="Dr. Sonal Keshwani"
+                                    class="relative w-40 md:w-52 h-auto rounded-2xl shadow-xl">
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-6 text-center">Dr. Sonal
+                                Keshwani</h3>
+                            <p class="text-leaf font-medium mt-1">Principal Investigator</p>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">Assistant Professor, IIIT Delhi</p>
+
+                            <!-- Social Links -->
+                            <div class="flex gap-3 mt-6">
+                                <a rel="noopener" href="https://www.linkedin.com/in/sonal-keshwani-5a2034322/"
+                                    target="_blank" class="social-link">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 448 512">
+                                        <path
+                                            d="M100.3 448H7.4V148.9h92.9zM53.8 108.1C24.1 108.1 0 83.5 0 53.8a53.8 53.8 0 0 1 107.6 0c0 29.7-24.1 54.3-53.8 54.3zM447.9 448h-92.7V302.4c0-34.7-.7-79.2-48.3-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.8V148.9h89.1v40.8h1.3c12.4-23.5 42.7-48.3 87.9-48.3 94 0 111.3 61.9 111.3 142.3V448z" />
+                                    </svg>
+                                </a>
+                                <a rel="noopener" href="https://scholar.google.co.in/citations?user=NLPFhkMAAAAJ&hl=en"
+                                    target="_blank" class="social-link">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 488 512">
+                                        <path
+                                            d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Content Side -->
+                        <div class="lg:w-2/3 p-8 lg:p-12">
+                            <!-- Key Highlights - Always 3 columns -->
+                            <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
+                                <div class="p-2 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center">
+                                    <div class="text-lg sm:text-2xl font-bold text-leaf">Ph.D.</div>
+                                    <div class="text-[10px] sm:text-sm text-gray-500 dark:text-gray-400">IISc</div>
+                                </div>
+                                <div class="p-2 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center">
+                                    <div class="text-lg sm:text-2xl font-bold text-leaf">5+</div>
+                                    <div class="text-[10px] sm:text-sm text-gray-500 dark:text-gray-400">SCI Pubs</div>
+                                </div>
+                                <div class="p-2 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center">
+                                    <div class="text-lg sm:text-2xl font-bold text-leaf">JASSO</div>
+                                    <div class="text-[10px] sm:text-sm text-gray-500 dark:text-gray-400">Japan</div>
+                                </div>
+                            </div>
+
+                            <!-- Bio -->
+                            <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+                                Dr. Sonal Keshwani is the Founder and Principal Investigator of the <span
+                                    class="text-leaf font-medium">DREAMRS Lab</span> at IIIT-Delhi's Department of
+                                Human-Centered Design. She earned her Ph.D. and M.Sc. in Design from <a
+                                    href="https://dm.iisc.ac.in/cpdm/ideaslab/" class="text-leaf hover:underline">IDeaS
+                                    Lab, IISc Bangalore</a>.
+                            </p>
+                            <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                                She serves on review boards of leading publications including <span
+                                    class="font-medium">Journal of Engineering Design</span> and <span
+                                    class="font-medium">Research in Engineering Design</span>, and has fostered
+                                international collaborations with institutions like Technical University of Denmark and
+                                Politecnico di Milano.
+                            </p>
+
+                            <!-- CTA -->
+                            <a href="pi.html" class="btn-primary inline-flex items-center gap-2">
+                                View Full Profile
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Contact Section -->
-        <section id="Contact" class="min-h-screen flex items-center bg-gray-50 dark:bg-gray-900 py-16 px-6">
-            <div class="container mx-auto">
-                <!-- Heading -->
-                <h1 class="text-2xl md:text-4xl font-medium text-center text-gray-800 capitalize dark:text-white">
-                    <span class="text-fuchsia-500">Contact</span> Us
-                </h1>
-                <!-- Card with fuchsia Border and Map -->
-                <div class="mt-12 flex flex-col-reverse lg:flex-row items-center bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                    <!-- Left Side: Contact Card -->
-                    <div class="w-full lg:w-1/2 p-6 md:p-12">
-                        <h2 class="text-xl md:text-2xl font-semibold text-gray-800 dark:text-white">Get in Touch</h2>
-                        <p class="mt-4 text-base md:text-lg text-gray-600 dark:text-gray-300">
-                            Have questions or want to collaborate? Reach out to us!
-                        </p>
-                        <!-- Contact Details -->
-                        <div class="mt-8 space-y-4">
-                            <!-- Email -->
-                            <div class="flex items-center">
-                                <svg class="w-6 h-6 md:w-8 md:h-8 text-fuchsia-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                </svg>
-                                <p class="ml-3 text-base md:text-lg text-gray-600 dark:text-gray-300">sonal.keshwani@iiitd.ac.in</p>
-                            </div>
-                            <!-- Address -->
-                            <div class="flex items-center">
-                                <svg class="w-6 h-6 md:w-8 md:h-8 text-fuchsia-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>
-                                <p class="ml-3 text-base md:text-lg text-gray-600 dark:text-gray-300">A-405, R&D Building, IIIT-Delhi, Okhla Industrial Estate, New Delhi, India</p>
+        <section id="Contact" class="py-20 px-6 bg-gray-50 dark:bg-gray-900">
+            <div class="container mx-auto max-w-6xl">
+                <!-- Section Header -->
+                <div class="text-center mb-12">
+                    <span class="inline-block px-4 py-1 bg-leaf/10 text-leaf rounded-full text-sm font-medium mb-4">Get
+                        in Touch</span>
+                    <h2 class="text-3xl md:text-5xl font-bold text-gray-800 dark:text-white">
+                        <span class="gradient-text">Contact</span> Us
+                    </h2>
+                </div>
+
+                <!-- Contact Card -->
+                <div class="glass-card rounded-3xl overflow-hidden">
+                    <div class="flex flex-col-reverse lg:flex-row">
+                        <!-- Left Side: Contact Info -->
+                        <div class="w-full lg:w-1/2 p-8 md:p-12">
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Let's Connect</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-8">
+                                Have questions or want to collaborate? We'd love to hear from you!
+                            </p>
+
+                            <!-- Contact Details -->
+                            <div class="space-y-6">
+                                <!-- Email -->
+                                <a href="mailto:sonal.keshwani@iiitd.ac.in"
+                                    class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-leaf/5 transition-colors group">
+                                    <div
+                                        class="w-12 h-12 rounded-xl bg-leaf/10 flex items-center justify-center group-hover:bg-leaf group-hover:text-white transition-all">
+                                        <svg class="w-6 h-6 text-leaf group-hover:text-white" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Email</p>
+                                        <p class="font-medium text-gray-800 dark:text-white">sonal.keshwani@iiitd.ac.in
+                                        </p>
+                                    </div>
+                                </a>
+
+                                <!-- Address -->
+                                <div class="flex items-start gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                                    <div
+                                        class="w-12 h-12 rounded-xl bg-leaf/10 flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6 text-leaf" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                            </path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Location</p>
+                                        <p class="font-medium text-gray-800 dark:text-white">A-405, R&D Building</p>
+                                        <p class="text-gray-600 dark:text-gray-400 text-sm">IIIT-Delhi, Okhla Industrial
+                                            Estate, New Delhi, India</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- Right Side: Map -->
-                    <div class="w-full lg:w-1/2 h-64 md:h-[28rem]">
-                        <iframe
-                            class="w-full h-full"
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1836.9371132582205!2d77.2704797534296!3d28.544184315205015!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce3e45d85d3e3%3A0x691393414902968e!2sIIIT-Delhi%20R%26D%20Building!5e0!3m2!1sen!2sin!4v1737124996340!5m2!1sen!2sin"
-                            title="IIIT-Delhi Location"
-                            allowfullscreen=""
-                        ></iframe>
+
+                        <!-- Right Side: Map -->
+                        <div class="w-full lg:w-1/2 h-72 lg:h-auto">
+                            <iframe class="w-full h-full"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1836.9371132582205!2d77.2704797534296!3d28.544184315205015!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce3e45d85d3e3%3A0x691393414902968e!2sIIIT-Delhi%20R%26D%20Building!5e0!3m2!1sen!2sin!4v1737124996340!5m2!1sen!2sin"
+                                title="IIIT-Delhi Location" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -161,5 +376,17 @@
     </main>
 
     <script src="script.js"></script>
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 50,
+            disable: 'mobile' // Disable on mobile for performance
+        });
+    </script>
 </body>
+
 </html>
