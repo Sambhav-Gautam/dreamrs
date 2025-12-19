@@ -1,0 +1,94 @@
+{
+  "publications": [
+    {
+      "Title": "Developing a method for creating structured representations of working of systems from natural language descriptions using the SAPPhIRE model of causality",
+      "Author": "K Bhattacharya, A Majumder, AN Bhatt, <strong>S Keshwani</strong>, BSC Ranjan, ...",
+      "Journal": "AI EDAM 38, e24",
+      "Year": 2024,
+      "Cited_by": "",
+      "Link": "https://scholar.google.co.in/citations?view_op=view_citation&hl=en&user=NLPFhkMAAAAJ&citation_for_view=NLPFhkMAAAAJ:UebtZRa9Y70C"
+    },
+    {
+      "Title": "Comparing Analogy-Based Methods—Bio-Inspiration and Engineering-Domain Inspiration for Domain Selection and Novelty",
+      "Author": "<strong>S Keshwani</strong>, H Casakin",
+      "Journal": "Biomimetics 9 (6), 344",
+      "Year": 2024,
+      "Cited_by": "2",
+      "Link": "https://scholar.google.co.in/citations?view_op=view_citation&hl=en&user=NLPFhkMAAAAJ&citation_for_view=NLPFhkMAAAAJ:UebtZRa9Y70C"
+    },
+    {
+      "Title": "Influence of analogical domains and comprehensiveness in explanation of analogy on the novelty of designs",
+      "Author": "<strong>S Keshwani</strong>, A Chakrabarti",
+      "Journal": "Research in Engineering Design 28 (3), 381-412",
+      "Year": 2017,
+      "Cited_by": "18",
+      "Link": "https://scholar.google.co.in/citations?view_op=view_citation&hl=en&user=NLPFhkMAAAAJ&citation_for_view=NLPFhkMAAAAJ:IjCSPb-OGe4C"
+    },
+    {
+      "Title": "Comparing novelty of designs from biological-inspiration with those from brainstorming",
+      "Author": "<strong>S Keshwani</strong>, TA Lenau, S Ahmed-Kristensen, A Chakrabarti",
+      "Journal": "Journal of Engineering Design 28 (10-12), 654-680",
+      "Cited_by": 54,
+      "Year": 2017,
+      "Link": "https://scholar.google.co.in/citations?view_op=view_citation&hl=en&user=NLPFhkMAAAAJ&citation_for_view=NLPFhkMAAAAJ:u5HHmVD_uO8C"
+    }
+  ],
+  "collaborations": [
+    {
+      "name": "Prof. Gaetano Cascini",
+      "link": "https://mecc.polimi.it/en/research/faculty/prof-gaetano-cascini",
+      "position": "Full Professor",
+      "department": "Department of Mechanical Engineering, Politecnico di Milano, Milan, <strong>Italy</strong>",
+      "departmentLink": "https://www.mecc.polimi.it/en/"
+    },
+    {
+      "name": "Prof. Hernan Casakin",
+      "link": "https://scholar.google.co.il/citations?user=kr7wm4QAAAAJ&hl=iw",
+      "position": "Associate Professor",
+      "department": "Department of Architecture, Ariel University, <strong>Israel</strong>",
+      "departmentLink": "https://cris.ariel.ac.il/en/organisations/school-of-architecture-2"
+    },
+    {
+      "name": "Prof. Santosh Jagtap",
+      "link": "https://sites.google.com/view/santoshdesign/home",
+      "position": "Associate Professor",
+      "department": "Department of Design, <strong>IIT Guwahati</strong>, India",
+      "departmentLink": "https://www.iitg.ac.in/design/"
+    },
+    {
+      "name": "Prof. Amaresh Chakrabarti",
+      "link": "https://dm.iisc.ac.in/cpdm/facultyprofile.php?name=1",
+      "position": "Professor and Chair",
+      "department": "Centre for Product Design and Manufacturing, <strong>IISc Bangalore</strong>",
+      "departmentLink": "https://dm.iisc.ac.in/dm/"
+    },
+    {
+      "name": "Prof. E.Z. Opiyo",
+      "link": "https://scholar.google.com/citations?user=3SAp_hIAAAAJ&hl=en",
+      "position": "Professor",
+      "department": "St. Joseph University, Dar-es-salaam, <strong>Tanzania</strong>",
+      "departmentLink": "https://www.sjuit.ac.tz/"
+    },
+    {
+      "name": "Prof. Srinivasan Venkataraman",
+      "link": "https://sites.google.com/view/srinivasan-aboutme/home",
+      "position": "Assistant Professor",
+      "department": "Department of Design, <strong>IIT Delhi</strong>, India",
+      "departmentLink": "https://www.iitg.ac.in/design/"
+    },
+    {
+      "name": "Prof. Torben Anker Lenau",
+      "link": "https://orbit.dtu.dk/en/persons/torben-anker-lenau",
+      "position": "Associate Professor",
+      "department": "Technical University of Denmark, <strong>Denmark</strong>",
+      "departmentLink": "https://www.dtu.dk/english"
+    },
+    {
+      "name": "Prof. Saeema Ahmed-Kristensen",
+      "link": "https://experts.exeter.ac.uk/34981-saeema-ahmedkristensen",
+      "position": "Professor",
+      "department": "Design Engineering and Innovation, University of Exeter, <strong>England</strong>",
+      "departmentLink": "https://www.exeter.ac.uk/"
+    }
+  ]
+}

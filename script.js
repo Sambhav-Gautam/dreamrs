@@ -285,44 +285,145 @@ document.addEventListener('DOMContentLoaded', function () {
     // Publications
     // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    const publicationsData = [
-        {
-            "Title": "Developing a method for creating structured representations of working of systems from natural language descriptions using the SAPPhIRE model of causality",
-            "Author": "K Bhattacharya, A Majumder, AN Bhatt, <strong>S Keshwani</strong>, BSC Ranjan, ...",
-            "Journal": "AI EDAM 38, e24",
-            "Cited_by": "",
-            "Year": 2024,
-            "Link": "https://scholar.google.co.in/citations?view_op=view_citation&hl=en&user=NLPFhkMAAAAJ&citation_for_view=NLPFhkMAAAAJ:UebtZRa9Y70C"
-        },
-        {
-            "Title": "Comparing Analogy-Based Methods—Bio-Inspiration and Engineering-Domain Inspiration for Domain Selection and Novelty",
-            "Author": "<strong>S Keshwani</strong>, H Casakin",
-            "Journal": "Biomimetics 9 (6), 344",
-            "Cited_by": 2,
-            "Year": 2024,
-            "Link": "https://scholar.google.co.in/citations?view_op=view_citation&hl=en&user=NLPFhkMAAAAJ&citation_for_view=NLPFhkMAAAAJ:UebtZRa9Y70C"
-        },
-        {
-            "Title": "Influence of analogical domains and comprehensiveness in explanation of analogy on the novelty of designs",
-            "Author": "<strong>S Keshwani</strong>, A Chakrabarti",
-            "Journal": "Research in Engineering Design 28 (3), 381-412",
-            "Cited_by": 18,
-            "Year": 2017,
-            "Link": "https://scholar.google.co.in/citations?view_op=view_citation&hl=en&user=NLPFhkMAAAAJ&citation_for_view=NLPFhkMAAAAJ:IjCSPb-OGe4C"
-        },
-        {
-            "Title": "Comparing novelty of designs from biological-inspiration with those from brainstorming",
-            "Author": "<strong>S Keshwani</strong>, TA Lenau, S Ahmed-Kristensen, A Chakrabarti",
-            "Journal": "Journal of Engineering Design 28 (10-12), 654-680",
-            "Cited_by": 54,
-            "Year": 2017,
-            "Link": "https://scholar.google.co.in/citations?view_op=view_citation&hl=en&user=NLPFhkMAAAAJ&citation_for_view=NLPFhkMAAAAJ:u5HHmVD_uO8C"
-        },
-    ]
-    const publications = document.getElementById('publications');
+    const publicationsData = []; // Will be populated from API
 
-    if (publications) {
-        publicationsData.forEach((item, index) => {
+    async function loadResearch() {
+        try {
+            const response = await fetch('/api/data/research');
+            const data = await response.json();
+
+            // Publications
+            renderPublications(data.publications);
+
+            // Collaborations
+            renderCollaborations(data.collaborations);
+        } catch (error) {
+            console.error('Error loading research data:', error);
+        }
+    }
+
+
+    // Global Slideshow Logic
+    let allPublicationImages = [];
+    let currentGlobalSlide = 0;
+    let globalSlideInterval;
+
+    async function initGlobalSlideshow(publications) {
+        allPublicationImages = [];
+
+        try {
+            // Fetch all images physically present in the directory
+            const res = await fetch('/api/files/list?dir=publications');
+            const files = await res.json();
+
+            // Map files to slides
+            files.forEach(filename => {
+                // Ignore system files
+                if (!filename.match(/\.(jpg|jpeg|png|gif|webp)$/i)) return;
+
+                // Find metadata if available
+                let title = "";
+                let link = "#";
+
+                // Search for this image in publications metadata
+                // This is O(N*M) but N is small
+                for (const pub of publications) {
+                    if (pub.images && pub.images.includes(filename)) {
+                        title = pub.Title;
+                        link = pub.Link;
+                        break;
+                    }
+                }
+
+                // Use fallback title if not matched
+                if (!title) title = "Research Image";
+
+                allPublicationImages.push({
+                    src: `uploads/images/publications/${filename}`,
+                    title: title,
+                    link: link
+                });
+            });
+        } catch (e) {
+            console.error("Failed to load slideshow images", e);
+        }
+
+        const container = document.getElementById('global-slideshow-container');
+        if (!container) return; // Should not happen on research page
+
+        if (allPublicationImages.length === 0) {
+            container.classList.add('hidden');
+            return;
+        }
+
+        container.classList.remove('hidden');
+        renderGlobalSlides();
+        startGlobalSlideshow();
+    }
+
+    function renderGlobalSlides() {
+        const track = document.getElementById('global-slideshow-track');
+        const indicators = document.getElementById('global-slideshow-indicators');
+
+        track.innerHTML = allPublicationImages.map((img, index) => `
+            <div class="min-w-full h-full relative group">
+                <img src="${img.src}" class="w-full h-full object-contain bg-black/50" alt="${img.title}">
+                <div class="absolute bottom-0 left-0 right-0 bg-black/60 p-4 text-white translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                    <p class="font-bold truncate">${img.title}</p>
+                </div>
+            </div>
+        `).join('');
+
+        indicators.innerHTML = allPublicationImages.map((_, index) => `
+            <button onclick="jumpToGlobalSlide(${index})" class="w-2 h-2 rounded-full transition-colors ${index === 0 ? 'bg-white' : 'bg-white/40 hover:bg-white/70'}"></button>
+        `).join('');
+    }
+
+    window.moveGlobalSlide = function (n) {
+        if (allPublicationImages.length === 0) return;
+        currentGlobalSlide = (currentGlobalSlide + n + allPublicationImages.length) % allPublicationImages.length;
+        updateGlobalSlidePosition();
+        resetGlobalTimer();
+    };
+
+    window.jumpToGlobalSlide = function (index) {
+        currentGlobalSlide = index;
+        updateGlobalSlidePosition();
+        resetGlobalTimer();
+    };
+
+    function updateGlobalSlidePosition() {
+        const track = document.getElementById('global-slideshow-track');
+        track.style.transform = `translateX(-${currentGlobalSlide * 100}%)`;
+
+        // Update indicators
+        const indicators = document.getElementById('global-slideshow-indicators').children;
+        Array.from(indicators).forEach((dot, idx) => {
+            dot.className = `w-2 h-2 rounded-full transition-colors ${idx === currentGlobalSlide ? 'bg-white' : 'bg-white/40 hover:bg-white/70'}`;
+        });
+    }
+
+    function startGlobalSlideshow() {
+        if (globalSlideInterval) clearInterval(globalSlideInterval);
+        globalSlideInterval = setInterval(() => {
+            window.moveGlobalSlide(1);
+        }, 3000); // 3 seconds
+    }
+
+    function resetGlobalTimer() {
+        startGlobalSlideshow();
+    }
+
+
+    function renderPublications(items) {
+        const publications = document.getElementById('research-publications');
+        if (!publications) return;
+
+        // Initialize Global Slideshow with all images
+        initGlobalSlideshow(items);
+
+        publications.innerHTML = '';
+        items.forEach((item, index) => {
             const li = document.createElement('div');
             li.className = 'publication-card group relative p-5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 hover:shadow-lg hover:border-leaf/50 transition-all duration-300 hover:-translate-y-1';
             li.style.animationDelay = `${index * 100}ms`;
@@ -339,6 +440,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </h3>
                         <p class="text-sm text-leaf font-medium mb-1">${item.Journal}</p>
                         <p class="text-sm text-gray-600 dark:text-gray-400">${item.Author}</p>
+                        ${item.Cited_by ? `<p class="text-xs text-gray-500 mt-1">Cited by: ${item.Cited_by}</p>` : ''}
                     </div>
                     <a href="${item.Link}" target="_blank" rel="noopener" class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 hover:bg-leaf hover:text-white transition-all duration-300">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -347,149 +449,125 @@ document.addEventListener('DOMContentLoaded', function () {
                     </a>
                 </div>
             `;
-
             publications.appendChild(li);
         });
     }
+
+    // Global slideshow mover
+    window.moveSlide = function (btn, n) {
+        const container = btn.parentElement;
+        const slides = container.getElementsByClassName('slide');
+        let currentIndex = 0;
+
+        // Find current active slide
+        for (let i = 0; i < slides.length; i++) {
+            if (slides[i].classList.contains('opacity-100')) {
+                currentIndex = i;
+                break;
+            }
+        }
+
+        slides[currentIndex].classList.remove('opacity-100');
+        slides[currentIndex].classList.add('opacity-0');
+
+        let newIndex = currentIndex + n;
+        if (newIndex >= slides.length) newIndex = 0;
+        if (newIndex < 0) newIndex = slides.length - 1;
+
+        slides[newIndex].classList.remove('opacity-0');
+        slides[newIndex].classList.add('opacity-100');
+    };
+
+    function renderCollaborations(items) {
+        const collaborations = document.getElementById('research-collaborations');
+        if (!collaborations) return;
+
+        // Use a vertical list layout for better UI
+        collaborations.className = "flex flex-col gap-4";
+
+        collaborations.innerHTML = '';
+        items.forEach((item, index) => {
+            const li = document.createElement('div');
+            // Styled as card like teams
+            li.className = 'group w-full p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 hover:shadow-lg hover:border-leaf/50 transition-all duration-300';
+            li.style.animationDelay = `${index * 100}ms`;
+
+            // Assuming we don't have photos for external collaborators, we use a nice formatted text card
+            li.innerHTML = `
+                <div class="flex items-start gap-4">
+                     <div class="w-12 h-12 rounded-full bg-gradient-to-br from-leaf to-green-400 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                        ${item.name.charAt(0)}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-lg font-semibold text-gray-800 dark:text-white group-hover:text-leaf transition-colors mb-1">
+                            <a href="${item.link}" target="_blank" rel="noopener">${item.name}</a>
+                        </h4>
+                        <p class="text-sm font-medium text-leaf mb-1">${item.position}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                             ${item.department}
+                             ${item.departmentLink ? `<a href="${item.departmentLink}" target="_blank" class="ml-1 text-leaf hover:underline">↗</a>` : ''}
+                        </p>
+                    </div>
+                </div>
+            `;
+            collaborations.appendChild(li);
+        });
+    }
+
+    // Call the function if we are on the research page
+    if (document.getElementById('research-publications') || document.getElementById('research-collaborations')) {
+        loadResearch();
+    }
+    // Old publication rendering logic removed, handled in renderPublications functions
 
 
     // Research Collaborations
     // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    const collaborationsData = [
-        {
-            "name": "Prof. Gaetano Cascini",
-            "link": "https://mecc.polimi.it/en/research/faculty/prof-gaetano-cascini",
-            "position": "Full Professor",
-            "department": "Department of Mechanical Engineering, Politecnico di Milano, Milan, <strong>Italy</strong>",
-            "departmentLink": "https://www.mecc.polimi.it/en/"
-        },
-        {
-            "name": "Prof. Hernan Casakin",
-            "link": "https://scholar.google.co.il/citations?user=kr7wm4QAAAAJ&hl=iw",
-            "position": "Associate Professor",
-            "department": "Department of Architecture, Ariel University, <strong>Israel</strong>",
-            "departmentLink": "https://cris.ariel.ac.il/en/organisations/school-of-architecture-2"
-        },
-        {
-            "name": "Prof. Santosh Jagtap",
-            "link": "https://sites.google.com/view/santoshdesign/home",
-            "position": "Associate Professor",
-            "department": "Department of Design, <strong>IIT Guwahati</strong>, India",
-            "departmentLink": "https://www.iitg.ac.in/design/"
-        },
-        {
-            "name": "Prof. Amaresh Chakrabarti",
-            "link": "https://dm.iisc.ac.in/cpdm/facultyprofile.php?name=1",
-            "position": "Professor and Chair",
-            "department": "Centre for Product Design and Manufacturing, <strong>IISc Bangalore</strong>",
-            "departmentLink": "https://dm.iisc.ac.in/dm/"
-        },
-        {
-            "name": "Prof. E.Z. Opiyo",
-            "link": "https://scholar.google.com/citations?user=3SAp_hIAAAAJ&hl=en",
-            "position": "Professor",
-            "department": "St. Joseph University, Dar-es-salaam, <strong>Tanzania</strong>",
-            "departmentLink": "https://www.sjuit.ac.tz/"
-        },
-        {
-            "name": "Prof. Srinivasan Venkataraman",
-            "link": "https://sites.google.com/view/srinivasan-aboutme/home",
-            "position": "Assistant Professor",
-            "department": "Department of Design, <strong>IIT Delhi</strong>, India",
-            "departmentLink": "https://www.iitg.ac.in/design/"
-        },
-        {
-            "name": "Prof. Torben Anker Lenau",
-            "link": "https://orbit.dtu.dk/en/persons/torben-anker-lenau",
-            "position": "Associate Professor",
-            "department": "Technical University of Denmark, <strong>Denmark</strong>",
-            "departmentLink": "https://www.dtu.dk/english"
-        },
-        {
-            "name": "Prof. Saeema Ahmed-Kristensen",
-            "link": "https://experts.exeter.ac.uk/34981-saeema-ahmedkristensen",
-            "position": "Professor",
-            "department": "Design Engineering and Innovation, University of Exeter, <strong>England</strong>",
-            "departmentLink": "https://www.exeter.ac.uk/"
-        }
-    ];
+    // Old collaborations data removed, handled in renderCollaborations
 
-    const collaborations = document.getElementById('research-collaborations');
-
-    if (collaborations) {
-        collaborationsData.forEach(collab => {
-            const card = document.createElement('div');
-            card.className = 'card-enhanced p-6';
-            card.innerHTML = `
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
-                    <a class="hover:text-leaf transition-colors" rel="noopener" target="_blank" href="${collab.link}">${collab.name}</a>
-                </h3>
-                <p class="text-sm text-leaf font-medium mt-1">${collab.position}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                    <a rel="noopener" target="_blank" class="hover:text-leaf transition-colors" href="${collab.departmentLink}">${collab.department}</a>
-                </p>
-            `;
-            collaborations.appendChild(card);
-        });
-    }
+    // Old collaboration rendering logic removed, handled in renderCollaborations
 
     // Courses
     // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    const courses = [
-        {
-            code: "DES102",
-            title: "Introduction to Human Computer Interaction",
-            description: "This course will provide a theoretical and practical understanding of human-computer interaction (HCI) design including concepts of user centered and design thinking, usability, interfaces, rapid prototyping, and evaluation. This is a project-based course where students can work on different user-centric prototypes.",
-            link: "https://techtree.iiitd.edu.in/viewDescription/filename?=DES102"
-        },
-        {
-            code: "DES523",
-            title: "Cognition & Information Processing in Design",
-            description: "In this course students will understand human cognition and its relevance in design. Through the course, the basic cognitive processes such as perception, attention, learning and memory will be discussed as separate entities. Students will also look at the role of various factors such as colour, form , shape and stress on cognition. Students will develop the skill to identify the application of these concepts to design. Students will be able to evaluate the subjective and objective methods of mental workload measures This course will enlighten students on all aspects of human cognition and design.",
-            link: "https://techtree.iiitd.edu.in/viewDescription/filename?=DES523"
-        },
-        {
-            code: "DES524",
-            title: "Ergonomics / Human Factors for Design",
-            description: "In designing, ergonomics takes care of the users' need, their limitations and abilities. Various aspects of basic anthropometry, physical, physiological, psychological and biomechanical limitations and abilities of the human body with reference to human centred design of products and systems will be explained. Students will: a) learn the principles, overview and background of ergonomics; b) develop the skill to identify the user friendly man machine environment system; and c) understand the methods and processes to evaluate the products, facilities, environment, jobs and tasks. This course will help in finding real time solutions to improve the quality of life and performance of an individual. ",
-            link: "https://techtree.iiitd.edu.in/viewDescription/filename?=DES524"
-        },
-        {
-            code: "DES533",
-            title: "Interaction Design Perspectives & Methods",
-            description: "This course provides description of various design methods at the various stages of designing. Students will learn to conduct in depth user analysis, understand the nuances of questionnaire design and analyze the user data quantitatively and qualitatively. Students will also be able to create prototypes and conduct usability testing of the developed prototypes.",
-            link: "https://techtree.iiitd.edu.in/viewDescription/filename?=DES533"
+    async function loadCourses() {
+        const courseCardsContainer = document.getElementById('course-cards');
+        if (!courseCardsContainer) return;
+
+        try {
+            const response = await fetch('/api/data/courses');
+            const courses = await response.json();
+
+            courseCardsContainer.innerHTML = '';
+
+            courses.forEach(course => {
+                const courseCard = document.createElement('a');
+                courseCard.href = course.link;
+                courseCard.target = "_blank";
+                courseCard.rel = "noopener";
+                courseCard.className = "card-enhanced group p-6 flex flex-col";
+
+                courseCard.innerHTML = `
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="px-3 py-1 bg-leaf/10 text-leaf text-sm font-bold rounded-lg">${course.code}</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white group-hover:text-leaf transition-colors">${course.title}</h3>
+                    <p class="mt-3 text-gray-600 dark:text-gray-400 text-sm leading-relaxed line-clamp-4">${course.description}</p>
+                    <div class="mt-auto pt-4 flex items-center text-leaf text-sm font-medium group-hover:gap-2 transition-all">
+                        Learn more
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                `;
+
+                courseCardsContainer.appendChild(courseCard);
+            });
+        } catch (error) {
+            console.error('Error loading courses:', error);
         }
-    ];
-
-    const courseCardsContainer = document.getElementById('course-cards');
-
-    if (courseCardsContainer) {
-        courses.forEach(course => {
-            const courseCard = document.createElement('a');
-            courseCard.href = course.link;
-            courseCard.target = "_blank";
-            courseCard.rel = "noopener";
-            courseCard.className = "card-enhanced group p-6 flex flex-col";
-
-            courseCard.innerHTML = `
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="px-3 py-1 bg-leaf/10 text-leaf text-sm font-bold rounded-lg">${course.code}</span>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 dark:text-white group-hover:text-leaf transition-colors">${course.title}</h3>
-                <p class="mt-3 text-gray-600 dark:text-gray-400 text-sm leading-relaxed line-clamp-4">${course.description}</p>
-                <div class="mt-auto pt-4 flex items-center text-leaf text-sm font-medium group-hover:gap-2 transition-all">
-                    Learn more
-                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </div>
-            `;
-
-            courseCardsContainer.appendChild(courseCard);
-        });
     }
+    loadCourses();
 
     // Team
     // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------

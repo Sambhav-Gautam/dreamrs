@@ -1,0 +1,27 @@
+{
+  "name": "dreamrs",
+  "version": "1.0.0",
+  "description": "This is a website for the DREAMRS Lab, headed by Dr Sonal Keshwani, at the Indraprastha Institute of Information Technology, Delhi.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sambhav-Gautam/dreamrs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Sambhav-Gautam/dreamrs/issues"
+  },
+  "homepage": "https://github.com/Sambhav-Gautam/dreamrs#readme",
+  "dependencies": {
+    "body-parser": "^2.2.1",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "multer": "^2.0.2"
+  }
+}

@@ -111,42 +111,49 @@
 
     <script src="script.js"></script>
     <script>
-        // Function to check if PDF exists and update the status
-        function checkPDFStatus(pdfPath, elementId) {
-            fetch(pdfPath)
-                .then(response => {
-                    if (response.ok) {
-                        document.getElementById(elementId).innerHTML = `
-                            <a href="${pdfPath}" target="_blank" class="btn-primary inline-flex items-center justify-center gap-2 w-full">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                View Details
-                            </a>
-                        `;
-                    } else {
-                        document.getElementById(elementId).innerHTML = `
-                            <div class="py-3 px-4 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400 text-sm">
-                                Currently no openings
-                            </div>
-                        `;
-                    }
-                })
-                .catch(() => {
-                    document.getElementById(elementId).innerHTML = `
-                        <div class="py-3 px-4 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400 text-sm">
-                            Currently no openings
-                        </div>
-                    `;
-                });
+        async function loadOpenings() {
+            try {
+                const response = await fetch('/api/data/openings');
+                const data = await response.json();
+
+                renderOpenings(data['PhD Positions'], 'phd-status');
+                renderOpenings(data['Research Assistant'], 'ra-status');
+                renderOpenings(data['B.Tech Projects'], 'btp-status');
+            } catch (error) {
+                console.error('Error loading openings:', error);
+            }
         }
 
-        // Check each PDF when the page loads
-        document.addEventListener('DOMContentLoaded', function () {
-            checkPDFStatus('pdfs/phd_opening.pdf', 'phd-status');
-            checkPDFStatus('pdfs/ra_opening.pdf', 'ra-status');
-            checkPDFStatus('pdfs/btp_opening.pdf', 'btp-status');
-        });
+        function renderOpenings(items, elementId) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+
+            if (!items || items.length === 0) {
+                container.innerHTML = `
+                    <div class="py-3 px-4 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400 text-sm">
+                        Currently no openings
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            items.forEach(item => {
+                const btn = document.createElement('a');
+                btn.href = `uploads/pdfs/${item.file}`;
+                btn.target = "_blank";
+                btn.className = "btn-primary inline-flex items-center justify-center gap-2 w-full mb-2 last:mb-0";
+                btn.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    ${item.name}
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadOpenings);
     </script>
 </body>
 

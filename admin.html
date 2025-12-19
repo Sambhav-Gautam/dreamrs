@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | DREAMRS Lab</title>
+    <link href="./custom.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300 min-h-screen">
+
+    <!-- Login Section -->
+    <div id="login-section" class="flex items-center justify-center min-h-screen">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl w-full max-w-md">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">Admin Login</h2>
+            <form id="login-form">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Current Images</label>
+                    <div id="pub-current-images" class="flex flex-wrap gap-2">
+                        <!-- Images injected here -->
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="pub-images">
+                        Upload Posters (Images only)
+                    </label>
+                    <input
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        id="username" type="text" placeholder="Username">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="password">
+                        Password
+                    </label>
+                    <input
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        id="password" type="password" placeholder="******************">
+                </div>
+                <div class="flex items-center justify-between">
+                    <button
+                        class="bg-leaf hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition-colors"
+                        type="submit">
+                        Sign In
+                    </button>
+                </div>
+                <p id="login-error" class="text-red-500 text-xs italic mt-4 hidden">Invalid username or password.</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard-section" class="hidden">
+        <!-- Navbar -->
+        <nav class="bg-white dark:bg-gray-800 shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex">
+                        <div class="flex-shrink-0 flex items-center">
+                            <span class="text-xl font-bold text-gray-800 dark:text-white">Admin Dashboard</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <button id="logout-btn"
+                            class="ml-4 px-4 py-2 rounded text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-200 dark:border-gray-700 mb-6 overflow-x-auto">
+                <button
+                    class="tab-btn active px-4 py-2 text-sm font-medium text-leaf border-b-2 border-leaf focus:outline-none"
+                    onclick="openTab('research')">Research</button>
+                <button
+                    class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent focus:outline-none"
+                    onclick="openTab('team')">Team Members</button>
+                <button
+                    class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent focus:outline-none"
+                    onclick="openTab('courses')">Courses</button>
+                <button
+                    class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent focus:outline-none"
+                    onclick="openTab('openings')">Openings (PDFs)</button>
+            </div>
+
+            <!-- Content Areas -->
+
+            <!-- Research Tab -->
+            <div id="research-tab" class="tab-content">
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Publications</h3>
+                        <button onclick="openPublicationModal()"
+                            class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded text-sm">+ Add
+                            Publication</button>
+                    </div>
+                    <div id="publications-list" class="space-y-4"></div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Collaborations</h3>
+                        <button onclick="openCollabModal()"
+                            class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded text-sm">+ Add
+                            Collaboration</button>
+                    </div>
+                    <div id="collaborations-list" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- Team Tab -->
+            <div id="team-tab" class="tab-content hidden">
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Team Members</h3>
+                        <button onclick="openTeamModal()"
+                            class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded text-sm">+ Add
+                            Member</button>
+                    </div>
+                    <div id="team-list" class="space-y-6"></div>
+                </div>
+            </div>
+
+            <!-- Courses Tab -->
+            <div id="courses-tab" class="tab-content hidden">
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Courses</h3>
+                        <button onclick="openCourseModal()"
+                            class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded text-sm">+ Add
+                            Course</button>
+                    </div>
+                    <div id="courses-list" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- Openings Tab (Existing) -->
+            <div id="openings-tab" class="tab-content hidden space-y-8">
+                <!-- PhD -->
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">PhD Positions</h3>
+                    <div id="phd-list" class="space-y-2 mb-4"></div>
+                    <div class="flex gap-2">
+                        <input type="file" id="phd-file"
+                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20" />
+                        <input type="text" id="phd-name" placeholder="Opening Name (e.g. Winter 2025)"
+                            class="border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                        <button onclick="uploadOpeningPDF('PhD Positions', 'phd-file', 'phd-name')"
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm whitespace-nowrap">Add
+                            PDF</button>
+                    </div>
+                </div>
+
+                <!-- RA -->
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Research Assistant</h3>
+                    <div id="ra-list" class="space-y-2 mb-4"></div>
+                    <div class="flex gap-2">
+                        <input type="file" id="ra-file"
+                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20" />
+                        <input type="text" id="ra-name" placeholder="Opening Name"
+                            class="border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                        <button onclick="uploadOpeningPDF('Research Assistant', 'ra-file', 'ra-name')"
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm whitespace-nowrap">Add
+                            PDF</button>
+                    </div>
+                </div>
+
+                <!-- BTP -->
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">B.Tech Projects</h3>
+                    <div id="btp-list" class="space-y-2 mb-4"></div>
+                    <div class="flex gap-2">
+                        <input type="file" id="btp-file"
+                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20" />
+                        <input type="text" id="btp-name" placeholder="Opening Name"
+                            class="border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                        <button onclick="uploadOpeningPDF('B.Tech Projects', 'btp-file', 'btp-name')"
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm whitespace-nowrap">Add
+                            PDF</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modals -->
+
+    <!-- Publication Modal -->
+    <div id="publication-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full max-h-screen overflow-y-auto">
+            <h3 id="pub-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add Publication</h3>
+            <form id="pub-form" class="space-y-4">
+                <input type="hidden" id="pub-index">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
+                    <input type="text" id="pub-title"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Author</label>
+                    <input type="text" id="pub-author"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Journal</label>
+                    <input type="text" id="pub-journal"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        required>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Year</label>
+                        <input type="number" id="pub-year"
+                            class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cited By</label>
+                        <input type="text" id="pub-cited"
+                            class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Link</label>
+                    <input type="url" id="pub-link"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <!-- Image Upload -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Posters
+                        (Images)</label>
+                    <input type="file" id="pub-images" multiple accept="image/*"
+                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20">
+                    <div id="pub-current-images" class="mt-2 flex gap-2 flex-wrap"></div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="closeModal('publication-modal')"
+                        class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                    <button type="submit" class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Team Modal -->
+    <div id="team-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full">
+            <h3 id="team-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add Team Member</h3>
+            <form id="team-form" class="space-y-4">
+                <input type="hidden" id="team-index">
+                <input type="hidden" id="team-old-category"> <!-- To track category changes -->
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+                    <select id="team-category"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="Principal Investigator">Principal Investigator</option>
+                        <option value="PhD Scholars">PhD Scholars</option>
+                        <option value="B.Tech Project Students">B.Tech Project Students</option>
+                        <option value="Independent Project Students">Independent Project Students</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                    <input type="text" id="team-name"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
+                    <input type="text" id="team-title"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subtitle</label>
+                    <input type="text" id="team-subtitle"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">LinkedIn</label>
+                    <input type="url" id="team-linkedin"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile Image
+                        (Optional)</label>
+                    <input type="file" id="team-image" accept="image/*"
+                        class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20">
+                    <div id="team-current-image" class="mt-2"></div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">GitHub</label>
+                    <input type="url" id="team-github"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="closeModal('team-modal')"
+                        class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                    <button type="submit" class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Course Modal -->
+    <div id="course-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full">
+            <h3 id="course-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add Course</h3>
+            <form id="course-form" class="space-y-4">
+                <input type="hidden" id="course-index">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Code</label>
+                    <input type="text" id="course-code"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
+                    <input type="text" id="course-title"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                    <textarea id="course-desc" rows="4"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        required></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Link</label>
+                    <input type="url" id="course-link"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="closeModal('course-modal')"
+                        class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                    <button type="submit" class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Collab Modal -->
+    <div id="collab-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full">
+            <h3 id="collab-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add Collaboration
+            </h3>
+            <form id="collab-form" class="space-y-4">
+                <input type="hidden" id="collab-index">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                    <input type="text" id="collab-name"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Link</label>
+                    <input type="url" id="collab-link"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Position</label>
+                    <input type="text" id="collab-position"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Department</label>
+                    <input type="text" id="collab-dept"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Department Link</label>
+                    <input type="url" id="collab-dept-link"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="closeModal('collab-modal')"
+                        class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                    <button type="submit" class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+
+</html>
