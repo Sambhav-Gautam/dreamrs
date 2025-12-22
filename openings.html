@@ -109,11 +109,21 @@
         </div>
     </section>
 
+    <script src="env.js"></script>
     <script src="script.js"></script>
     <script>
+        // Uses window.ENV from env.js
+        const API_BASE_URL = window.ENV?.API_BASE_URL || window.API_CONFIG?.API_BASE_URL || '';
+
+        function getFileUrl(filename) {
+            if (!filename) return '';
+            if (filename.startsWith('http://') || filename.startsWith('https://')) return filename;
+            return `${API_BASE_URL}/api/files/download/${encodeURIComponent(filename)}`;
+        }
+
         async function loadOpenings() {
             try {
-                const response = await fetch('/api/data/openings');
+                const response = await fetch(`${API_BASE_URL}/api/data/openings`);
                 const data = await response.json();
 
                 renderOpenings(data['PhD Positions'], 'phd-status');
@@ -140,7 +150,7 @@
             container.innerHTML = '';
             items.forEach(item => {
                 const btn = document.createElement('a');
-                btn.href = `uploads/pdfs/${item.file}`;
+                btn.href = getFileUrl(item.file);
                 btn.target = "_blank";
                 btn.className = "btn-primary inline-flex items-center justify-center gap-2 w-full mb-2 last:mb-0";
                 btn.innerHTML = `

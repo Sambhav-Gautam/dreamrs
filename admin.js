@@ -1,3 +1,30 @@
+// --- API CONFIGURATION ---
+// Uses window.ENV from env.js
+const API_BASE_URL = window.ENV?.API_BASE_URL || window.API_CONFIG?.API_BASE_URL || '';
+
+// Helper function for API calls
+async function apiFetch(endpoint, options = {}) {
+    const url = `${API_BASE_URL}${endpoint}`;
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers
+    };
+
+    // Remove Content-Type for FormData
+    if (options.body instanceof FormData) {
+        delete headers['Content-Type'];
+    }
+
+    return fetch(url, { ...options, headers });
+}
+
+// Helper to get file URL
+function getFileUrl(path) {
+    if (!path) return '';
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
+    return `${API_BASE_URL}/api/files/download/${encodeURIComponent(path)}`;
+}
+
 // --- GLOBAL STATE ---
 let researchData = { publications: [], collaborations: [] };
 let teamData = {};
@@ -56,9 +83,8 @@ loginForm.addEventListener('submit', async (e) => {
     const password = document.getElementById('password').value;
 
     try {
-        const res = await fetch('/api/login', {
+        const res = await apiFetch('/api/login', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
         const data = await res.json();
@@ -92,20 +118,20 @@ async function loadAllData() {
 }
 
 async function fetchResearch() {
-    const res = await fetch('/api/data/research');
+    const res = await apiFetch('/api/data/research');
     researchData = await res.json();
     renderResearchList();
     renderCollabList();
 }
 
 async function fetchTeam() {
-    const res = await fetch('/api/data/team');
+    const res = await apiFetch('/api/data/team');
     teamData = await res.json();
     renderTeamList();
 }
 
 async function fetchCourses() {
-    const res = await fetch('/api/data/courses');
+    const res = await apiFetch('/api/data/courses');
     coursesData = await res.json();
     renderCoursesList();
 }
@@ -160,7 +186,7 @@ function editPublication(index) {
             const div = document.createElement('div');
             div.className = "relative group inline-block m-2";
             div.innerHTML = `
-                <img src="uploads/images/publications/${img}" class="w-24 h-24 object-cover rounded-lg border-2 border-gray-200 shadow-sm" alt="Publication Image" onerror="this.style.display='none'">
+                <img src="${getFileUrl(img)}" class="w-24 h-24 object-cover rounded-lg border-2 border-gray-200 shadow-sm" alt="Publication Image" onerror="this.style.display='none'">
                 <button type="button" onclick="removePubImage(${index}, ${i})" title="Remove Image" class="absolute -top-3 -right-3 bg-red-500 hover:bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-lg shadow-md transition-transform hover:scale-110 z-10">×</button>
             `;
             imgContainer.appendChild(div);
@@ -183,9 +209,8 @@ async function removePubImage(pubIndex, imgIndex) {
 
     // Delete file from server
     try {
-        await fetch('/api/delete-file', {
+        await apiFetch('/api/delete-file', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ filename, type: 'image' })
         });
     } catch (e) {
@@ -212,7 +237,7 @@ document.getElementById('pub-form').addEventListener('submit', async (e) => {
             singleFormData.append('file', fileInput.files[i]);
 
             try {
-                const res = await fetch('/api/upload', {
+                const res = await fetch(`${API_BASE_URL} /api/upload`, {
                     method: 'POST',
                     body: singleFormData
                 });
@@ -237,9 +262,8 @@ document.getElementById('pub-form').addEventListener('submit', async (e) => {
             // Delete old files from server
             for (const oldImg of oldImages) {
                 try {
-                    await fetch('/api/delete-file', {
+                    await apiFetch('/api/delete-file', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ filename: oldImg, type: 'image' })
                     });
                 } catch (e) {
@@ -286,26 +310,27 @@ async function deletePublication(index) {
 }
 
 async function saveResearch() {
-    await fetch('/api/data/research', {
+    await apiFetch('/api/data/research', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(researchData)
     });
 }
 
 // --- COLLABORATION MANAGEMENT ---
 function renderCollabList() {
-    constcontainer = document.getElementById('collaborations-list');
     const container = document.getElementById('collaborations-list');
+    if (!container) return;
     container.innerHTML = '';
+
+    if (!researchData.collaborations) return;
 
     researchData.collaborations.forEach((collab, index) => {
         const div = document.createElement('div');
         div.className = 'p-4 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 flex justify-between items-start';
         div.innerHTML = `
             <div>
-                <p class="font-semibold text-gray-800 dark:text-white">${collab.name}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">${collab.position} at ${collab.department}</p>
+                <p class="font-semibold text-gray-800 dark:text-white">${collab.name || ''}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">${collab.position || ''} at ${collab.department || ''}</p>
             </div>
             <div class="flex gap-2">
                 <button onclick="editCollab(${index})" class="text-blue-500 hover:text-blue-700">Edit</button>
@@ -374,6 +399,7 @@ function renderTeamList() {
 
     Object.keys(teamData).forEach(category => {
         const catDiv = document.createElement('div');
+        catDiv.className = 'mb-4';
         catDiv.innerHTML = `<h4 class="font-bold text-gray-700 dark:text-gray-300 mb-2">${category}</h4>`;
 
         teamData[category].forEach((member, index) => {
@@ -382,7 +408,7 @@ function renderTeamList() {
             div.innerHTML = `
                 <div>
                     <span class="font-medium text-gray-800 dark:text-white">${member.name}</span>
-                    <span class="text-sm text-gray-500 dark:text-gray-400"> - ${member.title}</span>
+                    <span class="text-sm text-gray-500 dark:text-gray-400"> - ${member.title || ''}</span>
                 </div>
                 <div class="flex gap-2 text-sm">
                     <button onclick="editTeam('${category}', ${index})" class="text-blue-500 hover:text-blue-700">Edit</button>
@@ -422,8 +448,8 @@ function editTeam(category, index) {
     if (member.image) {
         imgContainer.innerHTML = `
             <div class="relative inline-block group">
-                 <img src="uploads/images/team/${member.image}" class="w-16 h-16 rounded object-cover border">
-                 <button type="button" onclick="removeTeamImage('${category}', ${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">x</button>
+                <img src="${getFileUrl(member.image)}" class="w-16 h-16 rounded object-cover border">
+                <button type="button" onclick="removeTeamImage('${category}', ${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">x</button>
             </div>
             <p class="text-xs text-gray-400 mt-1">${member.image}</p>
         `;
@@ -437,9 +463,8 @@ async function removeTeamImage(category, index) {
     const member = teamData[category][index];
 
     try {
-        await fetch('/api/delete-file', {
+        await apiFetch('/api/delete-file', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ filename: member.image, type: 'team_image' })
         });
         delete member.image; // Remove property
@@ -469,15 +494,14 @@ document.getElementById('team-form').addEventListener('submit', async (e) => {
             if (index !== -1 && oldCategory) {
                 const oldMember = teamData[oldCategory][index];
                 if (oldMember && oldMember.image) {
-                    await fetch('/api/delete-file', {
+                    await apiFetch('/api/delete-file', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ filename: oldMember.image, type: 'team_image' })
                     });
                 }
             }
 
-            const res = await fetch('/api/upload?folder=team', {
+            const res = await fetch(`${API_BASE_URL}/api/upload?folder=team`, {
                 method: 'POST',
                 body: formData
             });
@@ -525,9 +549,8 @@ async function deleteTeam(category, index) {
 }
 
 async function saveTeam() {
-    await fetch('/api/data/team', {
+    await apiFetch('/api/data/team', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(teamData)
     });
 }
@@ -536,17 +559,20 @@ async function saveTeam() {
 
 function renderCoursesList() {
     const container = document.getElementById('courses-list');
+    if (!container) return;
     container.innerHTML = '';
+
+    if (!coursesData || !Array.isArray(coursesData)) return;
 
     coursesData.forEach((course, index) => {
         const div = document.createElement('div');
         div.className = 'p-4 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 flex justify-between items-start';
         div.innerHTML = `
             <div>
-                <span class="inline-block px-2 py-1 bg-leaf/10 text-leaf text-xs rounded mb-1">${course.code}</span>
-                <p class="font-semibold text-gray-800 dark:text-white">${course.title}</p>
+                <span class="inline-block px-2 py-1 bg-leaf/10 text-leaf text-xs rounded mb-1">${course.code || ''}</span>
+                <p class="font-semibold text-gray-800 dark:text-white">${course.title || ''}</p>
             </div>
-             <div class="flex gap-2">
+            <div class="flex gap-2">
                 <button onclick="editCourse(${index})" class="text-blue-500 hover:text-blue-700">Edit</button>
                 <button onclick="deleteCourse(${index})" class="text-red-500 hover:text-red-700">Delete</button>
             </div>
@@ -603,9 +629,8 @@ async function deleteCourse(index) {
 }
 
 async function saveCourses() {
-    await fetch('/api/data/courses', {
+    await apiFetch('/api/data/courses', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(coursesData)
     });
 }
@@ -613,7 +638,7 @@ async function saveCourses() {
 // --- OPENINGS LOGIC (Reused/Adapted) ---
 
 async function fetchOpenings() {
-    const res = await fetch('/api/data/openings');
+    const res = await apiFetch('/api/data/openings');
     openingsData = await res.json();
     renderOpeningsList('PhD Positions', 'phd-list');
     renderOpeningsList('Research Assistant', 'ra-list');
@@ -636,7 +661,7 @@ function renderOpeningsList(category, elementId) {
         div.innerHTML = `
             <div class="flex items-center gap-3">
                 <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                <a href="uploads/pdfs/${item.file}" target="_blank" class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">${item.name}</a>
+                <a href="${getFileUrl(item.file)}" target="_blank" class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">${item.name}</a>
                 <span class="text-xs text-gray-400">(${item.file})</span>
             </div>
             <button onclick="deleteOpening('${category}', ${index})" class="text-red-500 hover:text-red-700 p-1">
@@ -659,7 +684,7 @@ async function uploadOpeningPDF(category, fileInputId, nameInputId) {
     formData.append('file', fileInput.files[0]); // changed from 'pdf' to 'file' to match generic endpoint
 
     try {
-        const res = await fetch('/api/upload', {
+        const res = await fetch(`${API_BASE_URL}/api/upload`, {
             method: 'POST',
             body: formData
         });
@@ -672,9 +697,8 @@ async function uploadOpeningPDF(category, fileInputId, nameInputId) {
                 file: data.filename
             });
 
-            await fetch('/api/data/openings', {
+            await apiFetch('/api/data/openings', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(openingsData)
             });
 
@@ -695,16 +719,14 @@ async function deleteOpening(category, index) {
     const item = openingsData[category][index];
 
     try {
-        await fetch('/api/delete-file', {
+        await apiFetch('/api/delete-file', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ filename: item.file })
         });
 
         openingsData[category].splice(index, 1);
-        await fetch('/api/data/openings', {
+        await apiFetch('/api/data/openings', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(openingsData)
         });
 

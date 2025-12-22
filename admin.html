@@ -20,14 +20,8 @@
             <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">Admin Login</h2>
             <form id="login-form">
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Current Images</label>
-                    <div id="pub-current-images" class="flex flex-wrap gap-2">
-                        <!-- Images injected here -->
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="pub-images">
-                        Upload Posters (Images only)
+                    <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="username">
+                        Username
                     </label>
                     <input
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:border-gray-600 dark:text-white"
@@ -401,6 +395,7 @@
         </div>
     </div>
 
+    <script src="env.js"></script>
     <script src="admin.js"></script>
 </body>
 

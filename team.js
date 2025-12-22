@@ -1,8 +1,20 @@
 document.addEventListener('DOMContentLoaded', function () {
+  // --- API CONFIGURATION ---
+  // Uses window.ENV from env.js
+  const API_BASE_URL = window.ENV?.API_BASE_URL || window.API_CONFIG?.API_BASE_URL || '';
+
+  // Helper to get file URL from backend
+  function getFileUrl(filename) {
+    if (!filename) return '';
+    if (filename.startsWith('http://') || filename.startsWith('https://')) return filename;
+    return `${API_BASE_URL}/api/files/download/${encodeURIComponent(filename)}`;
+  }
+
   async function loadTeam() {
     try {
-      const response = await fetch('/api/data/team');
+      const response = await fetch(`${API_BASE_URL}/api/data/team`);
       const team = await response.json();
+      console.log('Team data loaded:', team);
       renderTeam(team);
     } catch (error) {
       console.error('Error loading team data:', error);
@@ -27,6 +39,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Iterate through categories
     Object.entries(team).forEach(([category, members]) => {
+      if (!members || !Array.isArray(members) || members.length === 0) return;
+
       const section = document.createElement('div');
       section.className = 'team-section';
 
@@ -52,16 +66,16 @@ document.addEventListener('DOMContentLoaded', function () {
         grid.className = 'grid grid-cols-1 gap-6';
 
         members.forEach((member, index) => {
-          const initials = member.name.split(' ').map(n => n[0]).slice(0, 2).join('');
+          const initials = member.name ? member.name.split(' ').map(n => n[0]).slice(0, 2).join('') : '??';
           const card = document.createElement('div');
           card.className = 'group relative p-4 rounded-xl bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 hover:border-leaf/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1';
           card.style.animationDelay = `${index * 50}ms`;
 
-          // Image Source Logic
+          // Image Source Logic - use getFileUrl for backend images
           let imageSrc = null;
 
           if (member.image) {
-            imageSrc = `uploads/images/team/${member.image}`;
+            imageSrc = getFileUrl(member.image);
           }
           // For PI we might want an image, checking if we have one or defaulting to initials
           // User said "images of PI and PhD visible". 

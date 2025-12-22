@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // --- API CONFIGURATION ---
+    // Uses window.ENV from env.js
+    const API_BASE_URL = window.ENV?.API_BASE_URL || window.API_CONFIG?.API_BASE_URL || '';
+
+    // Helper to get file URL
+    function getFileUrl(filename) {
+        if (!filename) return '';
+        if (filename.startsWith('http://') || filename.startsWith('https://')) return filename;
+        return `${API_BASE_URL}/api/files/download/${encodeURIComponent(filename)}`;
+    }
+
     // Header and Footer
     // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -289,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function loadResearch() {
         try {
-            const response = await fetch('/api/data/research');
+            const response = await fetch(`${API_BASE_URL}/api/data/research`);
             const data = await response.json();
 
             // Publications
@@ -313,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             // Fetch all images physically present in the directory
-            const res = await fetch('/api/files/list?dir=publications');
+            const res = await fetch(`${API_BASE_URL}/api/files/list?dir=publications`);
             const files = await res.json();
 
             // Map files to slides
@@ -339,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!title) title = "Research Image";
 
                 allPublicationImages.push({
-                    src: `uploads/images/publications/${filename}`,
+                    src: getFileUrl(filename),
                     title: title,
                     link: link
                 });
@@ -535,7 +546,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!courseCardsContainer) return;
 
         try {
-            const response = await fetch('/api/data/courses');
+            const response = await fetch(`${API_BASE_URL}/api/data/courses`);
             const courses = await response.json();
 
             courseCardsContainer.innerHTML = '';
