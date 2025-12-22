@@ -90,5 +90,31 @@
       "department": "Design Engineering and Innovation, University of Exeter, <strong>England</strong>",
       "departmentLink": "https://www.exeter.ac.uk/"
     }
-  ]
+  ],
+  "projects": {
+    "funded": [
+      {
+        "title": "Investigation of Design process in Informal Sectors",
+        "duration": "December 2020 - December 2022",
+        "amount": "307,700 Swedish Krona",
+        "agency": "Swedish Research Council",
+        "link": "https://www.vr.se/english.html",
+        "description": "<a rel=\"noopener\" target=\"_blank\" class=\"hover:underline hover:text-leaf\" href=\"https://sites.google.com/view/santoshdesign/home\">Prof. Santosh Jagtap (IIT Guwahati)</a>, <a rel=\"noopener\" target=\"_blank\" class=\"hover:underline hover:text-leaf\" href=\"https://scholar.google.nl/citations?user=3SAp_hIAAAAJ&hl=en\">Prof. E.Z. Opiyo (Tanzania)</a>, <a rel=\"noopener\" target=\"_blank\" class=\"hover:underline hover:text-leaf\" href=\"https://scholar.google.com/citations?user=auL11d4AAAAJ&hl=en\">Prof. Andreas Larrson (Sweden)</a>"
+      }
+    ],
+    "other": [
+      {
+        "title": "Support development for bioinspired design"
+      },
+      {
+        "title": "Enabling systematic integration of LLM-based models with design methods for novel idea generation"
+      },
+      {
+        "title": "Investigating the convergent and divergent thinking patterns under different design conditions"
+      },
+      {
+        "title": "Investigating creative cognition in different design conditions"
+      }
+    ]
+  }
 }

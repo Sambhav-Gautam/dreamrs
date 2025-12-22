@@ -10,13 +10,50 @@ document.addEventListener('DOMContentLoaded', function () {
         return `${API_BASE_URL}/api/files/download/${encodeURIComponent(filename)}`;
     }
 
+    // Load and apply theme color from settings
+    async function loadThemeSettings() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/settings`);
+            if (response.ok) {
+                const settings = await response.json();
+                if (settings.themeColor) {
+                    applyThemeColor(settings.themeColor);
+                }
+            }
+        } catch (e) {
+            console.log('Using default theme color');
+        }
+    }
+
+    function applyThemeColor(color) {
+        document.documentElement.style.setProperty('--leaf-color', color);
+        const r = parseInt(color.slice(1, 3), 16);
+        const g = parseInt(color.slice(3, 5), 16);
+        const b = parseInt(color.slice(5, 7), 16);
+
+        // Set RGB components for rgba() usage in CSS
+        document.documentElement.style.setProperty('--leaf-r', r);
+        document.documentElement.style.setProperty('--leaf-g', g);
+        document.documentElement.style.setProperty('--leaf-b', b);
+
+        const lighter = `rgba(${r}, ${g}, ${b}, 0.15)`;
+        const darker = `rgb(${Math.max(0, r - 20)}, ${Math.max(0, g - 20)}, ${Math.max(0, b - 20)})`;
+
+        document.documentElement.style.setProperty('--leaf-color-light', color);
+        document.documentElement.style.setProperty('--leaf-color-dark', darker);
+        document.documentElement.style.setProperty('--leaf-bg-light', lighter);
+    }
+
+    // Load theme on page initialization
+    loadThemeSettings();
+
     // Header and Footer
     // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     const headerHTML = `
     <header id="main-header" class="header-modern fixed w-full top-0 z-50 transition-all duration-500">
         <!-- Gradient Line Animation -->
-        <div class="header-gradient-line absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-0 transition-opacity duration-500"></div>
+        <div class="header-gradient-line absolute top-0 left-0 right-0 h-0.5 header-line-gradient opacity-0 transition-opacity duration-500"></div>
         
         <div class="header-backdrop backdrop-blur-none bg-transparent border-b border-transparent transition-all duration-300">
             <div class="container mx-auto px-4 md:px-8">
@@ -25,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <a href="index.html" class="logo-container flex items-center group">
                         <div class="logo-glow relative">
                             <img src="images/logo.png" alt="DREAMRS Lab" class="h-14 sm:h-16 md:h-20 transition-all duration-300 group-hover:scale-105">
-                            <div class="absolute inset-0 bg-green-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
+                            <div class="absolute inset-0 logo-glow-effect blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
                         </div>
                     </a>
                     
@@ -97,19 +134,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const footerHTML = `
     <footer class="footer-modern relative bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 transition-colors duration-300">
         <div class="container mx-auto px-6 lg:px-12 py-12">
-            <!-- Top CTA Banner -->
-            <div class="mb-10 p-4 sm:p-6 rounded-xl bg-gradient-to-r from-leaf/10 to-green-400/10 dark:from-leaf/15 dark:to-green-400/10 border border-leaf/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-                <div>
-                    <p class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">Interested in joining our lab?</p>
-                    <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Explore research opportunities and open positions</p>
-                </div>
-                <a href="openings.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-leaf text-white font-medium rounded-lg hover:bg-green-600 transition-colors">
-                    View Openings
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </a>
-            </div>
 
             <!-- Main Content Grid: 4 columns -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
@@ -308,6 +332,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Collaborations
             renderCollaborations(data.collaborations);
+
+            // Projects
+            renderProjects(data.projects);
         } catch (error) {
             console.error('Error loading research data:', error);
         }
@@ -538,6 +565,100 @@ document.addEventListener('DOMContentLoaded', function () {
     // Old collaborations data removed, handled in renderCollaborations
 
     // Old collaboration rendering logic removed, handled in renderCollaborations
+
+    // Courses
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    function renderProjects(projectsData) {
+        if (!projectsData) return;
+        renderFundedProjects(projectsData.funded);
+        renderOtherProjects(projectsData.other);
+    }
+
+    function renderFundedProjects(items) {
+        const section = document.getElementById('funded-projects-section');
+        const container = document.getElementById('funded-projects');
+        if (!container || !section) return;
+
+        container.innerHTML = '';
+
+        if (!items || items.length === 0) {
+            section.classList.add('hidden');
+            return;
+        }
+
+        section.classList.remove('hidden');
+
+        items.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = "glass-card rounded-2xl p-6 md:p-8 hover:shadow-lg transition-all duration-300";
+
+            div.innerHTML = `
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-leaf/10 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-leaf" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-800 dark:text-white">${item.title}</h4>
+                        ${item.duration ? `<p class="text-gray-500 dark:text-gray-400 mt-1">${item.duration}</p>` : ''}
+                        
+                        ${item.amount ? `
+                        <p class="text-gray-600 dark:text-gray-300 mt-3">
+                            <span class="font-medium text-leaf">Grant Amount:</span> ${item.amount}
+                        </p>` : ''}
+                        
+                        ${item.agency ? `
+                        <p class="text-gray-600 dark:text-gray-300 mt-1">
+                            <span class="font-medium">Sponsoring body:</span> 
+                            ${item.link ?
+                        `<a rel="noopener" target="_blank" class="text-leaf hover:underline" href="${item.link}">${item.agency}</a>` :
+                        item.agency
+                    }
+                        </p>` : ''}
+
+                        ${item.description ? ` <p class="text-gray-500 dark:text-gray-400 mt-3 text-sm">${item.description}</p>` : ''}
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function renderOtherProjects(items) {
+        const section = document.getElementById('other-projects-section');
+        const container = document.getElementById('other-projects');
+        if (!container || !section) return;
+
+        container.innerHTML = '';
+
+        if (!items || items.length === 0) {
+            section.classList.add('hidden');
+            return;
+        }
+
+        section.classList.remove('hidden');
+
+        items.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = "card-enhanced p-6 flex items-start gap-4 hover:-translate-y-1 transition-transform duration-300";
+
+            div.innerHTML = `
+                <div class="w-10 h-10 rounded-lg bg-leaf/10 flex items-center justify-center flex-shrink-0">
+                    <span class="text-leaf font-bold">${index + 1}</span>
+                </div>
+                <div>
+                     <p class="text-gray-700 dark:text-gray-300 font-medium">${item.title}</p>
+                     ${item.description ? `<p class="text-sm text-gray-500 mt-1">${item.description}</p>` : ''}
+                     ${item.link ? `<a href="${item.link}" target="_blank" class="text-xs text-leaf hover:underline mt-1 inline-block">Learn more →</a>` : ''}
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
 
     // Courses
     // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -8,8 +8,29 @@
     /* Green-500 - brighter for dark mode */
     --leaf-color-dark: #15803d;
     /* Green-700 - for backgrounds */
-    --leaf-bg-light: rgba(34, 197, 94, 0.15);
-    --leaf-bg-dark: rgba(34, 197, 94, 0.25);
+    --leaf-r: 22;
+    --leaf-g: 197;
+    --leaf-b: 94;
+    --leaf-bg-light: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.15);
+    --leaf-bg-dark: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.25);
+}
+
+body {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+/* Enforce non-bold text globally as requested */
+*,
+.font-bold,
+.font-semibold,
+.font-medium,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: normal !important;
 }
 
 .text-leaf {
@@ -41,31 +62,31 @@
 }
 
 .bg-leaf\/10 {
-    background-color: rgba(34, 197, 94, 0.10);
+    background-color: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.10);
 }
 
 .dark .bg-leaf\/10 {
-    background-color: rgba(34, 197, 94, 0.20);
+    background-color: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.20);
 }
 
 .bg-leaf\/5 {
-    background-color: rgba(34, 197, 94, 0.05);
+    background-color: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.05);
 }
 
 .dark .bg-leaf\/5 {
-    background-color: rgba(34, 197, 94, 0.10);
+    background-color: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.10);
 }
 
 .bg-leaf\/20 {
-    background-color: rgba(34, 197, 94, 0.20);
+    background-color: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.20);
 }
 
 .border-leaf\/20 {
-    border-color: rgba(34, 197, 94, 0.20);
+    border-color: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.20);
 }
 
 .dark .border-leaf\/20 {
-    border-color: rgba(34, 197, 94, 0.35);
+    border-color: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.35);
 }
 
 /* ===================================
@@ -98,17 +119,17 @@
 /* Hero Buttons */
 .btn-hero-primary {
     padding: 0.875rem 2rem;
-    background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+    background: linear-gradient(135deg, var(--leaf-color) 0%, var(--leaf-color-light) 100%);
     color: white;
     border-radius: 9999px;
     font-weight: 600;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+    box-shadow: 0 4px 15px rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.4);
 }
 
 .btn-hero-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.5);
+    box-shadow: 0 8px 25px rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.5);
 }
 
 .btn-hero-secondary {
@@ -134,7 +155,7 @@
 
 /* Hero Gradient Text */
 .gradient-text-hero {
-    background: linear-gradient(135deg, #4ade80 0%, #22c55e 50%, #4ade80 100%);
+    background: linear-gradient(135deg, var(--leaf-color-light) 0%, var(--leaf-color) 50%, var(--leaf-color-light) 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -231,6 +252,16 @@
     opacity: 1;
 }
 
+/* Header gradient line - uses theme color */
+.header-line-gradient {
+    background: linear-gradient(to right, transparent, var(--leaf-color-light), transparent);
+}
+
+/* Logo glow effect - uses theme color */
+.logo-glow-effect {
+    background-color: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.2);
+}
+
 .nav-link-modern {
     position: relative;
     display: flex;
@@ -248,7 +279,7 @@
 }
 
 .nav-link-modern:hover {
-    color: #22c55e;
+    color: var(--leaf-color-light);
 }
 
 .nav-underline {
@@ -258,7 +289,7 @@
     transform: translateX(-50%);
     width: 0;
     height: 2px;
-    background: linear-gradient(90deg, #22c55e, #4ade80);
+    background: linear-gradient(90deg, var(--leaf-color-light), var(--leaf-color));
     border-radius: 2px;
     transition: width 0.3s ease;
 }
@@ -288,8 +319,8 @@
 }
 
 .theme-toggle-modern:hover {
-    background: rgba(34, 197, 94, 0.1);
-    border-color: #22c55e;
+    background: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.1);
+    border-color: var(--leaf-color-light);
     transform: scale(1.05);
 }
 
@@ -394,7 +425,7 @@
    GRADIENT UTILITIES
    =================================== */
 .gradient-text {
-    background: linear-gradient(135deg, #16a34a 0%, #4ade80 50%, #16a34a 100%);
+    background: linear-gradient(135deg, var(--leaf-color) 0%, var(--leaf-color-light) 50%, var(--leaf-color) 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -424,7 +455,7 @@
     position: absolute;
     inset: -2px;
     border-radius: 14px;
-    background: linear-gradient(135deg, #0b8043, #4ade80, #0b8043);
+    background: linear-gradient(135deg, var(--leaf-color-dark), var(--leaf-color-light), var(--leaf-color-dark));
     z-index: -1;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -442,8 +473,8 @@
 }
 
 .glow-hover:hover {
-    box-shadow: 0 0 20px rgba(34, 197, 94, 0.4),
-        0 0 40px rgba(34, 197, 94, 0.2);
+    box-shadow: 0 0 20px rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.4),
+        0 0 40px rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.2);
 }
 
 /* ===================================
@@ -469,7 +500,7 @@
 }
 
 .footer-link:hover {
-    color: #0b8043;
+    color: var(--leaf-color-dark);
     padding-left: 4px;
 }
 
@@ -484,25 +515,25 @@
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    background: rgba(34, 197, 94, 0.15);
-    color: #16a34a;
+    background: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.15);
+    color: var(--leaf-color);
     transition: all 0.3s ease;
 }
 
 .dark .footer-social-btn {
-    background: rgba(34, 197, 94, 0.2);
-    color: #22c55e;
+    background: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.2);
+    color: var(--leaf-color-light);
 }
 
 .footer-social-btn:hover {
-    background: #16a34a;
+    background: var(--leaf-color);
     color: white;
     transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+    box-shadow: 0 4px 12px rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.4);
 }
 
 .dark .footer-social-btn:hover {
-    background: #22c55e;
+    background: var(--leaf-color-light);
 }
 
 .footer-contact-card {
@@ -517,8 +548,8 @@
 }
 
 .footer-contact-card:hover {
-    border-color: #16a34a;
-    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.15);
+    border-color: var(--leaf-color);
+    box-shadow: 0 2px 8px rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.15);
 }
 
 .dark .footer-contact-card {
@@ -527,7 +558,7 @@
 }
 
 .dark .footer-contact-card:hover {
-    border-color: #22c55e;
+    border-color: var(--leaf-color-light);
 }
 
 .footer-contact-icon {
@@ -537,14 +568,14 @@
     width: 36px;
     height: 36px;
     border-radius: 10px;
-    background: rgba(34, 197, 94, 0.15);
-    color: #16a34a;
+    background: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.15);
+    color: var(--leaf-color);
     flex-shrink: 0;
 }
 
 .dark .footer-contact-icon {
-    background: rgba(34, 197, 94, 0.2);
-    color: #22c55e;
+    background: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.2);
+    color: var(--leaf-color-light);
 }
 
 /* Footer Modern Styles */
@@ -601,7 +632,7 @@
     left: 0;
     width: 24px;
     height: 2px;
-    background: linear-gradient(90deg, #22c55e, transparent);
+    background: linear-gradient(90deg, var(--leaf-color-light), transparent);
     border-radius: 2px;
 }
 
@@ -632,12 +663,12 @@
 }
 
 .footer-link-modern:hover {
-    color: #22c55e;
+    color: var(--leaf-color-light);
     transform: translateX(8px);
 }
 
 .footer-link-modern:hover::before {
-    border-left: 5px solid #22c55e;
+    border-left: 5px solid var(--leaf-color-light);
     border-top: 3px solid transparent;
     border-bottom: 3px solid transparent;
     border-right: 0;
@@ -649,7 +680,7 @@
 }
 
 .dark .footer-link-modern:hover {
-    color: #22c55e;
+    color: var(--leaf-color-light);
 }
 
 .footer-contact-item {
@@ -670,24 +701,24 @@
     width: 32px;
     height: 32px;
     border-radius: 8px;
-    background: rgba(34, 197, 94, 0.1);
-    color: #16a34a;
+    background: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.1);
+    color: var(--leaf-color);
     flex-shrink: 0;
     transition: all 0.2s ease;
 }
 
 .footer-contact-item:hover .footer-contact-icon-sm {
-    background: #22c55e;
+    background: var(--leaf-color-light);
     color: white;
 }
 
 .dark .footer-contact-icon-sm {
-    background: rgba(34, 197, 94, 0.15);
-    color: #22c55e;
+    background: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.15);
+    color: var(--leaf-color-light);
 }
 
 .dark .footer-contact-item:hover .footer-contact-icon-sm {
-    background: #22c55e;
+    background: var(--leaf-color-light);
     color: white;
 }
 
@@ -786,7 +817,7 @@
 }
 
 .team-table thead {
-    background: linear-gradient(135deg, #0b8043 0%, #22c55e 100%);
+    background: linear-gradient(135deg, var(--leaf-color-dark) 0%, var(--leaf-color-light) 100%);
 }
 
 .team-table th {
@@ -840,7 +871,7 @@
 
 .team-category-header td {
     font-weight: 700;
-    color: #0b8043;
+    color: var(--leaf-color-dark);
     font-size: 1rem;
     padding: 12px 20px;
     text-transform: uppercase;
@@ -848,7 +879,20 @@
 }
 
 .dark .team-category-header td {
-    color: #4ade80;
+    color: var(--leaf-color-light);
+}
+
+/* Profile Section Gradients */
+.profile-bg-gradient {
+    background: linear-gradient(to bottom right, rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.1), rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.1));
+}
+
+.dark .profile-bg-gradient {
+    background: linear-gradient(to bottom right, rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.05), rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.05));
+}
+
+.profile-glow-gradient {
+    background: linear-gradient(to bottom right, var(--leaf-color), var(--leaf-color-light));
 }
 
 /* Social Links in Table */
@@ -859,26 +903,26 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: rgba(11, 128, 67, 0.1);
-    color: #0b8043;
+    background: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.1);
+    color: var(--leaf-color-dark);
     transition: all 0.3s ease;
     margin-right: 8px;
 }
 
 .social-link:hover {
-    background: #0b8043;
+    background: var(--leaf-color-dark);
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(11, 128, 67, 0.3);
+    box-shadow: 0 4px 12px rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.3);
 }
 
 .dark .social-link {
-    background: rgba(74, 222, 128, 0.1);
-    color: #4ade80;
+    background: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.1);
+    color: var(--leaf-color-light);
 }
 
 .dark .social-link:hover {
-    background: #4ade80;
+    background: var(--leaf-color-light);
     color: #1f2937;
 }
 
@@ -908,7 +952,7 @@ nav a::after {
     left: 0;
     width: 0;
     height: 2px;
-    background: linear-gradient(90deg, #0b8043, #4ade80);
+    background: linear-gradient(90deg, var(--leaf-color-dark), var(--leaf-color-light));
     transition: width 0.3s ease;
 }
 
@@ -937,18 +981,18 @@ section {
    BUTTON ENHANCEMENTS
    =================================== */
 .btn-primary {
-    background: linear-gradient(135deg, #0b8043 0%, #22c55e 100%);
+    background: linear-gradient(135deg, var(--leaf-color-dark) 0%, var(--leaf-color-light) 100%);
     color: white;
     padding: 12px 24px;
     border-radius: 8px;
     font-weight: 600;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 14px rgba(11, 128, 67, 0.25);
+    box-shadow: 0 4px 14px rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.25);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(11, 128, 67, 0.35);
+    box-shadow: 0 6px 20px rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.35);
 }
 
 /* ===================================
@@ -985,9 +1029,9 @@ section {
 .gradient-shimmer {
     background: linear-gradient(90deg,
             var(--leaf-color) 0%,
-            #4ade80 25%,
+            var(--leaf-color-light) 25%,
             var(--leaf-color-light) 50%,
-            #4ade80 75%,
+            var(--leaf-color-light) 75%,
             var(--leaf-color) 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;

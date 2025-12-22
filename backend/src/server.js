@@ -61,6 +61,36 @@ app.use('/api/data/courses', courseRoutes);
 app.use('/api/data/openings', openingRoutes);
 app.use('/api/files', fileRoutes);
 
+// Settings API
+const Settings = require('./models/Settings');
+
+app.get('/api/settings', async (req, res) => {
+    try {
+        const settings = await Settings.find({});
+        const result = {};
+        settings.forEach(s => { result[s.key] = s.value; });
+        res.json(result);
+    } catch (error) {
+        console.error('Error fetching settings:', error);
+        res.status(500).json({ error: 'Failed to fetch settings' });
+    }
+});
+
+app.put('/api/settings', async (req, res) => {
+    try {
+        const { key, value } = req.body;
+        await Settings.findOneAndUpdate(
+            { key },
+            { key, value },
+            { upsert: true, new: true }
+        );
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error updating settings:', error);
+        res.status(500).json({ error: 'Failed to update settings' });
+    }
+});
+
 // Legacy API compatibility endpoints
 app.get('/api/data/:section', async (req, res) => {
     const { section } = req.params;

@@ -44,18 +44,36 @@ document.addEventListener('DOMContentLoaded', function () {
       const section = document.createElement('div');
       section.className = 'team-section';
 
+      // Define collapsible categories and default state
+      const isCollapsible = ["PhD Scholars", "B.Tech Project Students", "Independent Project Students"].includes(category);
+      const isExpandedByDefault = category === "PhD Scholars"; // PhD open by default, others closed
+
       // Category header
       const header = document.createElement('div');
-      header.className = 'flex items-center gap-3 mb-4';
-      header.innerHTML = `
+      header.className = `flex items-center justify-between mb-4 ${isCollapsible ? 'cursor-pointer group select-none' : ''}`;
+
+      const headerLeft = document.createElement('div');
+      headerLeft.className = 'flex items-center gap-3';
+      headerLeft.innerHTML = `
         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-leaf to-green-400 flex items-center justify-center text-white">
           ${categoryIcons[category] || categoryIcons["B.Tech Project Students"]}
         </div>
         <div>
-          <h3 class="text-lg font-bold text-gray-800 dark:text-white">${category}</h3>
+          <h3 class="text-lg font-bold text-gray-800 dark:text-white group-hover:text-leaf transition-colors">${category}</h3>
           <p class="text-xs text-gray-500 dark:text-gray-400">${members.length} member${members.length > 1 ? 's' : ''}</p>
         </div>
       `;
+      header.appendChild(headerLeft);
+
+      // Add chevron if collapsible
+      let chevron;
+      if (isCollapsible) {
+        chevron = document.createElement('div');
+        chevron.className = `transform transition-transform duration-300 ${isExpandedByDefault ? 'rotate-180' : ''}`;
+        chevron.innerHTML = `<svg class="w-6 h-6 text-gray-400 group-hover:text-leaf" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>`;
+        header.appendChild(chevron);
+      }
+
       section.appendChild(header);
 
       // Members grid - use different layouts based on category
@@ -77,12 +95,6 @@ document.addEventListener('DOMContentLoaded', function () {
           if (member.image) {
             imageSrc = getFileUrl(member.image);
           }
-          // For PI we might want an image, checking if we have one or defaulting to initials
-          // User said "images of PI and PhD visible". 
-          // If we don't have PI image, we fall back to initials gradient. 
-          // Assuming we might have `images/pi.png` or similar later, but for now stick to initials if no specific instructions on PI image filename, 
-          // OR use the same PS2.png logic if that was the intent (unlikely).
-          // Let's check if the member object has an image property (future proofing)
 
           let imageHTML = '';
           if (imageSrc) {
@@ -141,7 +153,42 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       }
 
-      section.appendChild(grid);
+      // If collapsible, wrap in a container to toggle
+      if (isCollapsible) {
+        const wrapper = document.createElement('div');
+        wrapper.className = `transition-all duration-300 overflow-hidden ${isExpandedByDefault ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`;
+        wrapper.appendChild(grid);
+        section.appendChild(wrapper);
+
+        // Click handler
+        header.addEventListener('click', () => {
+          const isExpanded = wrapper.style.maxHeight !== '0px' && !wrapper.classList.contains('max-h-0');
+
+          if (isExpanded) {
+            // Collapse
+            wrapper.style.maxHeight = '0px';
+            wrapper.classList.add('max-h-0', 'opacity-0');
+            wrapper.classList.remove('max-h-[2000px]', 'opacity-100');
+            chevron.classList.remove('rotate-180');
+          } else {
+            // Expand
+            wrapper.classList.remove('max-h-0', 'opacity-0');
+            wrapper.classList.add('max-h-[2000px]', 'opacity-100');
+            wrapper.style.maxHeight = wrapper.scrollHeight + 'px'; // approximate or use large value
+            // Using scrollHeight is smooth but needs event listener for dynamic content, simply large max-height works for simple lists
+            // or just toggle classes.
+            // Let's use the tailored classes logic:
+            // Actually, just toggling classes is safer if css handles it.
+            // But 'max-h-[2000px]' is a tailwind arbitrary value, might be enough.
+            // Let's explicitly set scrollHeight for smooth animation if needed, but arbitrary large value is often easiest for variable content.
+            wrapper.style.maxHeight = '2000px'; // ample space
+            chevron.classList.add('rotate-180');
+          }
+        });
+      } else {
+        section.appendChild(grid);
+      }
+
       mainWrapper.appendChild(section);
     });
 

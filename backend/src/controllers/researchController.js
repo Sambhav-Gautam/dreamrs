@@ -6,10 +6,21 @@ exports.getResearch = async (req, res) => {
         const data = await ResearchData.findOne();
 
         if (!data || !data.data) {
-            return res.json({ publications: [], collaborations: [] });
+            return res.json({
+                publications: [],
+                collaborations: [],
+                projects: { funded: [], other: [] }
+            });
         }
 
-        res.json(data.data);
+        // Ensure structure exists
+        const responseData = {
+            publications: data.data.publications || [],
+            collaborations: data.data.collaborations || [],
+            projects: data.data.projects || { funded: [], other: [] }
+        };
+
+        res.json(responseData);
     } catch (error) {
         console.error('Error fetching research:', error);
         res.status(500).json({ error: 'Failed to fetch research data' });

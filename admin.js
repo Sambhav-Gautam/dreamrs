@@ -26,7 +26,7 @@ function getFileUrl(path) {
 }
 
 // --- GLOBAL STATE ---
-let researchData = { publications: [], collaborations: [] };
+let researchData = { publications: [], collaborations: [], projects: { funded: [], other: [] } };
 let teamData = {};
 let coursesData = [];
 let openingsData = {};
@@ -121,7 +121,9 @@ async function fetchResearch() {
     const res = await apiFetch('/api/data/research');
     researchData = await res.json();
     renderResearchList();
+    renderResearchList();
     renderCollabList();
+    renderProjectsList();
 }
 
 async function fetchTeam() {
@@ -383,11 +385,210 @@ document.getElementById('collab-form').addEventListener('submit', async (e) => {
     closeModal('collab-modal');
 });
 
+
+
 async function deleteCollab(index) {
     if (!confirm('Delete this collaboration?')) return;
     researchData.collaborations.splice(index, 1);
     await saveResearch();
     renderCollabList();
+}
+
+
+// --- PROJECTS MANAGEMENT ---
+
+function renderProjectsList() {
+    renderProjectCategory('funded');
+    renderProjectCategory('other');
+}
+
+function renderProjectCategory(type) {
+    const listId = type === 'funded' ? 'funded-projects-list' : 'other-projects-list';
+    const sectionId = type === 'funded' ? 'admin-funded-section' : 'admin-other-section';
+
+    const container = document.getElementById(listId);
+    const section = document.getElementById(sectionId);
+
+    if (!container || !section) return;
+    container.innerHTML = '';
+
+    const list = researchData.projects && researchData.projects[type] ? researchData.projects[type] : [];
+
+    if (list.length === 0) {
+        section.classList.add('hidden');
+        return;
+    }
+
+    section.classList.remove('hidden');
+
+    list.forEach((project, index) => {
+        const div = document.createElement('div');
+        div.className = 'p-4 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 flex justify-between items-start';
+        div.innerHTML = `
+            <div class="flex-1">
+                <p class="font-semibold text-gray-800 dark:text-white">${project.title || 'Untitled'}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${project.description || ''}</p>
+                ${project.agency ? `<p class="text-xs text-leaf mt-1">Agency: ${project.agency}</p>` : ''}
+            </div>
+            <div class="flex gap-2 ml-4">
+                <button onclick="editProject('${type}', ${index})" class="text-blue-500 hover:text-blue-700 text-sm">Edit</button>
+                <button onclick="deleteProject('${type}', ${index})" class="text-red-500 hover:text-red-700 text-sm">Delete</button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function openProjectModal(type) {
+    const form = document.getElementById('project-form');
+    form.reset();
+    document.getElementById('project-index').value = -1;
+    document.getElementById('project-type').value = type;
+    document.getElementById('project-modal-title').textContent = type === 'funded' ? 'Add Funded Project' : 'Add Other Project';
+
+    // Toggle fields based on type
+    const agencyField = document.getElementById('project-agency-field');
+    const amountField = document.getElementById('project-amount-field');
+
+    if (type === 'funded') {
+        agencyField.style.display = 'block';
+        amountField.style.display = 'grid';
+    } else {
+        agencyField.style.display = 'none';
+        amountField.style.display = 'none';
+    }
+
+    document.getElementById('project-current-image').innerHTML = '';
+    openModal('project-modal');
+}
+
+function editProject(type, index) {
+    openProjectModal(type); // Reset and set type
+
+    const project = researchData.projects[type][index];
+    document.getElementById('project-index').value = index;
+    document.getElementById('project-modal-title').textContent = type === 'funded' ? 'Edit Funded Project' : 'Edit Other Project';
+
+    document.getElementById('project-title').value = project.title || '';
+    document.getElementById('project-agency').value = project.agency || '';
+    document.getElementById('project-amount').value = project.amount || '';
+    document.getElementById('project-duration').value = project.duration || '';
+    document.getElementById('project-desc').value = project.description || '';
+    document.getElementById('project-link').value = project.link || '';
+
+    // Show image if exists
+    const imgContainer = document.getElementById('project-current-image');
+    if (project.image) {
+        imgContainer.innerHTML = `
+            <div class="relative inline-block group">
+                <img src="${getFileUrl(project.image)}" class="w-24 h-24 object-cover rounded-lg border-2 border-gray-200 shadow-sm">
+                <button type="button" onclick="removeProjectImage('${type}', ${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md">×</button>
+            </div>
+        `;
+    }
+}
+
+async function removeProjectImage(type, index) {
+    if (!confirm('Remove this image?')) return;
+    const project = researchData.projects[type][index];
+
+    try {
+        await apiFetch('/api/delete-file', {
+            method: 'POST',
+            body: JSON.stringify({ filename: project.image, type: 'image' })
+        });
+        delete project.image;
+        await saveResearch();
+        editProject(type, index);
+    } catch (e) {
+        console.error("Failed to delete file", e);
+    }
+}
+
+document.getElementById('project-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const index = parseInt(document.getElementById('project-index').value);
+    const type = document.getElementById('project-type').value;
+    const fileInput = document.getElementById('project-image');
+
+    let imageName = null;
+
+    // Handle Image Upload
+    if (fileInput.files.length > 0) {
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        try {
+            // Delete old image if editing
+            if (index !== -1) {
+                const oldProject = researchData.projects[type][index];
+                if (oldProject && oldProject.image) {
+                    await apiFetch('/api/delete-file', {
+                        method: 'POST',
+                        body: JSON.stringify({ filename: oldProject.image, type: 'image' })
+                    });
+                }
+            }
+
+            const res = await fetch(`${API_BASE_URL}/api/upload?folder=research`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.filename) imageName = data.filename;
+        } catch (err) {
+            console.error("Project image upload failed", err);
+        }
+    } else if (index !== -1) {
+        // Keep existing image
+        const oldProject = researchData.projects[type][index];
+        if (oldProject) imageName = oldProject.image;
+    }
+
+    const newProject = {
+        title: document.getElementById('project-title').value,
+        agency: document.getElementById('project-agency').value,
+        amount: document.getElementById('project-amount').value,
+        duration: document.getElementById('project-duration').value,
+        description: document.getElementById('project-desc').value,
+        link: document.getElementById('project-link').value,
+    };
+    if (imageName) newProject.image = imageName;
+
+    // Initialize logic if undefined
+    if (!researchData.projects) researchData.projects = { funded: [], other: [] };
+    if (!researchData.projects[type]) researchData.projects[type] = [];
+
+    if (index === -1) {
+        researchData.projects[type].push(newProject);
+    } else {
+        researchData.projects[type][index] = newProject;
+    }
+
+    await saveResearch();
+    renderProjectsList();
+    closeModal('project-modal');
+});
+
+async function deleteProject(type, index) {
+    if (!confirm('Delete this project?')) return;
+
+    // Delete image if exists
+    const project = researchData.projects[type][index];
+    if (project.image) {
+        try {
+            await apiFetch('/api/delete-file', {
+                method: 'POST',
+                body: JSON.stringify({ filename: project.image, type: 'image' })
+            });
+        } catch (e) {
+            console.error("Image delete failed during project deletion", e);
+        }
+    }
+
+    researchData.projects[type].splice(index, 1);
+    await saveResearch();
+    renderProjectsList();
 }
 
 
@@ -736,6 +937,101 @@ async function deleteOpening(category, index) {
         alert('Delete failed.');
     }
 }
+
+// --- THEME SETTINGS MANAGEMENT ---
+
+let currentThemeColor = '#16a34a';
+
+async function fetchThemeSettings() {
+    try {
+        const settings = await apiFetch('/api/settings');
+        if (settings.themeColor) {
+            currentThemeColor = settings.themeColor;
+            updateThemeUI(currentThemeColor);
+            applyThemeColor(currentThemeColor);
+        }
+    } catch (e) {
+        console.error('Error fetching theme settings:', e);
+    }
+}
+
+function updateThemeUI(color) {
+    const picker = document.getElementById('theme-color-picker');
+    const hex = document.getElementById('theme-color-hex');
+    const preview = document.getElementById('theme-color-preview');
+
+    if (picker) picker.value = color;
+    if (hex) hex.value = color.toUpperCase();
+    if (preview) preview.style.backgroundColor = color;
+}
+
+function setThemeColor(color) {
+    currentThemeColor = color;
+    updateThemeUI(color);
+    applyThemeColor(color);
+}
+
+function applyThemeColor(color) {
+    document.documentElement.style.setProperty('--leaf-color', color);
+    // Generate lighter/darker variants
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+
+    // Set RGB components for rgba() usage in CSS
+    document.documentElement.style.setProperty('--leaf-r', r);
+    document.documentElement.style.setProperty('--leaf-g', g);
+    document.documentElement.style.setProperty('--leaf-b', b);
+
+    const lighter = `rgba(${r}, ${g}, ${b}, 0.15)`;
+    const darker = `rgb(${Math.max(0, r - 20)}, ${Math.max(0, g - 20)}, ${Math.max(0, b - 20)})`;
+
+    document.documentElement.style.setProperty('--leaf-color-light', color);
+    document.documentElement.style.setProperty('--leaf-color-dark', darker);
+    document.documentElement.style.setProperty('--leaf-bg-light', lighter);
+}
+
+async function saveThemeSettings() {
+    try {
+        await apiFetch('/api/settings', {
+            method: 'PUT',
+            body: JSON.stringify({ key: 'themeColor', value: currentThemeColor })
+        });
+
+        const status = document.getElementById('theme-save-status');
+        if (status) {
+            status.classList.remove('hidden');
+            setTimeout(() => status.classList.add('hidden'), 2000);
+        }
+    } catch (e) {
+        console.error('Error saving theme settings:', e);
+        alert('Failed to save theme settings');
+    }
+}
+
+// Theme color picker event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const picker = document.getElementById('theme-color-picker');
+    const hex = document.getElementById('theme-color-hex');
+
+    if (picker) {
+        picker.addEventListener('input', (e) => {
+            setThemeColor(e.target.value);
+        });
+    }
+
+    if (hex) {
+        hex.addEventListener('change', (e) => {
+            const value = e.target.value;
+            if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
+                setThemeColor(value);
+            }
+        });
+    }
+
+    // Fetch theme settings on page load
+    fetchThemeSettings();
+});
 
 // Initialize
 checkAuth();

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | DREAMRS Lab</title>
+    <link rel="icon" href="images/logo.png" type="image/png">
     <link href="./custom.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -54,7 +55,8 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex">
-                        <div class="flex-shrink-0 flex items-center">
+                        <div class="flex-shrink-0 flex items-center gap-3">
+                            <img src="images/logo.png" alt="DREAMRS Lab" class="h-10 w-auto">
                             <span class="text-xl font-bold text-gray-800 dark:text-white">Admin Dashboard</span>
                         </div>
                     </div>
@@ -83,6 +85,9 @@
                 <button
                     class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent focus:outline-none"
                     onclick="openTab('openings')">Openings (PDFs)</button>
+                <button
+                    class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent focus:outline-none"
+                    onclick="openTab('settings')">Settings</button>
             </div>
 
             <!-- Content Areas -->
@@ -107,6 +112,37 @@
                             Collaboration</button>
                     </div>
                     <div id="collaborations-list" class="space-y-4"></div>
+                </div>
+
+                <!-- Projects Section -->
+                <div class="mt-6 space-y-6">
+                    <div class="flex justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Manage Projects</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openProjectModal('funded')"
+                                class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded text-sm">+ Add
+                                Funded</button>
+                            <button onclick="openProjectModal('other')"
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm">+ Add
+                                Other</button>
+                        </div>
+                    </div>
+
+                    <!-- Funded Projects -->
+                    <div id="admin-funded-section" class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Funded Projects</h3>
+                        </div>
+                        <div id="funded-projects-list" class="space-y-4"></div>
+                    </div>
+
+                    <!-- Other Projects -->
+                    <div id="admin-other-section" class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Other Projects</h3>
+                        </div>
+                        <div id="other-projects-list" class="space-y-4"></div>
+                    </div>
                 </div>
             </div>
 
@@ -180,6 +216,65 @@
                         <button onclick="uploadOpeningPDF('B.Tech Projects', 'btp-file', 'btp-name')"
                             class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm whitespace-nowrap">Add
                             PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="tab-content hidden">
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-6">Theme Settings</h3>
+
+                    <div class="space-y-6">
+                        <!-- Primary Color -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Primary Theme
+                                Color</label>
+                            <div class="flex items-center gap-4">
+                                <input type="color" id="theme-color-picker" value="#16a34a"
+                                    class="w-16 h-10 rounded cursor-pointer border-2 border-gray-300 dark:border-gray-600">
+                                <input type="text" id="theme-color-hex" value="#16a34a"
+                                    class="border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white w-32 uppercase"
+                                    pattern="^#[0-9A-Fa-f]{6}$" maxlength="7">
+                                <div id="theme-color-preview" class="w-10 h-10 rounded-lg shadow-inner"
+                                    style="background-color: #16a34a;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Preset Colors -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quick
+                                Presets</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button" onclick="setThemeColor('#16a34a')"
+                                    class="w-10 h-10 rounded-lg shadow hover:scale-110 transition-transform"
+                                    style="background-color: #16a34a;" title="Green (Default)"></button>
+                                <button type="button" onclick="setThemeColor('#2563eb')"
+                                    class="w-10 h-10 rounded-lg shadow hover:scale-110 transition-transform"
+                                    style="background-color: #2563eb;" title="Blue"></button>
+                                <button type="button" onclick="setThemeColor('#7c3aed')"
+                                    class="w-10 h-10 rounded-lg shadow hover:scale-110 transition-transform"
+                                    style="background-color: #7c3aed;" title="Purple"></button>
+                                <button type="button" onclick="setThemeColor('#db2777')"
+                                    class="w-10 h-10 rounded-lg shadow hover:scale-110 transition-transform"
+                                    style="background-color: #db2777;" title="Pink"></button>
+                                <button type="button" onclick="setThemeColor('#ea580c')"
+                                    class="w-10 h-10 rounded-lg shadow hover:scale-110 transition-transform"
+                                    style="background-color: #ea580c;" title="Orange"></button>
+                                <button type="button" onclick="setThemeColor('#0891b2')"
+                                    class="w-10 h-10 rounded-lg shadow hover:scale-110 transition-transform"
+                                    style="background-color: #0891b2;" title="Cyan"></button>
+                            </div>
+                        </div>
+
+                        <!-- Save Button -->
+                        <div class="pt-4 border-t dark:border-gray-700">
+                            <button onclick="saveThemeSettings()"
+                                class="bg-leaf hover:bg-green-600 text-white px-6 py-2 rounded text-sm">
+                                Save Theme Settings
+                            </button>
+                            <span id="theme-save-status" class="ml-4 text-sm text-green-600 hidden">✓ Saved!</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -388,6 +483,73 @@
 
                 <div class="flex justify-end gap-3 mt-6">
                     <button type="button" onclick="closeModal('collab-modal')"
+                        class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                    <button type="submit" class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="project-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full max-h-screen overflow-y-auto">
+            <h3 id="project-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add Project</h3>
+            <form id="project-form" class="space-y-4">
+                <input type="hidden" id="project-index">
+                <input type="hidden" id="project-type"> <!-- 'funded' or 'other' -->
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Project Title</label>
+                    <input type="text" id="project-title"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        required>
+                </div>
+
+                <!-- Fields for Funded Projects -->
+                <div id="project-agency-field">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Funding Agency</label>
+                    <input type="text" id="project-agency"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <div id="project-amount-field" class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Amount / Grant
+                            No</label>
+                        <input type="text" id="project-amount"
+                            class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Duration/Year</label>
+                        <input type="text" id="project-duration"
+                            class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description / Role</label>
+                    <textarea id="project-desc" rows="3"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Link (Optional)</label>
+                    <input type="url" id="project-link"
+                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <!-- Image Upload -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project Image
+                        (Optional)</label>
+                    <input type="file" id="project-image" accept="image/*"
+                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20">
+                    <div id="project-current-image" class="mt-2"></div>
+                </div>
+
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="closeModal('project-modal')"
                         class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
                     <button type="submit" class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
                 </div>
