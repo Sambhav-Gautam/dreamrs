@@ -9,7 +9,7 @@ const memberSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    subtitle: {
+    workDescription: {
         type: String,
         default: ''
     },

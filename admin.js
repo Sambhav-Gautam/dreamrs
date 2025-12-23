@@ -611,7 +611,7 @@ function renderTeamList() {
             div.innerHTML = `
                 <div>
                     <span class="font-medium text-gray-800 dark:text-white">${member.name}</span>
-                    <span class="text-sm text-gray-500 dark:text-gray-400"> - ${member.title || ''}</span>
+                    <span class="text-sm text-gray-500 dark:text-gray-400"> - ${member.workDescription || ''}</span>
                 </div>
                 <div class="flex gap-2 text-sm">
                     <button onclick="editTeam('${category}', ${index})" class="text-blue-500 hover:text-blue-700">Edit</button>
@@ -629,6 +629,7 @@ function openTeamModal() {
     document.getElementById('team-index').value = -1;
     document.getElementById('team-old-category').value = '';
     document.getElementById('team-modal-title').textContent = 'Add Team Member';
+    document.getElementById('team-current-image').innerHTML = ''; // Clear Previous Image
     openModal('team-modal');
 }
 
@@ -639,10 +640,9 @@ function editTeam(category, index) {
     document.getElementById('team-old-category').value = category;
     document.getElementById('team-category').value = category;
     document.getElementById('team-name').value = member.name;
-    document.getElementById('team-title').value = member.title;
-    document.getElementById('team-subtitle').value = member.subtitle || '';
     document.getElementById('team-linkedin').value = member.linkedin || '';
     document.getElementById('team-github').value = member.github || '';
+    document.getElementById('team-work').value = member.workDescription || '';
     document.getElementById('team-modal-title').textContent = 'Edit Team Member';
 
     // Show current image
@@ -714,18 +714,21 @@ document.getElementById('team-form').addEventListener('submit', async (e) => {
         } catch (err) {
             console.error("Team image upload failed", err);
         }
-    } else if (index !== -1 && oldCategory) {
+    } else if (index !== -1) {
         // Keep existing image if no new file
-        const oldMember = teamData[oldCategory][index];
-        if (oldMember) imageName = oldMember.image;
+        // Logic fix: index is valid, so we are editing. 
+        // We get image from old category (if present) OR from the current member being edited (which is safer)
+        if (oldCategory && teamData[oldCategory] && teamData[oldCategory][index]) {
+            const oldMember = teamData[oldCategory][index];
+            if (oldMember) imageName = oldMember.image;
+        }
     }
 
     const member = {
         name: document.getElementById('team-name').value,
-        title: document.getElementById('team-title').value,
-        subtitle: document.getElementById('team-subtitle').value,
         linkedin: document.getElementById('team-linkedin').value,
-        github: document.getElementById('team-github').value
+        github: document.getElementById('team-github').value,
+        workDescription: document.getElementById('team-work').value
     };
 
     if (imageName) member.image = imageName;
