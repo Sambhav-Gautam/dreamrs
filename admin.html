@@ -342,6 +342,163 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Education Section -->
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mt-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Education</h3>
+                        <button onclick="openEducationModal()"
+                            class="bg-leaf hover:bg-leaf-dark text-white px-4 py-2 rounded text-sm transition-colors">
+                            + Add Education
+                        </button>
+                    </div>
+                    <div id="education-list" class="space-y-4">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Experience Section -->
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mt-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Academic Experience</h3>
+                        <button onclick="openExperienceModal()"
+                            class="bg-leaf hover:bg-leaf-dark text-white px-4 py-2 rounded text-sm transition-colors">
+                            + Add Experience
+                        </button>
+                    </div>
+                    <div id="experience-list" class="space-y-4">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Awards Section -->
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mt-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Awards & Recognition</h3>
+                        <button onclick="openAwardsModal()"
+                            class="bg-leaf hover:bg-leaf-dark text-white px-4 py-2 rounded text-sm transition-colors">
+                            + Add Award
+                        </button>
+                    </div>
+                    <div id="awards-list" class="space-y-4">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modals -->
+            <!-- Education Modal -->
+            <div id="education-modal"
+                class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                <div
+                    class="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+                    <h3 class="text-lg font-bold mb-4 dark:text-white" id="edu-modal-title">Add Education</h3>
+                    <input type="hidden" id="edu-index">
+                    <div class="space-y-4">
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Degree</label>
+                            <input id="edu-degree" type="text" placeholder="e.g. Doctor of Philosophy (Ph.D.)"
+                                class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Institution</label>
+                            <input id="edu-institution" type="text"
+                                class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Year/Period</label>
+                            <input id="edu-year" type="text" placeholder="e.g. 2011–2018"
+                                class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Details
+                                (Optional)</label>
+                            <div class="text-xs text-gray-500 mb-1">Use the main formatting toolbar at top if needed
+                                (click inside box first)</div>
+                            <div id="edu-details-editor" contenteditable="true"
+                                onfocus="setActiveEditor('edu-details-editor')"
+                                class="min-h-24 p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:border-leaf">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end gap-3">
+                        <button onclick="closeEducationModal()"
+                            class="px-4 py-2 bg-gray-200 dark:bg-gray-600 dark:text-white rounded hover:opacity-90">Cancel</button>
+                        <button onclick="saveEducationItem()"
+                            class="px-4 py-2 bg-leaf text-white rounded hover:opacity-90">Save</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Experience Modal -->
+            <div id="experience-modal"
+                class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                <div
+                    class="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+                    <h3 class="text-lg font-bold mb-4 dark:text-white" id="exp-modal-title">Add Experience</h3>
+                    <input type="hidden" id="exp-index">
+                    <div class="space-y-4">
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role/Title</label>
+                            <input id="exp-role" type="text"
+                                class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Institution</label>
+                            <input id="exp-institution" type="text"
+                                class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Period</label>
+                            <input id="exp-period" type="text" placeholder="e.g. July 2023 – Present"
+                                class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end gap-3">
+                        <button onclick="closeExperienceModal()"
+                            class="px-4 py-2 bg-gray-200 dark:bg-gray-600 dark:text-white rounded hover:opacity-90">Cancel</button>
+                        <button onclick="saveExperienceItem()"
+                            class="px-4 py-2 bg-leaf text-white rounded hover:opacity-90">Save</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Awards Modal -->
+            <div id="awards-modal"
+                class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                <div
+                    class="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+                    <h3 class="text-lg font-bold mb-4 dark:text-white" id="award-modal-title">Add Award</h3>
+                    <input type="hidden" id="award-index">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
+                            <input id="award-title" type="text"
+                                class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description/Details</label>
+                            <div class="text-xs text-gray-500 mb-1">Use formatting toolbar for lists/bold etc.</div>
+                            <div id="award-details-editor" contenteditable="true"
+                                onfocus="setActiveEditor('award-details-editor')"
+                                class="min-h-32 p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:border-leaf">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end gap-3">
+                        <button onclick="closeAwardsModal()"
+                            class="px-4 py-2 bg-gray-200 dark:bg-gray-600 dark:text-white rounded hover:opacity-90">Cancel</button>
+                        <button onclick="saveAwardItem()"
+                            class="px-4 py-2 bg-leaf text-white rounded hover:opacity-90">Save</button>
+                    </div>
+                </div>
             </div>
 
             <!-- Settings Tab -->

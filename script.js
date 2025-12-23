@@ -802,3 +802,139 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// --- PI Profile Rendering ---
+async function loadPIProfile() {
+    const containers = {
+        bio: document.getElementById('pi-content-display'),
+        education: document.getElementById('education-container'),
+        experience: document.getElementById('experience-container'),
+        awards: document.getElementById('awards-container')
+    };
+
+    // If no PI containers exist, we might not be on the PI page
+    if (!Object.values(containers).some(c => c)) return;
+
+    try {
+        const res = await apiFetch('/api/settings');
+        if (!res.ok) return;
+        const settings = await res.json();
+
+        // 1. Render Bio
+        if (containers.bio && settings.piContent) {
+            containers.bio.innerHTML = settings.piContent;
+        }
+
+        // 2. Render Education
+        if (containers.education && settings.piEducation && settings.piEducation.length > 0) {
+            const eduList = settings.piEducation;
+            document.getElementById('education-section')?.classList.remove('hidden');
+            containers.education.innerHTML = eduList.map(item => `
+                <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md transition-colors duration-300">
+                    <h3 class="text-xl font-medium text-gray-700 dark:text-gray-200">${item.degree || ''}</h3>
+                    <p class="mt-2 text-gray-600 dark:text-gray-400 font-medium">${item.institution || ''} <span class="text-gray-500 font-normal">(${item.year || ''})</span></p>
+                    ${item.details ? `<div class="mt-2 text-gray-600 dark:text-gray-400">${item.details}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // 3. Render Experience
+        if (containers.experience && settings.piExperience && settings.piExperience.length > 0) {
+            const expList = settings.piExperience;
+            document.getElementById('experience-section')?.classList.remove('hidden');
+            containers.experience.innerHTML = expList.map(item => `
+                <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md transition-colors duration-300">
+                    <h3 class="text-xl font-medium text-gray-700 dark:text-gray-200">${item.role || ''}</h3>
+                    <p class="mt-2 text-gray-600 dark:text-gray-400">${item.institution || ''} <span class="text-gray-500">(${item.period || ''})</span></p>
+                </div>
+            `).join('');
+        }
+
+        // 4. Render Awards
+        if (containers.awards && settings.piAwards && settings.piAwards.length > 0) {
+            const awardsList = settings.piAwards;
+            document.getElementById('awards-section')?.classList.remove('hidden');
+            containers.awards.className = "mt-4 space-y-4"; // Ensure container has spacing for cards
+            containers.awards.innerHTML = awardsList.map(item => `
+                <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md transition-colors duration-300">
+                    <h3 class="font-medium text-gray-700 dark:text-gray-200">${item.title}</h3>
+                    ${item.description ? `<div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">${item.description}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+    } catch (e) {
+        console.error('Error loading PI profile:', e);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadPIProfile);
+// --- Fixed PI Profile Rendering (Append) ---
+async function initPIProfile() {
+    const containers = {
+        bio: document.getElementById('pi-content-display'),
+        education: document.getElementById('education-container'),
+        experience: document.getElementById('experience-container'),
+        awards: document.getElementById('awards-container')
+    };
+
+    // If no PI containers exist, we might not be on the PI page
+    if (!Object.values(containers).some(c => c)) return;
+
+    // Get API_BASE_URL safely
+    const API_BASE_URL = window.ENV?.API_BASE_URL || window.API_CONFIG?.API_BASE_URL || '';
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/settings`);
+        if (!res.ok) return;
+        const settings = await res.json();
+
+        // 1. Render Bio
+        if (containers.bio && settings.piContent) {
+            containers.bio.innerHTML = settings.piContent;
+        }
+
+        // 2. Render Education
+        if (containers.education && settings.piEducation && settings.piEducation.length > 0) {
+            const eduList = settings.piEducation;
+            document.getElementById('education-section')?.classList.remove('hidden');
+            containers.education.innerHTML = eduList.map(item => `
+                <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md transition-colors duration-300">
+                    <h3 class="text-xl font-medium text-gray-700 dark:text-gray-200">${item.degree || ''}</h3>
+                    <p class="mt-2 text-gray-600 dark:text-gray-400 font-medium">${item.institution || ''} <span class="text-gray-500 font-normal">(${item.year || ''})</span></p>
+                    ${item.details ? `<div class="mt-2 text-gray-600 dark:text-gray-400">${item.details}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // 3. Render Experience
+        if (containers.experience && settings.piExperience && settings.piExperience.length > 0) {
+            const expList = settings.piExperience;
+            document.getElementById('experience-section')?.classList.remove('hidden');
+            containers.experience.innerHTML = expList.map(item => `
+                <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md transition-colors duration-300">
+                    <h3 class="text-xl font-medium text-gray-700 dark:text-gray-200">${item.role || ''}</h3>
+                    <p class="mt-2 text-gray-600 dark:text-gray-400">${item.institution || ''} <span class="text-gray-500">(${item.period || ''})</span></p>
+                </div>
+            `).join('');
+        }
+
+        // 4. Render Awards
+        if (containers.awards && settings.piAwards && settings.piAwards.length > 0) {
+            const awardsList = settings.piAwards;
+            document.getElementById('awards-section')?.classList.remove('hidden');
+            containers.awards.className = "mt-4 space-y-4";
+            containers.awards.innerHTML = awardsList.map(item => `
+                <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md transition-colors duration-300">
+                    <h3 class="font-medium text-gray-700 dark:text-gray-200">${item.title}</h3>
+                    ${item.description ? `<div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">${item.description}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+    } catch (e) {
+        console.error('Error loading PI profile (init):', e);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initPIProfile);

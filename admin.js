@@ -1191,9 +1191,16 @@ function restoreSelection() {
     }
 }
 
+// Active editor ID (defaults to main PI editor)
+window.activeEditorId = 'pi-content-editor';
+
+function setActiveEditor(id) {
+    window.activeEditorId = id;
+}
+
 // Format text in contenteditable editor
 function formatText(command) {
-    const editor = document.getElementById('pi-content-editor');
+    const editor = document.getElementById(window.activeEditorId);
     if (editor) {
         // We assume focus is preserved via event.preventDefault() on buttons
         // So we just execute the command on the current selection
@@ -1243,7 +1250,7 @@ function toggleLink() {
 function changeFontSize(size) {
     if (size) {
         document.execCommand('fontSize', false, size);
-        document.getElementById('pi-content-editor')?.focus();
+        document.getElementById(window.activeEditorId)?.focus();
     }
 }
 
@@ -1261,7 +1268,7 @@ function applySelectedColor() {
 
     if (color) {
         document.execCommand('foreColor', false, color);
-        document.getElementById('pi-content-editor')?.focus();
+        document.getElementById(window.activeEditorId)?.focus();
     }
 }
 
@@ -1339,8 +1346,260 @@ async function savePIContent() {
 
 // Load PI content on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
-    fetchPIContent();
+    if (document.getElementById('pi-content-editor')) {
+        fetchPIContent();
+        loadPISections();
+    }
 });
+
+// --- PI SECTION HELPERS ---
+async function savePISetting(key, value) {
+    try {
+        await apiFetch('/api/settings', {
+            method: 'PUT',
+            body: JSON.stringify({ key, value })
+        });
+    } catch (e) {
+        console.error('Error saving ' + key, e);
+        alert('Failed to save changes');
+    }
+}
+
+// --- PI SECTIONS STATE ---
+let piEducation = [];
+let piExperience = [];
+let piAwards = [];
+
+// Load all PI sections
+async function loadPISections() {
+    try {
+        const res = await apiFetch('/api/settings');
+        const settings = await res.json();
+
+        piEducation = settings.piEducation || [];
+        piExperience = settings.piExperience || [];
+        piAwards = settings.piAwards || [];
+
+        renderEducationList();
+        renderExperienceList();
+        renderAwardsList();
+    } catch (e) {
+        console.error('Error loading PI sections:', e);
+    }
+}
+
+// --- EDUCATION LOGIC ---
+function renderEducationList() {
+    const list = document.getElementById('education-list');
+    if (!list) return;
+
+    list.innerHTML = piEducation.map((item, index) => `
+        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded border dark:border-gray-600 flex justify-between items-start">
+            <div class="flex-1">
+                <div class="font-bold text-gray-800 dark:text-white">${item.degree || 'No Degree'}</div>
+                <div class="text-sm text-gray-600 dark:text-gray-300 font-semibold">${item.institution || ''}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400 italic">${item.year || ''}</div>
+                ${item.details ? `<div class="text-sm text-gray-600 dark:text-gray-400 mt-1">${item.details}</div>` : ''}
+            </div>
+            <div class="flex gap-2 ml-4">
+                <button onclick="openEducationModal(${index})" class="text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">
+                    Edit
+                </button>
+                <button onclick="deleteEducation(${index})" class="text-red-600 hover:text-red-800 flex items-center gap-1 font-medium">
+                    Delete
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function openEducationModal(index = null) {
+    const modal = document.getElementById('education-modal');
+    modal.classList.remove('hidden');
+    document.getElementById('edu-index').value = index !== null ? index : '';
+    document.getElementById('edu-modal-title').innerText = index !== null ? 'Edit Education' : 'Add Education';
+
+    if (index !== null) {
+        const item = piEducation[index];
+        document.getElementById('edu-degree').value = item.degree || '';
+        document.getElementById('edu-institution').value = item.institution || '';
+        document.getElementById('edu-year').value = item.year || '';
+        document.getElementById('edu-details-editor').innerHTML = item.details || '';
+    } else {
+        document.getElementById('edu-degree').value = '';
+        document.getElementById('edu-institution').value = '';
+        document.getElementById('edu-year').value = '';
+        document.getElementById('edu-details-editor').innerHTML = '';
+    }
+    setActiveEditor('edu-details-editor');
+}
+
+function closeEducationModal() {
+    document.getElementById('education-modal').classList.add('hidden');
+    setActiveEditor('pi-content-editor');
+}
+
+async function saveEducationItem() {
+    const index = document.getElementById('edu-index').value;
+    const item = {
+        degree: document.getElementById('edu-degree').value,
+        institution: document.getElementById('edu-institution').value,
+        year: document.getElementById('edu-year').value,
+        details: document.getElementById('edu-details-editor').innerHTML
+    };
+
+    if (index !== '') {
+        piEducation[parseInt(index)] = item;
+    } else {
+        piEducation.push(item);
+    }
+
+    await savePISetting('piEducation', piEducation);
+    renderEducationList();
+    closeEducationModal();
+}
+
+async function deleteEducation(index) {
+    if (!confirm('Delete this education entry?')) return;
+    piEducation.splice(index, 1);
+    await savePISetting('piEducation', piEducation);
+    renderEducationList();
+}
+
+
+// --- EXPERIENCE LOGIC ---
+function renderExperienceList() {
+    const list = document.getElementById('experience-list');
+    if (!list) return;
+
+    list.innerHTML = piExperience.map((item, index) => `
+        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded border dark:border-gray-600 flex justify-between items-start">
+            <div class="flex-1">
+                <div class="font-bold text-gray-800 dark:text-white">${item.role || 'No Role'}</div>
+                <div class="text-sm text-gray-600 dark:text-gray-300 font-semibold">${item.institution || ''}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400 italic">${item.period || ''}</div>
+            </div>
+            <div class="flex gap-2 ml-4">
+                <button onclick="openExperienceModal(${index})" class="text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">Edit</button>
+                <button onclick="deleteExperience(${index})" class="text-red-600 hover:text-red-800 flex items-center gap-1 font-medium">Delete</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function openExperienceModal(index = null) {
+    const modal = document.getElementById('experience-modal');
+    modal.classList.remove('hidden');
+    document.getElementById('exp-index').value = index !== null ? index : '';
+    document.getElementById('exp-modal-title').innerText = index !== null ? 'Edit Experience' : 'Add Experience';
+
+    if (index !== null) {
+        const item = piExperience[index];
+        document.getElementById('exp-role').value = item.role || '';
+        document.getElementById('exp-institution').value = item.institution || '';
+        document.getElementById('exp-period').value = item.period || '';
+    } else {
+        document.getElementById('exp-role').value = '';
+        document.getElementById('exp-institution').value = '';
+        document.getElementById('exp-period').value = '';
+    }
+}
+
+function closeExperienceModal() {
+    document.getElementById('experience-modal').classList.add('hidden');
+}
+
+async function saveExperienceItem() {
+    const index = document.getElementById('exp-index').value;
+    const item = {
+        role: document.getElementById('exp-role').value,
+        institution: document.getElementById('exp-institution').value,
+        period: document.getElementById('exp-period').value
+    };
+
+    if (index !== '') {
+        piExperience[parseInt(index)] = item;
+    } else {
+        piExperience.push(item);
+    }
+
+    await savePISetting('piExperience', piExperience);
+    renderExperienceList();
+    closeExperienceModal();
+}
+
+async function deleteExperience(index) {
+    if (!confirm('Delete this experience entry?')) return;
+    piExperience.splice(index, 1);
+    await savePISetting('piExperience', piExperience);
+    renderExperienceList();
+}
+
+// --- AWARDS LOGIC ---
+function renderAwardsList() {
+    const list = document.getElementById('awards-list');
+    if (!list) return;
+
+    list.innerHTML = piAwards.map((item, index) => `
+        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded border dark:border-gray-600 flex justify-between items-start">
+            <div class="flex-1">
+                <div class="font-bold text-gray-800 dark:text-white">${item.title || 'Award Title'}</div>
+                ${item.description ? `<div class="text-sm text-gray-600 dark:text-gray-400 mt-1 pl-6">${item.description}</div>` : ''}
+            </div>
+            <div class="flex gap-2 ml-4">
+                <button onclick="openAwardsModal(${index})" class="text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">Edit</button>
+                <button onclick="deleteAward(${index})" class="text-red-600 hover:text-red-800 flex items-center gap-1 font-medium">Delete</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function openAwardsModal(index = null) {
+    const modal = document.getElementById('awards-modal');
+    modal.classList.remove('hidden');
+    document.getElementById('award-index').value = index !== null ? index : '';
+    document.getElementById('award-modal-title').innerText = index !== null ? 'Edit Award' : 'Add Award';
+
+    if (index !== null) {
+        const item = piAwards[index];
+        document.getElementById('award-title').value = item.title || '';
+        document.getElementById('award-details-editor').innerHTML = item.description || '';
+    } else {
+        document.getElementById('award-title').value = '';
+        document.getElementById('award-details-editor').innerHTML = '';
+    }
+    setActiveEditor('award-details-editor');
+}
+
+function closeAwardsModal() {
+    document.getElementById('awards-modal').classList.add('hidden');
+    setActiveEditor('pi-content-editor');
+}
+
+async function saveAwardItem() {
+    const index = document.getElementById('award-index').value;
+    const item = {
+        title: document.getElementById('award-title').value,
+        description: document.getElementById('award-details-editor').innerHTML
+    };
+
+    if (index !== '') {
+        piAwards[parseInt(index)] = item;
+    } else {
+        piAwards.push(item);
+    }
+
+    await savePISetting('piAwards', piAwards);
+    renderAwardsList();
+    closeAwardsModal();
+}
+
+async function deleteAward(index) {
+    if (!confirm('Delete this award?')) return;
+    piAwards.splice(index, 1);
+    await savePISetting('piAwards', piAwards);
+    renderAwardsList();
+}
 
 // Initialize
 checkAuth();
