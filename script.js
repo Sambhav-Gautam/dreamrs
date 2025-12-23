@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Load and apply theme color from settings
+    // First apply cached color from localStorage for instant display
+    const cachedTheme = localStorage.getItem('themeColor');
+    if (cachedTheme) {
+        applyThemeColor(cachedTheme);
+    }
+
     async function loadThemeSettings() {
         try {
             const response = await fetch(`${API_BASE_URL}/api/settings`);
@@ -18,10 +24,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 const settings = await response.json();
                 if (settings.themeColor) {
                     applyThemeColor(settings.themeColor);
+                    // Cache the theme color for instant loading on next page visit
+                    localStorage.setItem('themeColor', settings.themeColor);
                 }
             }
         } catch (e) {
-            console.log('Using default theme color');
+            console.log('Using default/cached theme color');
         }
     }
 
@@ -47,6 +55,53 @@ document.addEventListener('DOMContentLoaded', function () {
     // Load theme on page initialization
     loadThemeSettings();
 
+    // Get logo URL based on filename
+    function getLogoUrl(filename) {
+        if (!filename) return 'images/logo.png';
+        if (filename.startsWith('http://') || filename.startsWith('https://') || filename.startsWith('images/')) {
+            return filename;
+        }
+        return `${API_BASE_URL}/api/files/download/${encodeURIComponent(filename)}`;
+    }
+
+    // Get initial logo URL from cache or default
+    const cachedLogo = localStorage.getItem('siteLogo');
+    const initialLogoUrl = cachedLogo ? getLogoUrl(cachedLogo) : 'images/logo.png';
+
+    // Load logo settings and update header, footer, and favicon
+    async function loadLogoSettings() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/settings`);
+            if (response.ok) {
+                const settings = await response.json();
+                if (settings.siteLogo) {
+                    localStorage.setItem('siteLogo', settings.siteLogo);
+                    const logoUrl = getLogoUrl(settings.siteLogo);
+                    updateAllLogos(logoUrl);
+                }
+            }
+        } catch (e) {
+            console.log('Using default/cached logo');
+        }
+    }
+
+    // Update all logo instances across the page
+    function updateAllLogos(logoUrl) {
+        // Update header logos
+        document.querySelectorAll('.header-logo-img').forEach(img => {
+            img.src = logoUrl;
+        });
+        // Update footer logos
+        document.querySelectorAll('.footer-logo-img').forEach(img => {
+            img.src = logoUrl;
+        });
+        // Update favicon
+        const favicon = document.querySelector('link[rel="icon"]');
+        if (favicon) {
+            favicon.href = logoUrl;
+        }
+    }
+
     // Header and Footer
     // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -61,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <!-- Logo with Hover Animation -->
                     <a href="index.html" class="logo-container flex items-center group">
                         <div class="logo-glow relative">
-                            <img src="images/logo.png" alt="DREAMRS Lab" class="h-14 sm:h-16 md:h-20 transition-all duration-300 group-hover:scale-105">
+                            <img src="${initialLogoUrl}" alt="DREAMRS Lab" class="header-logo-img h-14 sm:h-16 md:h-20 transition-all duration-300 group-hover:scale-105">
                             <div class="absolute inset-0 logo-glow-effect blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
                         </div>
                     </a>
@@ -140,7 +195,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 <!-- Brand Section -->
                 <div class="space-y-4">
-                    <img src="images/logo.png" alt="DREAMRS Lab Logo" class="h-20 md:h-24 lg:h-32 footer-logo-animate">
+                    <div class="logo-glow relative inline-block group">
+                        <img src="${initialLogoUrl}" alt="DREAMRS Lab Logo" class="footer-logo-img h-20 md:h-24 lg:h-32 transition-all duration-300 group-hover:scale-105">
+                        <div class="absolute inset-0 logo-glow-effect blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
+                    </div>
                     <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                         Design Research and Human Factors Lab at IIIT Delhi.
                     </p>
@@ -234,6 +292,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.body.insertAdjacentHTML('afterbegin', headerHTML);
     document.body.insertAdjacentHTML('beforeend', footerHTML);
+
+    // Load logo settings after header is in DOM
+    loadLogoSettings();
 
     // Mobile Menu Toggle
     const mobileMenuButton = document.getElementById('mobile-menu-button');

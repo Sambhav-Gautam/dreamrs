@@ -55,9 +55,6 @@ document.addEventListener('DOMContentLoaded', function () {
       const headerLeft = document.createElement('div');
       headerLeft.className = 'flex items-center gap-3';
       headerLeft.innerHTML = `
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-leaf to-green-400 flex items-center justify-center text-white">
-          ${categoryIcons[category] || categoryIcons["B.Tech Project Students"]}
-        </div>
         <div>
           <h3 class="text-lg font-bold text-gray-800 dark:text-white group-hover:text-leaf transition-colors">${category}</h3>
           <p class="text-xs text-gray-500 dark:text-gray-400">${members.length} member${members.length > 1 ? 's' : ''}</p>

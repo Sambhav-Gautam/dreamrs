@@ -71,6 +71,8 @@ function checkAuth() {
         loginSection.classList.add('hidden');
         dashboardSection.classList.remove('hidden');
         loadAllData();
+        // Also load and apply theme settings
+        fetchThemeSettings();
     } else {
         loginSection.classList.remove('hidden');
         dashboardSection.classList.add('hidden');
@@ -942,11 +944,20 @@ async function deleteOpening(category, index) {
 
 let currentThemeColor = '#16a34a';
 
+// Apply cached theme immediately to prevent flash of green
+const cachedTheme = localStorage.getItem('themeColor');
+if (cachedTheme) {
+    currentThemeColor = cachedTheme;
+    applyThemeColor(cachedTheme);
+}
+
 async function fetchThemeSettings() {
     try {
-        const settings = await apiFetch('/api/settings');
+        const res = await apiFetch('/api/settings');
+        const settings = await res.json();
         if (settings.themeColor) {
             currentThemeColor = settings.themeColor;
+            localStorage.setItem('themeColor', settings.themeColor);
             updateThemeUI(currentThemeColor);
             applyThemeColor(currentThemeColor);
         }
@@ -998,6 +1009,9 @@ async function saveThemeSettings() {
             body: JSON.stringify({ key: 'themeColor', value: currentThemeColor })
         });
 
+        // Also save to localStorage for instant loading on next visit
+        localStorage.setItem('themeColor', currentThemeColor);
+
         const status = document.getElementById('theme-save-status');
         if (status) {
             status.classList.remove('hidden');
@@ -1029,9 +1043,131 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Logo file input preview
+    const logoInput = document.getElementById('logo-file-input');
+    if (logoInput) {
+        logoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const previewContainer = document.getElementById('logo-preview-container');
+                    const previewImg = document.getElementById('new-logo-preview');
+                    if (previewImg && previewContainer) {
+                        previewImg.src = e.target.result;
+                        previewContainer.classList.remove('hidden');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
     // Fetch theme settings on page load
     fetchThemeSettings();
+    fetchLogoSettings();
 });
+
+// --- LOGO MANAGEMENT ---
+
+let currentLogoFilename = 'images/logo.png';
+
+// Apply cached logo immediately
+const cachedLogo = localStorage.getItem('siteLogo');
+if (cachedLogo) {
+    currentLogoFilename = cachedLogo;
+    updateLogoUI(cachedLogo);
+}
+
+async function fetchLogoSettings() {
+    try {
+        const res = await apiFetch('/api/settings');
+        const settings = await res.json();
+        if (settings.siteLogo) {
+            currentLogoFilename = settings.siteLogo;
+            localStorage.setItem('siteLogo', settings.siteLogo);
+            updateLogoUI(settings.siteLogo);
+        }
+    } catch (e) {
+        console.error('Error fetching logo settings:', e);
+    }
+}
+
+function updateLogoUI(logoPath) {
+    const logoUrl = getFileUrl(logoPath) || logoPath;
+
+    // Update Settings tab preview
+    const currentLogoPreview = document.getElementById('current-logo-preview');
+    if (currentLogoPreview) {
+        currentLogoPreview.src = logoUrl;
+    }
+
+    // Update navbar logo
+    const navbarLogo = document.querySelector('.admin-logo-img');
+    if (navbarLogo) {
+        navbarLogo.src = logoUrl;
+    }
+
+    // Update favicon
+    const favicon = document.querySelector('link[rel="icon"]');
+    if (favicon) {
+        favicon.href = logoUrl;
+    }
+}
+
+async function saveLogo() {
+    const fileInput = document.getElementById('logo-file-input');
+    const file = fileInput?.files[0];
+
+    if (!file) {
+        alert('Please select a logo file to upload');
+        return;
+    }
+
+    try {
+        // Upload file
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('folder', 'logos');
+
+        const uploadRes = await fetch(`${API_BASE_URL}/api/files/upload`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!uploadRes.ok) {
+            throw new Error('Failed to upload logo');
+        }
+
+        const uploadData = await uploadRes.json();
+        const logoFilename = uploadData.filename;
+
+        // Save logo filename to settings
+        await apiFetch('/api/settings', {
+            method: 'PUT',
+            body: JSON.stringify({ key: 'siteLogo', value: logoFilename })
+        });
+
+        // Update localStorage and UI
+        localStorage.setItem('siteLogo', logoFilename);
+        currentLogoFilename = logoFilename;
+        updateLogoUI(logoFilename);
+
+        // Clear file input and hide preview
+        fileInput.value = '';
+        document.getElementById('logo-preview-container')?.classList.add('hidden');
+
+        // Show success message
+        const status = document.getElementById('logo-save-status');
+        if (status) {
+            status.classList.remove('hidden');
+            setTimeout(() => status.classList.add('hidden'), 2000);
+        }
+    } catch (e) {
+        console.error('Error saving logo:', e);
+        alert('Failed to save logo');
+    }
+}
 
 // Initialize
 checkAuth();
