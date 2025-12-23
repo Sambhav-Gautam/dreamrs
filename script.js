@@ -783,25 +783,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     loadCourses();
 
-    // PI Details - Load dynamically
-    async function loadPIDetails() {
-        const container = document.getElementById('pi-details-container');
-        if (!container) return;
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/settings`);
-            if (response.ok) {
-                const settings = await response.json();
-                if (settings.piDetails) {
-                    container.innerHTML = settings.piDetails;
-                }
-            }
-        } catch (error) {
-            console.error('Error loading PI details:', error);
-        }
-    }
-    loadPIDetails();
-
     // Team
     // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
     // Refer to the team.js file for the team data

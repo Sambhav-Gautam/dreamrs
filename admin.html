@@ -332,101 +332,13 @@
                             Tip: Select text first, then click a formatting button. Use 🎨 to apply your theme color.
                         </p>
 
+                        <!-- Save Button -->
                         <div class="pt-4 border-t dark:border-gray-700">
                             <button onclick="savePIContent()"
                                 class="bg-leaf hover:opacity-90 text-white px-6 py-2 rounded text-sm">
                                 Save PI Content
                             </button>
                             <span id="pi-save-status" class="ml-4 text-sm text-green-600 hidden">✓ Saved!</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section 5: PI Details Editor -->
-                <div
-                    class="glass-card p-6 md:p-8 rounded-2xl animate-fade-in-up hover-lift border-t-4 border-leaf mt-8">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3
-                            class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-leaf-light to-leaf-dark">
-                            PI Details Editor (Education, Experience, Awards)
-                        </h3>
-                    </div>
-
-                    <div class="space-y-4">
-                        <!-- Formatting Toolbar -->
-                        <div
-                            class="flex flex-wrap gap-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            <!-- Text Formatting -->
-                            <button type="button"
-                                onmousedown="event.preventDefault(); formatText('bold', 'pi-details-editor');"
-                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm font-bold"
-                                title="Bold (Ctrl+B)">B</button>
-                            <button type="button"
-                                onmousedown="event.preventDefault(); formatText('italic', 'pi-details-editor');"
-                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm italic"
-                                title="Italic (Ctrl+I)">I</button>
-                            <button type="button"
-                                onmousedown="event.preventDefault(); formatText('underline', 'pi-details-editor');"
-                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm underline"
-                                title="Underline (Ctrl+U)">U</button>
-                            <button type="button"
-                                onmousedown="event.preventDefault(); formatText('strikeThrough', 'pi-details-editor');"
-                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm line-through"
-                                title="Strikethrough">S</button>
-
-                            <div class="w-px bg-gray-300 dark:bg-gray-500 mx-1"></div>
-
-                            <!-- Font Size -->
-                            <select onchange="changeFontSize(this.value, 'pi-details-editor')"
-                                class="px-2 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300"
-                                title="Font Size">
-                                <option value="">Size</option>
-                                <option value="1">10px</option>
-                                <option value="2">13px</option>
-                                <option value="3">16px</option>
-                                <option value="4">18px</option>
-                                <option value="5">24px</option>
-                                <option value="6">32px</option>
-                                <option value="7">48px</option>
-                            </select>
-
-                            <!-- Font Color -->
-                            <div class="flex items-center gap-1">
-                                <input type="color" id="details-color-picker" value="#000000"
-                                    class="w-8 h-8 rounded cursor-pointer border border-gray-300 dark:border-gray-600"
-                                    title="Select Color">
-                                <button type="button" onmousedown="saveSelection(); event.preventDefault();"
-                                    onclick="applySelectedColor('pi-details-editor', 'details-color-picker')"
-                                    class="px-2 py-2 bg-gray-500 text-white rounded hover:opacity-90 text-xs"
-                                    title="Apply Selected Color">Apply</button>
-                                <button type="button" onmousedown="saveSelection(); event.preventDefault();"
-                                    onclick="toggleThemeColor('pi-details-editor')"
-                                    class="px-2 py-2 bg-leaf text-white rounded hover:opacity-90 text-xs"
-                                    title="Toggle Theme Color (apply/remove)">🎨</button>
-                            </div>
-
-                            <div class="w-px bg-gray-300 dark:bg-gray-500 mx-1"></div>
-
-                            <!-- Links -->
-                            <button type="button" onmousedown="saveSelection(); event.preventDefault();"
-                                onclick="toggleLink('pi-details-editor')"
-                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm"
-                                title="Insert/Remove Link (select text first)">🔗 Link</button>
-                        </div>
-
-                        <!-- Editor -->
-                        <div id="pi-details-editor" contenteditable="true"
-                            class="min-h-64 p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 focus:border-leaf focus:outline-none"
-                            style="min-height: 400px;">
-                            <p>Loading details...</p>
-                        </div>
-
-                        <!-- Save Button -->
-                        <div class="pt-4 border-t dark:border-gray-700">
-                            <button onclick="savePIDetails()"
-                                class="bg-leaf hover:opacity-90 text-white px-6 py-2 rounded text-sm">
-                                Save PI Details
-                            </button>
                         </div>
                     </div>
                 </div>

@@ -43,6 +43,22 @@ strong a {
     font-weight: bold !important;
 }
 
+/* Ensure Italics and Underline work correctly */
+i,
+em,
+a i,
+i a,
+a em,
+em a {
+    font-style: italic !important;
+}
+
+u,
+a u,
+u a {
+    text-decoration: underline !important;
+}
+
 .text-leaf {
     color: var(--leaf-color);
 }
