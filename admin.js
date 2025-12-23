@@ -1169,5 +1169,243 @@ async function saveLogo() {
     }
 }
 
+// --- PI PROFILE EDITOR ---
+
+// Store the current selection for formatting
+let savedSelection = null;
+
+// Save the current selection (called on mousedown of buttons)
+function saveSelection() {
+    const sel = window.getSelection();
+    if (sel.rangeCount > 0) {
+        savedSelection = sel.getRangeAt(0).cloneRange();
+    }
+}
+
+// Restore the saved selection
+function restoreSelection() {
+    if (savedSelection) {
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(savedSelection);
+    }
+}
+
+// Format text in contenteditable editor
+// Format text in contenteditable editor
+function formatText(command, editorId = 'pi-content-editor') {
+    const editor = document.getElementById(editorId);
+    if (editor) {
+        document.execCommand(command, false, null);
+        editor.focus(); // Ensure focus stays
+    }
+}
+
+// Toggle link - insert or remove
+function toggleLink(editorId = 'pi-content-editor') {
+    restoreSelection();
+    const selection = window.getSelection();
+    if (!selection.rangeCount || selection.isCollapsed) {
+        alert('Please select some text first');
+        return;
+    }
+
+    // Check if selection is inside a link
+    let node = selection.anchorNode;
+    while (node && node.nodeName !== 'A') {
+        node = node.parentNode;
+    }
+
+    if (node && node.nodeName === 'A') {
+        // Remove link - unwrap the anchor
+        document.execCommand('unlink', false, null);
+    } else {
+        // Insert link
+        const url = prompt('Enter URL:', 'https://');
+        if (url) {
+            document.execCommand('createLink', false, url);
+            // Add theme color class to new links
+            const editor = document.getElementById(editorId);
+            if (editor) {
+                const links = editor.querySelectorAll('a:not(.text-leaf)');
+                links.forEach(link => {
+                    link.classList.add('text-leaf', 'hover:underline');
+                    link.setAttribute('target', '_blank');
+                });
+            }
+        }
+    }
+    document.getElementById(editorId)?.focus();
+}
+
+// Change font size
+function changeFontSize(size, editorId = 'pi-content-editor') {
+    if (size) {
+        document.execCommand('fontSize', false, size);
+        document.getElementById(editorId)?.focus();
+    }
+}
+
+// Apply color from color picker
+function applySelectedColor(editorId = 'pi-content-editor', pickerId = 'font-color-picker') {
+    restoreSelection();
+    const colorPicker = document.getElementById(pickerId);
+    const color = colorPicker?.value;
+    const selection = window.getSelection();
+
+    if (!selection.rangeCount || selection.isCollapsed) {
+        alert('Please select some text first');
+        return;
+    }
+
+    if (color) {
+        document.execCommand('foreColor', false, color);
+        document.getElementById(editorId)?.focus();
+    }
+}
+
+// Toggle theme color on selected text
+function toggleThemeColor(editorId = 'pi-content-editor') {
+    restoreSelection();
+    const selection = window.getSelection();
+    if (!selection.rangeCount || selection.isCollapsed) {
+        alert('Please select some text first');
+        return;
+    }
+
+    // Check if selection has text-leaf class
+    let node = selection.anchorNode;
+    while (node && node.nodeType !== 1) {
+        node = node.parentNode;
+    }
+
+    // Check if already has theme color class
+    if (node && (node.classList?.contains('text-leaf') || node.closest?.('.text-leaf'))) {
+        // Remove theme color - reset to default
+        document.execCommand('removeFormat', false, null);
+    } else {
+        // Apply theme color using span
+        const range = selection.getRangeAt(0);
+        const span = document.createElement('span');
+        span.className = 'text-leaf font-semibold';
+        try {
+            range.surroundContents(span);
+        } catch (e) {
+            // If selection spans multiple elements, use execCommand with current theme color
+            document.execCommand('foreColor', false, currentThemeColor);
+        }
+    }
+    document.getElementById(editorId)?.focus();
+}
+
+// Fetch PI content from settings
+async function fetchPIContent() {
+    try {
+        const res = await apiFetch('/api/settings');
+        const settings = await res.json();
+        const editor = document.getElementById('pi-content-editor');
+        if (settings.piContent && editor) {
+            editor.innerHTML = settings.piContent;
+        }
+    } catch (e) {
+        console.error('Error fetching PI content:', e);
+    }
+}
+
+// Save PI content to settings
+async function savePIContent() {
+    const editor = document.getElementById('pi-content-editor');
+    if (!editor) return;
+
+    const content = editor.innerHTML;
+
+    try {
+        await apiFetch('/api/settings', {
+            method: 'PUT',
+            body: JSON.stringify({ key: 'piContent', value: content })
+        });
+
+        const status = document.getElementById('pi-save-status');
+        if (status) {
+            status.classList.remove('hidden');
+            setTimeout(() => status.classList.add('hidden'), 2000);
+        }
+    } catch (e) {
+        console.error('Error saving PI content:', e);
+        alert('Failed to save PI content');
+    }
+}
+
+// Load PI content on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    fetchPIContent();
+    loadPIDetails();
+});
+
+// Fetch PI Details from settings
+async function loadPIDetails() {
+    try {
+        // We reuse the /api/settings endpoint which returns all settings
+        // But since we want specifically 'piDetails', we can filter on client side
+        // Typically GET /api/settings returns an array or object?
+        // fetchPIContent uses: const settings = await res.json();
+        // and checks settings.piContent.
+        // So I assume specific endpoint logic or getting all settings.
+        // Let's assume GET /api/settings?key=piDetails works OR just get all.
+        // Based on fetchPIContent implementation:
+        const res = await apiFetch('/api/settings');
+        // Based on previous code, it returns an object where keys are setting keys?
+        // Wait, fetchPIContent uses `settings.piContent`.
+        // So if I use same endpoint, I should get `settings.piDetails` too if seeded properly.
+        const settings = await res.json();
+        const editor = document.getElementById('pi-details-editor');
+        if (settings.piDetails && editor) {
+            editor.innerHTML = settings.piDetails;
+        }
+    } catch (e) {
+        console.error('Error fetching PI details:', e);
+    }
+}
+
+// Save PI Details
+async function savePIDetails() {
+    const editor = document.getElementById('pi-details-editor');
+    if (!editor) return;
+
+    const content = editor.innerHTML;
+    const btn = document.querySelector('button[onclick="savePIDetails()"]');
+    const originalText = btn ? btn.innerText : 'Save PI Details';
+
+    if (btn) {
+        btn.innerText = 'Saving...';
+        btn.disabled = true;
+    }
+
+    try {
+        await apiFetch('/api/settings', {
+            method: 'PUT',
+            body: JSON.stringify({ key: 'piDetails', value: content })
+        });
+
+        if (btn) {
+            btn.innerText = 'Saved!';
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }, 2000);
+        }
+    } catch (e) {
+        console.error('Error saving PI details:', e);
+        if (btn) {
+            btn.innerText = 'Error!';
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }, 2000);
+        }
+        alert('Failed to save PI details');
+    }
+}
+
 // Initialize
 checkAuth();

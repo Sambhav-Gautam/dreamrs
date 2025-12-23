@@ -87,6 +87,9 @@
                     onclick="openTab('openings')">Openings (PDFs)</button>
                 <button
                     class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent focus:outline-none"
+                    onclick="openTab('pi-profile')">PI Profile</button>
+                <button
+                    class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent focus:outline-none"
                     onclick="openTab('settings')">Settings</button>
             </div>
 
@@ -216,6 +219,215 @@
                         <button onclick="uploadOpeningPDF('B.Tech Projects', 'btp-file', 'btp-name')"
                             class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm whitespace-nowrap">Add
                             PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PI Profile Tab -->
+            <div id="pi-profile-tab" class="tab-content hidden">
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-6">Principal Investigator Profile
+                    </h3>
+
+                    <div class="space-y-4">
+                        <!-- Formatting Toolbar -->
+                        <div
+                            class="flex flex-wrap gap-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                            <!-- Text Formatting -->
+                            <button type="button" onmousedown="event.preventDefault(); formatText('bold');"
+                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm font-bold"
+                                title="Bold (Ctrl+B)">
+                                B
+                            </button>
+                            <button type="button" onmousedown="event.preventDefault(); formatText('italic');"
+                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm italic"
+                                title="Italic (Ctrl+I)">
+                                I
+                            </button>
+                            <button type="button" onmousedown="event.preventDefault(); formatText('underline');"
+                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm underline"
+                                title="Underline (Ctrl+U)">
+                                U
+                            </button>
+                            <button type="button" onmousedown="event.preventDefault(); formatText('strikeThrough');"
+                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm line-through"
+                                title="Strikethrough">
+                                S
+                            </button>
+
+                            <div class="w-px bg-gray-300 dark:bg-gray-500 mx-1"></div>
+
+                            <!-- Font Size -->
+                            <select onchange="changeFontSize(this.value)"
+                                class="px-2 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300"
+                                title="Font Size">
+                                <option value="">Size</option>
+                                <option value="1">10px</option>
+                                <option value="2">13px</option>
+                                <option value="3">16px</option>
+                                <option value="4">18px</option>
+                                <option value="5">24px</option>
+                                <option value="6">32px</option>
+                                <option value="7">48px</option>
+                            </select>
+
+                            <!-- Font Color -->
+                            <div class="flex items-center gap-1">
+                                <input type="color" id="font-color-picker" value="#000000"
+                                    class="w-8 h-8 rounded cursor-pointer border border-gray-300 dark:border-gray-600"
+                                    title="Select Color">
+                                <button type="button" onmousedown="saveSelection(); event.preventDefault();"
+                                    onclick="applySelectedColor()"
+                                    class="px-2 py-2 bg-gray-500 text-white rounded hover:opacity-90 text-xs"
+                                    title="Apply Selected Color">
+                                    Apply
+                                </button>
+                                <button type="button" onmousedown="saveSelection(); event.preventDefault();"
+                                    onclick="toggleThemeColor()"
+                                    class="px-2 py-2 bg-leaf text-white rounded hover:opacity-90 text-xs"
+                                    title="Toggle Theme Color (apply/remove)">
+                                    🎨
+                                </button>
+                            </div>
+
+                            <div class="w-px bg-gray-300 dark:bg-gray-500 mx-1"></div>
+
+                            <!-- Links -->
+                            <button type="button" onmousedown="saveSelection(); event.preventDefault();"
+                                onclick="toggleLink()"
+                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm"
+                                title="Insert/Remove Link (select text first)">
+                                🔗 Link
+                            </button>
+                        </div>
+
+                        <!-- Editor -->
+                        <div id="pi-content-editor" contenteditable="true"
+                            class="min-h-64 p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 focus:border-leaf focus:outline-none"
+                            style="min-height: 300px;">
+                            <p><span class="text-leaf font-bold">Dr. Sonal Keshwani</span> is the Founder and Principal
+                                Investigator of the Design Research and Human Factors Lab (<span
+                                    class="text-leaf font-semibold">DREAMRS</span> Lab), Department of Human-Centered
+                                Design, IIIT-Delhi. She holds a Ph.D. and an MSc in Design from <a
+                                    href="https://dm.iisc.ac.in/cpdm/ideaslab/" class="text-leaf hover:underline">IDeaS
+                                    Lab</a>, <a href="https://dm.iisc.ac.in/dm/"
+                                    class="text-leaf hover:underline">Department of Design and Manufacturing</a>, <a
+                                    href="https://iisc.ac.in/" class="text-leaf hover:underline">Indian Institute of
+                                    Science (IISc), Bangalore</a> (2018), and a B.Tech in Production Engineering from
+                                G.B. Pant University, Pantnagar (2008). Dr. Keshwani serves on the review boards of
+                                several leading publications, including the Journal of Engineering Design (Taylor and
+                                Francis), Research in Engineering Design (Springer), and the ASME IDETC conference. Her
+                                research has been published in five international peer-reviewed SCI journals. She was
+                                also a guest researcher at the Japan Advanced Institute of Science and Technology, where
+                                she received the prestigious JASSO scholarship.</p>
+                            <p class="mt-4">In addition to her research, Dr. Keshwani has fostered international
+                                collaborations with institutions such as the Technical University of Denmark,
+                                Politecnico di Milano, and Ariel University. She was a founding member of the School of
+                                Design and Digital Transmedia at Dayananda Sagar University (DSU), Bangalore, where she
+                                served from 2021 to 2023. Before transitioning to academia, Dr. Keshwani gained industry
+                                experience working with Tata Motors Ltd. from 2008 to 2011.</p>
+                        </div>
+
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                            Tip: Select text first, then click a formatting button. Use 🎨 to apply your theme color.
+                        </p>
+
+                        <div class="pt-4 border-t dark:border-gray-700">
+                            <button onclick="savePIContent()"
+                                class="bg-leaf hover:opacity-90 text-white px-6 py-2 rounded text-sm">
+                                Save PI Content
+                            </button>
+                            <span id="pi-save-status" class="ml-4 text-sm text-green-600 hidden">✓ Saved!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5: PI Details Editor -->
+                <div
+                    class="glass-card p-6 md:p-8 rounded-2xl animate-fade-in-up hover-lift border-t-4 border-leaf mt-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3
+                            class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-leaf-light to-leaf-dark">
+                            PI Details Editor (Education, Experience, Awards)
+                        </h3>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Formatting Toolbar -->
+                        <div
+                            class="flex flex-wrap gap-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                            <!-- Text Formatting -->
+                            <button type="button"
+                                onmousedown="event.preventDefault(); formatText('bold', 'pi-details-editor');"
+                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm font-bold"
+                                title="Bold (Ctrl+B)">B</button>
+                            <button type="button"
+                                onmousedown="event.preventDefault(); formatText('italic', 'pi-details-editor');"
+                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm italic"
+                                title="Italic (Ctrl+I)">I</button>
+                            <button type="button"
+                                onmousedown="event.preventDefault(); formatText('underline', 'pi-details-editor');"
+                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm underline"
+                                title="Underline (Ctrl+U)">U</button>
+                            <button type="button"
+                                onmousedown="event.preventDefault(); formatText('strikeThrough', 'pi-details-editor');"
+                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm line-through"
+                                title="Strikethrough">S</button>
+
+                            <div class="w-px bg-gray-300 dark:bg-gray-500 mx-1"></div>
+
+                            <!-- Font Size -->
+                            <select onchange="changeFontSize(this.value, 'pi-details-editor')"
+                                class="px-2 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300"
+                                title="Font Size">
+                                <option value="">Size</option>
+                                <option value="1">10px</option>
+                                <option value="2">13px</option>
+                                <option value="3">16px</option>
+                                <option value="4">18px</option>
+                                <option value="5">24px</option>
+                                <option value="6">32px</option>
+                                <option value="7">48px</option>
+                            </select>
+
+                            <!-- Font Color -->
+                            <div class="flex items-center gap-1">
+                                <input type="color" id="details-color-picker" value="#000000"
+                                    class="w-8 h-8 rounded cursor-pointer border border-gray-300 dark:border-gray-600"
+                                    title="Select Color">
+                                <button type="button" onmousedown="saveSelection(); event.preventDefault();"
+                                    onclick="applySelectedColor('pi-details-editor', 'details-color-picker')"
+                                    class="px-2 py-2 bg-gray-500 text-white rounded hover:opacity-90 text-xs"
+                                    title="Apply Selected Color">Apply</button>
+                                <button type="button" onmousedown="saveSelection(); event.preventDefault();"
+                                    onclick="toggleThemeColor('pi-details-editor')"
+                                    class="px-2 py-2 bg-leaf text-white rounded hover:opacity-90 text-xs"
+                                    title="Toggle Theme Color (apply/remove)">🎨</button>
+                            </div>
+
+                            <div class="w-px bg-gray-300 dark:bg-gray-500 mx-1"></div>
+
+                            <!-- Links -->
+                            <button type="button" onmousedown="saveSelection(); event.preventDefault();"
+                                onclick="toggleLink('pi-details-editor')"
+                                class="px-3 py-2 bg-leaf text-white rounded hover:opacity-90 text-sm"
+                                title="Insert/Remove Link (select text first)">🔗 Link</button>
+                        </div>
+
+                        <!-- Editor -->
+                        <div id="pi-details-editor" contenteditable="true"
+                            class="min-h-64 p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 focus:border-leaf focus:outline-none"
+                            style="min-height: 400px;">
+                            <p>Loading details...</p>
+                        </div>
+
+                        <!-- Save Button -->
+                        <div class="pt-4 border-t dark:border-gray-700">
+                            <button onclick="savePIDetails()"
+                                class="bg-leaf hover:opacity-90 text-white px-6 py-2 rounded text-sm">
+                                Save PI Details
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

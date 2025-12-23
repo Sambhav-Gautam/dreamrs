@@ -55,6 +55,24 @@ document.addEventListener('DOMContentLoaded', function () {
     // Load theme on page initialization
     loadThemeSettings();
 
+    // Load PI content for dynamic rendering
+    async function loadPIContent() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/settings`);
+            if (response.ok) {
+                const settings = await response.json();
+                if (settings.piContent) {
+                    // Update PI content containers on the page
+                    document.querySelectorAll('.pi-content-dynamic').forEach(el => {
+                        el.innerHTML = settings.piContent;
+                    });
+                }
+            }
+        } catch (e) {
+            console.log('Using default PI content');
+        }
+    }
+
     // Get logo URL based on filename
     function getLogoUrl(filename) {
         if (!filename) return 'images/logo.png';
@@ -295,6 +313,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Load logo settings after header is in DOM
     loadLogoSettings();
+
+    // Load PI content for dynamic sections
+    loadPIContent();
 
     // Mobile Menu Toggle
     const mobileMenuButton = document.getElementById('mobile-menu-button');
@@ -761,6 +782,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     loadCourses();
+
+    // PI Details - Load dynamically
+    async function loadPIDetails() {
+        const container = document.getElementById('pi-details-container');
+        if (!container) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/settings`);
+            if (response.ok) {
+                const settings = await response.json();
+                if (settings.piDetails) {
+                    container.innerHTML = settings.piDetails;
+                }
+            }
+        } catch (error) {
+            console.error('Error loading PI details:', error);
+        }
+    }
+    loadPIDetails();
 
     // Team
     // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------

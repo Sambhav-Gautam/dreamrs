@@ -19,7 +19,7 @@ body {
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-/* Enforce non-bold text globally as requested */
+/* Enforce non-bold text globally, but allow specific overrides */
 *,
 .font-bold,
 .font-semibold,
@@ -31,6 +31,16 @@ h4,
 h5,
 h6 {
     font-weight: normal !important;
+}
+
+/* Explicitly allow bold ONLY for b and strong tags (admin editor usage) */
+b,
+strong,
+a b,
+b a,
+a strong,
+strong a {
+    font-weight: bold !important;
 }
 
 .text-leaf {
