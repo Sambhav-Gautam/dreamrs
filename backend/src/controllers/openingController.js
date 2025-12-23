@@ -1,15 +1,16 @@
-const OpeningsData = require('../models/Opening');
+const Settings = require('../models/Settings');
 
 // Get all openings
 exports.getOpenings = async (req, res) => {
     try {
-        const data = await OpeningsData.findOne();
+        // Query for the specific generalOpening key
+        const openingSetting = await Settings.findOne({ key: 'generalOpening' });
 
-        if (!data || !data.data) {
-            return res.json({});
-        }
-
-        res.json(data.data);
+        // Return object structure expected by frontend
+        // frontend expects { generalOpening: { file: ..., link: ... } }
+        res.json({
+            generalOpening: openingSetting?.value || {}
+        });
     } catch (error) {
         console.error('Error fetching openings:', error);
         res.status(500).json({ error: 'Failed to fetch openings data' });

@@ -29,7 +29,7 @@ function getFileUrl(path) {
 let researchData = { publications: [], collaborations: [], projects: { funded: [], other: [] } };
 let teamData = {};
 let coursesData = [];
-let openingsData = {};
+// Removed old openingsData array
 
 // --- TABS & MODALS LOGIC ---
 function openTab(tabName) {
@@ -48,7 +48,7 @@ function openTab(tabName) {
     event.currentTarget.classList.add('text-leaf', 'border-leaf');
 
     // Refresh specific data if needed
-    if (tabName === 'openings') fetchOpenings();
+    if (tabName === 'openings') loadOpeningsAdmin();
 }
 
 function openModal(id) {
@@ -115,7 +115,8 @@ async function loadAllData() {
         fetchResearch(),
         fetchTeam(),
         fetchCourses(),
-        fetchOpenings()
+        loadOpeningsAdmin(),
+        fetchPISettings()
     ]);
 }
 
@@ -841,105 +842,119 @@ async function saveCourses() {
     });
 }
 
-// --- OPENINGS LOGIC (Reused/Adapted) ---
 
-async function fetchOpenings() {
-    const res = await apiFetch('/api/data/openings');
-    openingsData = await res.json();
-    renderOpeningsList('PhD Positions', 'phd-list');
-    renderOpeningsList('Research Assistant', 'ra-list');
-    renderOpeningsList('B.Tech Projects', 'btp-list');
+// --- OPENINGS (Single Global Item Logic) ---
+
+let currentOpenings = {};
+
+async function loadOpeningsAdmin() {
+    try {
+        const res = await apiFetch('/api/settings');
+        const settings = await res.json();
+        // Use 'generalOpening' key
+        currentOpenings = settings.generalOpening || {};
+
+        const linkInput = document.getElementById('general-link');
+        const fileDisplay = document.getElementById('general-current-file');
+
+        if (linkInput) linkInput.value = currentOpenings.link || '';
+        if (fileDisplay) {
+            if (currentOpenings.file) {
+                fileDisplay.innerHTML = `
+                    <span class="italic">Current: <a href="${getFileUrl(currentOpenings.file)}" target="_blank" class="text-leaf hover:underline font-medium">${currentOpenings.file}</a></span>
+                    <button onclick="deleteGeneralOpeningFile()" class="text-red-500 hover:text-red-700 text-xs font-medium px-2 py-1 rounded border border-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">Delete PDF</button>
+                `;
+            } else {
+                fileDisplay.innerHTML = '<span class="italic">No file uploaded</span>';
+            }
+        }
+
+    } catch (e) {
+        console.error('Error loading openings:', e);
+    }
 }
 
-function renderOpeningsList(category, elementId) {
-    const list = openingsData[category] || [];
-    const container = document.getElementById(elementId);
-    container.innerHTML = '';
+async function saveGeneralOpening() {
+    const fileInput = document.getElementById('general-file');
+    const linkInput = document.getElementById('general-link');
+    const linkValue = linkInput ? linkInput.value.trim() : '';
 
-    if (list.length === 0) {
-        container.innerHTML = '<p class="text-gray-500 italic text-sm">No active openings.</p>';
+    // Copy existing data to preserve fields not being updated
+    let newData = { ...currentOpenings };
+
+    try {
+        // 1. Handle File Upload if present
+        if (fileInput && fileInput.files.length > 0) {
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('folder', 'pdfs');
+
+            const uploadRes = await fetch(`${API_BASE_URL}/api/files/upload`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!uploadRes.ok) throw new Error('File upload failed');
+
+            const uploadData = await uploadRes.json();
+            newData.file = uploadData.filename;
+        }
+
+        // 2. Update Link
+        newData.link = linkValue;
+
+        // 3. Update Local State
+        currentOpenings = newData;
+
+        // 4. Save to Settings under 'generalOpening'
+        await apiFetch('/api/settings', {
+            method: 'PUT',
+            body: JSON.stringify({ key: 'generalOpening', value: currentOpenings })
+        });
+
+        alert('Openings settings saved successfully!');
+
+        // Refresh UI
+        loadOpeningsAdmin();
+
+        // Clear file input
+        if (fileInput) fileInput.value = '';
+
+    } catch (e) {
+        console.error('Error saving opening:', e);
+        alert('Failed to save opening: ' + e.message);
+    }
+}
+
+async function deleteGeneralOpeningFile() {
+    if (!currentOpenings.file) {
+        alert('No file to delete.');
         return;
     }
 
-    list.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = 'flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600';
-        div.innerHTML = `
-            <div class="flex items-center gap-3">
-                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                <a href="${getFileUrl(item.file)}" target="_blank" class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">${item.name}</a>
-                <span class="text-xs text-gray-400">(${item.file})</span>
-            </div>
-            <button onclick="deleteOpening('${category}', ${index})" class="text-red-500 hover:text-red-700 p-1">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-            </button>
-        `;
-        container.appendChild(div);
-    });
-}
-
-async function uploadOpeningPDF(category, fileInputId, nameInputId) {
-    const fileInput = document.getElementById(fileInputId);
-    const nameInput = document.getElementById(nameInputId);
-
-    if (!fileInput.files[0] || !nameInput.value) {
-        return alert('Please select a file and enter a name.');
-    }
-
-    const formData = new FormData();
-    formData.append('file', fileInput.files[0]); // changed from 'pdf' to 'file' to match generic endpoint
+    if (!confirm('Are you sure you want to delete the current PDF?')) return;
 
     try {
-        const res = await fetch(`${API_BASE_URL}/api/upload`, {
-            method: 'POST',
-            body: formData
-        });
-        const data = await res.json();
-
-        if (data.filename) {
-            if (!openingsData[category]) openingsData[category] = [];
-            openingsData[category].push({
-                name: nameInput.value,
-                file: data.filename
-            });
-
-            await apiFetch('/api/data/openings', {
-                method: 'POST',
-                body: JSON.stringify(openingsData)
-            });
-
-            fileInput.value = '';
-            nameInput.value = '';
-            fetchOpenings();
-            alert('Opening added successfully!');
-        }
-    } catch (e) {
-        console.error(e);
-        alert('Upload failed.');
-    }
-}
-
-async function deleteOpening(category, index) {
-    if (!confirm('Are you sure you want to delete this opening?')) return;
-
-    const item = openingsData[category][index];
-
-    try {
+        // 1. Delete file from server (optional - could leave orphaned files)
         await apiFetch('/api/delete-file', {
             method: 'POST',
-            body: JSON.stringify({ filename: item.file })
+            body: JSON.stringify({ filename: currentOpenings.file, type: 'pdf' })
         });
 
-        openingsData[category].splice(index, 1);
-        await apiFetch('/api/data/openings', {
-            method: 'POST',
-            body: JSON.stringify(openingsData)
+        // 2. Remove from settings
+        delete currentOpenings.file;
+
+        await apiFetch('/api/settings', {
+            method: 'PUT',
+            body: JSON.stringify({ key: 'generalOpening', value: currentOpenings })
         });
 
-        fetchOpenings();
+        alert('PDF deleted successfully!');
+        loadOpeningsAdmin();
+
     } catch (e) {
-        console.error(e);
-        alert('Delete failed.');
+        console.error('Error deleting file:', e);
+        alert('Failed to delete file: ' + e.message);
     }
 }
 
@@ -998,397 +1013,177 @@ function applyThemeColor(color) {
     document.documentElement.style.setProperty('--leaf-b', b);
 
     const lighter = `rgba(${r}, ${g}, ${b}, 0.15)`;
-    const darker = `rgb(${Math.max(0, r - 20)}, ${Math.max(0, g - 20)}, ${Math.max(0, b - 20)})`;
-
-    document.documentElement.style.setProperty('--leaf-color-light', color);
-    document.documentElement.style.setProperty('--leaf-color-dark', darker);
     document.documentElement.style.setProperty('--leaf-bg-light', lighter);
+
+    // Update charts if they exist (dashboard?)
 }
 
-async function saveThemeSettings() {
-    try {
-        await apiFetch('/api/settings', {
-            method: 'PUT',
-            body: JSON.stringify({ key: 'themeColor', value: currentThemeColor })
-        });
-
-        // Also save to localStorage for instant loading on next visit
-        localStorage.setItem('themeColor', currentThemeColor);
-
-        const status = document.getElementById('theme-save-status');
-        if (status) {
-            status.classList.remove('hidden');
-            setTimeout(() => status.classList.add('hidden'), 2000);
-        }
-    } catch (e) {
-        console.error('Error saving theme settings:', e);
-        alert('Failed to save theme settings');
-    }
-}
-
-// Theme color picker event listeners
-document.addEventListener('DOMContentLoaded', () => {
+function saveThemeColor() {
     const picker = document.getElementById('theme-color-picker');
-    const hex = document.getElementById('theme-color-hex');
+    const color = picker ? picker.value : currentThemeColor;
 
-    if (picker) {
-        picker.addEventListener('input', (e) => {
-            setThemeColor(e.target.value);
-        });
-    }
-
-    if (hex) {
-        hex.addEventListener('change', (e) => {
-            const value = e.target.value;
-            if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
-                setThemeColor(value);
-            }
-        });
-    }
-
-    // Logo file input preview
-    const logoInput = document.getElementById('logo-file-input');
-    if (logoInput) {
-        logoInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const previewContainer = document.getElementById('logo-preview-container');
-                    const previewImg = document.getElementById('new-logo-preview');
-                    if (previewImg && previewContainer) {
-                        previewImg.src = e.target.result;
-                        previewContainer.classList.remove('hidden');
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-
-    // Fetch theme settings on page load
-    fetchThemeSettings();
-    fetchLogoSettings();
-});
-
-// --- LOGO MANAGEMENT ---
-
-let currentLogoFilename = 'images/logo.png';
-
-// Apply cached logo immediately
-const cachedLogo = localStorage.getItem('siteLogo');
-if (cachedLogo) {
-    currentLogoFilename = cachedLogo;
-    updateLogoUI(cachedLogo);
+    apiFetch('/api/settings', {
+        method: 'PUT',
+        body: JSON.stringify({ key: 'themeColor', value: color })
+    }).then(() => {
+        alert('Theme color saved!');
+    }).catch(e => {
+        console.error('Save failed', e);
+        alert('Failed to save theme');
+    });
 }
 
-async function fetchLogoSettings() {
-    try {
-        const res = await apiFetch('/api/settings');
-        const settings = await res.json();
-        if (settings.siteLogo) {
-            currentLogoFilename = settings.siteLogo;
-            localStorage.setItem('siteLogo', settings.siteLogo);
-            updateLogoUI(settings.siteLogo);
+// Color Picker Listeners
+const colorPicker = document.getElementById('theme-color-picker');
+const colorHex = document.getElementById('theme-color-hex');
+
+if (colorPicker) {
+    colorPicker.addEventListener('input', (e) => {
+        setThemeColor(e.target.value);
+    });
+}
+
+if (colorHex) {
+    colorHex.addEventListener('change', (e) => {
+        let val = e.target.value;
+        if (!val.startsWith('#')) val = '#' + val;
+        if (/^#[0-9A-F]{6}$/i.test(val)) {
+            setThemeColor(val);
         }
-    } catch (e) {
-        console.error('Error fetching logo settings:', e);
-    }
+    });
 }
 
-function updateLogoUI(logoPath) {
-    const logoUrl = getFileUrl(logoPath) || logoPath;
+// --- LOGO SETTINGS ---
+async function uploadLogo(type = 'nav') {
+    // type: 'nav' or 'footer'
+    const inputId = type === 'nav' ? 'logo-nav-file' : 'logo-footer-file';
+    const input = document.getElementById(inputId);
 
-    // Update Settings tab preview
-    const currentLogoPreview = document.getElementById('current-logo-preview');
-    if (currentLogoPreview) {
-        currentLogoPreview.src = logoUrl;
-    }
+    if (input.files.length === 0) return alert('Select a file first');
 
-    // Update navbar logo
-    const navbarLogo = document.querySelector('.admin-logo-img');
-    if (navbarLogo) {
-        navbarLogo.src = logoUrl;
-    }
-
-    // Update favicon
-    const favicon = document.querySelector('link[rel="icon"]');
-    if (favicon) {
-        favicon.href = logoUrl;
-    }
-}
-
-async function saveLogo() {
-    const fileInput = document.getElementById('logo-file-input');
-    const file = fileInput?.files[0];
-
-    if (!file) {
-        alert('Please select a logo file to upload');
-        return;
-    }
+    const formData = new FormData();
+    formData.append('file', input.files[0]);
+    formData.append('folder', 'images/logo');
 
     try {
-        // Upload file
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('folder', 'logos');
+        const res = await fetch(`${API_BASE_URL}/api/upload`, { method: 'POST', body: formData });
+        const data = await res.json();
+        if (data.filename) {
+            // Save to settings
+            const key = type === 'nav' ? 'siteLogo' : 'siteFooterLogo';
+            await apiFetch('/api/settings', {
+                method: 'PUT',
+                body: JSON.stringify({ key, value: data.filename })
+            });
 
-        const uploadRes = await fetch(`${API_BASE_URL}/api/files/upload`, {
-            method: 'POST',
-            body: formData
-        });
+            // Update Preview
+            const previewId = type === 'nav' ? 'logo-nav-preview' : 'logo-footer-preview';
+            const preview = document.getElementById(previewId);
+            if (preview) preview.src = getFileUrl(data.filename);
 
-        if (!uploadRes.ok) {
-            throw new Error('Failed to upload logo');
-        }
-
-        const uploadData = await uploadRes.json();
-        const logoFilename = uploadData.filename;
-
-        // Save logo filename to settings
-        await apiFetch('/api/settings', {
-            method: 'PUT',
-            body: JSON.stringify({ key: 'siteLogo', value: logoFilename })
-        });
-
-        // Update localStorage and UI
-        localStorage.setItem('siteLogo', logoFilename);
-        currentLogoFilename = logoFilename;
-        updateLogoUI(logoFilename);
-
-        // Clear file input and hide preview
-        fileInput.value = '';
-        document.getElementById('logo-preview-container')?.classList.add('hidden');
-
-        // Show success message
-        const status = document.getElementById('logo-save-status');
-        if (status) {
-            status.classList.remove('hidden');
-            setTimeout(() => status.classList.add('hidden'), 2000);
+            alert('Logo updated!');
         }
     } catch (e) {
-        console.error('Error saving logo:', e);
-        alert('Failed to save logo');
+        console.error(e);
+        alert('Upload failed');
     }
 }
 
-// --- PI PROFILE EDITOR ---
 
-// Store the current selection for formatting
-let savedSelection = null;
+// --- MARKDOWN / TEXT EDITOR LOGIC (For PI Modal) ---
 
-// Save the current selection (called on mousedown of buttons)
-function saveSelection() {
-    const sel = window.getSelection();
-    if (sel.rangeCount > 0) {
-        savedSelection = sel.getRangeAt(0).cloneRange();
-    }
-}
-
-// Restore the saved selection
-function restoreSelection() {
-    if (savedSelection) {
-        const sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(savedSelection);
-    }
-}
-
-// Active editor ID (defaults to main PI editor)
-window.activeEditorId = 'pi-content-editor';
-
-function setActiveEditor(id) {
-    window.activeEditorId = id;
-}
-
-// Format text in contenteditable editor
-function formatText(command) {
-    const editor = document.getElementById(window.activeEditorId);
-    if (editor) {
-        // We assume focus is preserved via event.preventDefault() on buttons
-        // So we just execute the command on the current selection
-        document.execCommand(command, false, null);
-        editor.focus(); // Ensure focus stays
-    }
-}
-
-// Toggle link - insert or remove
-function toggleLink() {
-    restoreSelection();
-    const selection = window.getSelection();
-    if (!selection.rangeCount || selection.isCollapsed) {
-        alert('Please select some text first');
-        return;
-    }
-
-    // Check if selection is inside a link
-    let node = selection.anchorNode;
-    while (node && node.nodeName !== 'A') {
-        node = node.parentNode;
-    }
-
-    if (node && node.nodeName === 'A') {
-        // Remove link - unwrap the anchor
-        document.execCommand('unlink', false, null);
-    } else {
-        // Insert link
-        const url = prompt('Enter URL:', 'https://');
-        if (url) {
-            document.execCommand('createLink', false, url);
-            // Add theme color class to new links
-            const editor = document.getElementById('pi-content-editor');
-            if (editor) {
-                const links = editor.querySelectorAll('a:not(.text-leaf)');
-                links.forEach(link => {
-                    link.classList.add('text-leaf', 'hover:underline');
-                    link.setAttribute('target', '_blank');
-                });
-            }
-        }
-    }
-    document.getElementById('pi-content-editor')?.focus();
-}
-
-// Change font size
-function changeFontSize(size) {
-    if (size) {
-        document.execCommand('fontSize', false, size);
-        document.getElementById(window.activeEditorId)?.focus();
-    }
-}
-
-// Apply color from color picker
-function applySelectedColor() {
-    restoreSelection();
-    const colorPicker = document.getElementById('font-color-picker');
-    const color = colorPicker?.value;
-    const selection = window.getSelection();
-
-    if (!selection.rangeCount || selection.isCollapsed) {
-        alert('Please select some text first');
-        return;
-    }
-
-    if (color) {
-        document.execCommand('foreColor', false, color);
-        document.getElementById(window.activeEditorId)?.focus();
-    }
-}
-
-// Toggle theme color on selected text
-function toggleThemeColor() {
-    restoreSelection();
-    const selection = window.getSelection();
-    if (!selection.rangeCount || selection.isCollapsed) {
-        alert('Please select some text first');
-        return;
-    }
-
-    // Check if selection has text-leaf class
-    let node = selection.anchorNode;
-    while (node && node.nodeType !== 1) {
-        node = node.parentNode;
-    }
-
-    // Check if already has theme color class
-    if (node && (node.classList?.contains('text-leaf') || node.closest?.('.text-leaf'))) {
-        // Remove theme color - reset to default
-        document.execCommand('removeFormat', false, null);
-    } else {
-        // Apply theme color using span
-        const range = selection.getRangeAt(0);
-        const span = document.createElement('span');
-        span.className = 'text-leaf font-semibold';
-        try {
-            range.surroundContents(span);
-        } catch (e) {
-            // If selection spans multiple elements, use execCommand with current theme color
-            document.execCommand('foreColor', false, currentThemeColor);
-        }
-    }
-    document.getElementById('pi-content-editor')?.focus();
-}
-
-// Fetch PI content from settings
-async function fetchPIContent() {
-    try {
-        const res = await apiFetch('/api/settings');
-        const settings = await res.json();
-        const editor = document.getElementById('pi-content-editor');
-        if (settings.piContent && editor) {
-            editor.innerHTML = settings.piContent;
-        }
-    } catch (e) {
-        console.error('Error fetching PI content:', e);
-    }
-}
-
-// Save PI content to settings
-async function savePIContent() {
-    const editor = document.getElementById('pi-content-editor');
-    if (!editor) return;
-
-    const content = editor.innerHTML;
-
-    try {
-        await apiFetch('/api/settings', {
-            method: 'PUT',
-            body: JSON.stringify({ key: 'piContent', value: content })
-        });
-
-        const status = document.getElementById('pi-save-status');
-        if (status) {
-            status.classList.remove('hidden');
-            setTimeout(() => status.classList.add('hidden'), 2000);
-        }
-    } catch (e) {
-        console.error('Error saving PI content:', e);
-        alert('Failed to save PI content');
-    }
-}
-
-// Load PI content on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('pi-content-editor')) {
-        fetchPIContent();
-        loadPISections();
-    }
-});
-
-// --- PI SECTION HELPERS ---
-async function savePISetting(key, value) {
-    try {
-        await apiFetch('/api/settings', {
-            method: 'PUT',
-            body: JSON.stringify({ key, value })
-        });
-    } catch (e) {
-        console.error('Error saving ' + key, e);
-        alert('Failed to save changes');
-    }
-}
-
-// --- PI SECTIONS STATE ---
 let piEducation = [];
 let piExperience = [];
 let piAwards = [];
 
-// Load all PI sections
-async function loadPISections() {
+// PI Profile Editor Logic
+function setActiveEditor(id) {
+    window.activeEditorId = id;
+
+    // Highlight active editor visually
+    document.querySelectorAll('[contenteditable]').forEach(el => {
+        el.classList.remove('ring-2', 'ring-leaf', 'bg-white');
+        el.classList.add('bg-gray-50');
+    });
+
+    const activeEl = document.getElementById(id);
+    if (activeEl) {
+        activeEl.classList.add('ring-2', 'ring-leaf', 'bg-white');
+        activeEl.classList.remove('bg-gray-50');
+    }
+}
+
+function execCmd(command, value = null) {
+    if (!window.activeEditorId) {
+        // Default to main bio if none selected
+        setActiveEditor('pi-content-editor');
+    }
+
+    document.getElementById(window.activeEditorId).focus();
+    document.execCommand(command, false, value);
+
+    // Re-focus to keep selection active
+    document.getElementById(window.activeEditorId).focus();
+}
+
+// PI Settings Modal with Tabs
+function openPIModal() {
+    loadPISettings();
+    openModal('pi-modal');
+    setActiveEditor('pi-content-editor');
+}
+
+async function loadPISettings() {
     try {
         const res = await apiFetch('/api/settings');
         const settings = await res.json();
 
-        piEducation = settings.piEducation || [];
-        piExperience = settings.piExperience || [];
-        piAwards = settings.piAwards || [];
+        // Load Bio
+        const editor = document.getElementById('pi-content-editor');
+        if (editor) editor.innerHTML = settings.piBio || '<p>Enter PI Biography here...</p>';
 
+        // Load Education
+        piEducation = settings.piEducation || [];
         renderEducationList();
+
+        // Load Experience
+        piExperience = settings.piExperience || [];
         renderExperienceList();
+
+        // Load Awards
+        piAwards = settings.piAwards || [];
         renderAwardsList();
+
     } catch (e) {
-        console.error('Error loading PI sections:', e);
+        console.error('Error loading PI settings:', e);
     }
+}
+
+async function fetchPISettings() {
+    // Helper to allow external calls if needed, simply reuses internal load if appropriate
+    // But this is usually called by openPIModal
+    // We might want to load it initially for caching if we need to display it on dashboard summary
+}
+
+async function savePISettingsContent() {
+    const content = document.getElementById('pi-content-editor').innerHTML;
+    try {
+        await apiFetch('/api/settings', {
+            method: 'PUT',
+            body: JSON.stringify({ key: 'piBio', value: content })
+        });
+        alert('PI Biography Saved!');
+    } catch (e) {
+        console.error(e);
+        alert('Failed to save bio');
+    }
+}
+
+async function savePISetting(key, value) {
+    await apiFetch('/api/settings', {
+        method: 'PUT',
+        body: JSON.stringify({ key, value })
+    });
 }
 
 // --- EDUCATION LOGIC ---
@@ -1399,18 +1194,14 @@ function renderEducationList() {
     list.innerHTML = piEducation.map((item, index) => `
         <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded border dark:border-gray-600 flex justify-between items-start">
             <div class="flex-1">
-                <div class="font-bold text-gray-800 dark:text-white">${item.degree || 'No Degree'}</div>
+                <div class="font-bold text-gray-800 dark:text-white">${item.degree || 'Degree'}</div>
                 <div class="text-sm text-gray-600 dark:text-gray-300 font-semibold">${item.institution || ''}</div>
                 <div class="text-sm text-gray-500 dark:text-gray-400 italic">${item.year || ''}</div>
-                ${item.details ? `<div class="text-sm text-gray-600 dark:text-gray-400 mt-1">${item.details}</div>` : ''}
+                ${item.thesis ? `<div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Thesis: ${item.thesis}</div>` : ''}
             </div>
             <div class="flex gap-2 ml-4">
-                <button onclick="openEducationModal(${index})" class="text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">
-                    Edit
-                </button>
-                <button onclick="deleteEducation(${index})" class="text-red-600 hover:text-red-800 flex items-center gap-1 font-medium">
-                    Delete
-                </button>
+                <button onclick="openEducationModal(${index})" class="text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">Edit</button>
+                <button onclick="deleteEducation(${index})" class="text-red-600 hover:text-red-800 flex items-center gap-1 font-medium">Delete</button>
             </div>
         </div>
     `).join('');
@@ -1427,19 +1218,17 @@ function openEducationModal(index = null) {
         document.getElementById('edu-degree').value = item.degree || '';
         document.getElementById('edu-institution').value = item.institution || '';
         document.getElementById('edu-year').value = item.year || '';
-        document.getElementById('edu-details-editor').innerHTML = item.details || '';
+        document.getElementById('edu-thesis').value = item.thesis || '';
     } else {
         document.getElementById('edu-degree').value = '';
         document.getElementById('edu-institution').value = '';
         document.getElementById('edu-year').value = '';
-        document.getElementById('edu-details-editor').innerHTML = '';
+        document.getElementById('edu-thesis').value = '';
     }
-    setActiveEditor('edu-details-editor');
 }
 
 function closeEducationModal() {
     document.getElementById('education-modal').classList.add('hidden');
-    setActiveEditor('pi-content-editor');
 }
 
 async function saveEducationItem() {
@@ -1448,7 +1237,7 @@ async function saveEducationItem() {
         degree: document.getElementById('edu-degree').value,
         institution: document.getElementById('edu-institution').value,
         year: document.getElementById('edu-year').value,
-        details: document.getElementById('edu-details-editor').innerHTML
+        thesis: document.getElementById('edu-thesis').value
     };
 
     if (index !== '') {

@@ -1022,6 +1022,30 @@ section {
     box-shadow: 0 6px 20px rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.35);
 }
 
+.btn-secondary {
+    background: transparent;
+    color: var(--leaf-color-dark);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: 1px solid var(--leaf-color);
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.1);
+    transform: translateY(-2px);
+}
+
+.dark .btn-secondary {
+    color: var(--leaf-color-light);
+    border-color: var(--leaf-color-light);
+}
+
+.dark .btn-secondary:hover {
+    background: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.2);
+}
+
 /* ===================================
    CARD ENHANCEMENTS
    =================================== */

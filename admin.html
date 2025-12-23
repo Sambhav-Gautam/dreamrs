@@ -175,50 +175,55 @@
                 </div>
             </div>
 
-            <!-- Openings Tab (Existing) -->
-            <div id="openings-tab" class="tab-content hidden space-y-8">
-                <!-- PhD -->
-                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">PhD Positions</h3>
-                    <div id="phd-list" class="space-y-2 mb-4"></div>
-                    <div class="flex gap-2">
-                        <input type="file" id="phd-file"
-                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20" />
-                        <input type="text" id="phd-name" placeholder="Opening Name (e.g. Winter 2025)"
-                            class="border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-                        <button onclick="uploadOpeningPDF('PhD Positions', 'phd-file', 'phd-name')"
-                            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm whitespace-nowrap">Add
-                            PDF</button>
-                    </div>
-                </div>
+            <!-- Openings Tab -->
+            <div id="openings-tab" class="tab-content hidden max-w-2xl mx-auto">
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-8">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6 border-b dark:border-gray-700 pb-4">
+                        General Opening Settings
+                    </h3>
+                    <div class="space-y-6">
+                        <!-- Description PDF -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Job Description / Details PDF
+                            </label>
+                            <div
+                                class="flex flex-col gap-3 bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                                <input type="file" id="general-file" accept=".pdf"
+                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20 connection-action" />
+                                <div id="general-current-file"
+                                    class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                                    <!-- Will be populated by JS -->
+                                </div>
+                            </div>
+                        </div>
 
-                <!-- RA -->
-                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Research Assistant</h3>
-                    <div id="ra-list" class="space-y-2 mb-4"></div>
-                    <div class="flex gap-2">
-                        <input type="file" id="ra-file"
-                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20" />
-                        <input type="text" id="ra-name" placeholder="Opening Name"
-                            class="border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-                        <button onclick="uploadOpeningPDF('Research Assistant', 'ra-file', 'ra-name')"
-                            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm whitespace-nowrap">Add
-                            PDF</button>
-                    </div>
-                </div>
+                        <!-- Application Link -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Application Link (Google Form)
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <input type="url" id="general-link" placeholder="https://forms.google.com/..."
+                                    class="w-full pl-10 border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-leaf focus:border-transparent transition-all" />
+                            </div>
+                        </div>
 
-                <!-- BTP -->
-                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">B.Tech Projects</h3>
-                    <div id="btp-list" class="space-y-2 mb-4"></div>
-                    <div class="flex gap-2">
-                        <input type="file" id="btp-file"
-                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20" />
-                        <input type="text" id="btp-name" placeholder="Opening Name"
-                            class="border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-                        <button onclick="uploadOpeningPDF('B.Tech Projects', 'btp-file', 'btp-name')"
-                            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm whitespace-nowrap">Add
-                            PDF</button>
+                        <!-- Save Action -->
+                        <div class="pt-4 flex justify-end">
+                            <button onclick="saveGeneralOpening()"
+                                class="bg-leaf hover:bg-green-600 text-white px-6 py-2.5 rounded-lg font-medium shadow-md transition-all hover:-translate-y-0.5">
+                                Save Settings
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Openings | DREAMRS Lab</title>
-    <meta name="description"
-        content="Join DREAMRS Lab - Current openings for PhD, Research Assistant, and B.Tech projects">
+    <meta name="description" content="Join DREAMRS Lab - Current openings for research projects">
     <link rel="icon" href="images/logo.png" type="image/png">
     <link href="./custom.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,8 +16,8 @@
 
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
 
-    <section id="Openings" class="py-8 pt-36 px-6 bg-gray-50 dark:bg-gray-900">
-        <div class="container mx-auto max-w-6xl">
+    <section id="Openings" class="py-8 pt-36 px-6 bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col">
+        <div class="container mx-auto max-w-6xl flex-1 flex flex-col justify-center">
             <!-- Section Header -->
             <div class="text-center mb-10">
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">
@@ -31,67 +30,22 @@
             </div>
 
             <!-- Opening Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- PhD Opening -->
-                <div class="card-enhanced text-center p-8 flex flex-col h-full">
-                    <div class="flex-1 flex flex-col items-center justify-center">
-                        <div class="w-16 h-16 rounded-2xl bg-leaf/10 flex items-center justify-center mb-6">
-                            <svg class="w-8 h-8 text-leaf" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z">
-                                </path>
-                            </svg>
+            <div class="max-w-4xl mx-auto w-full">
+                <!-- General Opening -->
+                <div class="card-enhanced text-center p-12 flex flex-col items-center shadow-2xl dark:shadow-none border border-gray-100 dark:border-gray-800"
+                    style="transform: none !important;">
+                    <div id="opening-actions" class="w-full max-w-md space-y-4">
+                        <!-- Actions will be inserted here by JavaScript -->
+                        <div class="animate-pulse flex space-x-4 justify-center">
+                            <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
                         </div>
-                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">PhD Positions</h2>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">Full-time doctoral research
-                            opportunities</p>
-                    </div>
-                    <div id="phd-status" class="w-full mt-auto">
-                        <!-- Status will be inserted here by JavaScript -->
-                    </div>
-                </div>
-
-                <!-- Research Assistant Opening -->
-                <div class="card-enhanced text-center p-8 flex flex-col h-full">
-                    <div class="flex-1 flex flex-col items-center justify-center">
-                        <div class="w-16 h-16 rounded-2xl bg-leaf/10 flex items-center justify-center mb-6">
-                            <svg class="w-8 h-8 text-leaf" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
-                                </path>
-                            </svg>
-                        </div>
-                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Research Assistant</h2>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">Contribute to ongoing research projects
-                        </p>
-                    </div>
-                    <div id="ra-status" class="w-full mt-auto">
-                        <!-- Status will be inserted here by JavaScript -->
-                    </div>
-                </div>
-
-                <!-- B.Tech Project Opening -->
-                <div class="card-enhanced text-center p-8 flex flex-col h-full">
-                    <div class="flex-1 flex flex-col items-center justify-center">
-                        <div class="w-16 h-16 rounded-2xl bg-leaf/10 flex items-center justify-center mb-6">
-                            <svg class="w-8 h-8 text-leaf" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                            </svg>
-                        </div>
-                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">B.Tech Projects</h2>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">Undergraduate project opportunities</p>
-                    </div>
-                    <div id="btp-status" class="w-full mt-auto">
-                        <!-- Status will be inserted here by JavaScript -->
                     </div>
                 </div>
             </div>
 
             <!-- Contact CTA -->
-            <div class="mt-16 text-center glass-card rounded-2xl p-8">
-                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">Interested in joining us?</h3>
+            <div class="mt-16 text-center glass-card rounded-2xl p-8 max-w-2xl mx-auto w-full">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">Questions?</h3>
                 <p class="text-gray-600 dark:text-gray-400 mb-6">
                     Contact Dr. Sonal Keshwani with your CV and research interests
                 </p>
@@ -123,42 +77,69 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/api/data/openings`);
                 const data = await response.json();
+                // Expecting { generalOpening: { file: "...", link: "..." } } or old format fallback
 
-                renderOpenings(data['PhD Positions'], 'phd-status');
-                renderOpenings(data['Research Assistant'], 'ra-status');
-                renderOpenings(data['B.Tech Projects'], 'btp-status');
+                const item = data.generalOpening || {};
+
+                renderOpeningActions(item);
             } catch (error) {
                 console.error('Error loading openings:', error);
+
+                // Fallback / Clear loading state
+                const container = document.getElementById('opening-actions');
+                if (container) {
+                    container.innerHTML = `<div class="text-red-500">Failed to load openings.</div>`;
+                }
             }
         }
 
-        function renderOpenings(items, elementId) {
-            const container = document.getElementById(elementId);
+        function renderOpeningActions(item) {
+            const container = document.getElementById('opening-actions');
             if (!container) return;
 
-            if (!items || items.length === 0) {
+            // Check if empty
+            if (!item.file && !item.link) {
                 container.innerHTML = `
-                    <div class="py-3 px-4 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400 text-sm">
-                        Currently no openings
+                    <div class="py-5 px-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-gray-500 dark:text-gray-400 font-medium border border-dashed border-gray-300 dark:border-gray-700">
+                        Currently no open positions. Please check back later.
                     </div>
                 `;
                 return;
             }
 
+            // Create a flex row container for side-by-side buttons
             container.innerHTML = '';
-            items.forEach(item => {
-                const btn = document.createElement('a');
-                btn.href = getFileUrl(item.file);
-                btn.target = "_blank";
-                btn.className = "btn-primary inline-flex items-center justify-center gap-2 w-full mb-2 last:mb-0";
-                btn.innerHTML = `
+            container.className = 'flex flex-row gap-4 w-full max-w-lg justify-center';
+
+            // View Opening Button (Left) - if PDF exists
+            if (item.file) {
+                const btnFile = document.createElement('a');
+                btnFile.href = getFileUrl(item.file);
+                btnFile.target = "_blank";
+                btnFile.className = "btn-secondary flex-1 flex items-center justify-center gap-2 text-base py-3 px-4";
+                btnFile.innerHTML = `
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
-                    ${item.name}
+                    View Opening
                 `;
-                container.appendChild(btn);
-            });
+                container.appendChild(btnFile);
+            }
+
+            // Apply Button (Right) - if Link exists
+            if (item.link) {
+                const btnLink = document.createElement('a');
+                btnLink.href = item.link;
+                btnLink.target = "_blank";
+                btnLink.className = "btn-primary flex-1 flex items-center justify-center gap-2 text-base py-3 px-4 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all";
+                btnLink.innerHTML = `
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                    Apply
+                `;
+                container.appendChild(btnLink);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', loadOpenings);
