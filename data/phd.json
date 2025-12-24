@@ -1,0 +1,91 @@
+{
+    "scholars": [
+        {
+            "name": "Deepayan Mukherjee",
+            "email": "deepayanm@iiitd.ac.in",
+            "image": "Deepayan_Mukherjee_phd.jpg",
+            "education": [
+                "B.Tech ECE - GGSIPU, Delhi",
+                "MSc. Cognitive Science - Centre of Behavioural and Cognitive Sciences (CBCS)"
+            ],
+            "researchAreas": [
+                "Emotion and Cognition",
+                "Neurodegenerative Disorders",
+                "Music Cognition"
+            ],
+            "interests": [
+                "Behavioural Design",
+                "Multimodal Signal Processing (EEG, ECG, GSR, Pupillometry)",
+                "Design Neurocognition"
+            ],
+            "publications": [
+                {
+                    "title": "Design Cognition Study",
+                    "doi": "10.1017/pds.2025.10108",
+                    "link": "https://doi.org/10.1017/pds.2025.10108",
+                    "apa": "Mukherjee, D. (2025). Design cognition study. <em>Proceedings of the Design Society</em>. https://doi.org/10.1017/pds.2025.10108",
+                    "abstract": "A study investigating design cognition patterns and neurocognitive processes in design activities.",
+                    "note": "Acknowledgment",
+                    "year": 2025
+                },
+                {
+                    "title": "Computational Analysis of RNA Nucleotide Sequences",
+                    "doi": "10.31142/ijtsrd21342",
+                    "link": "https://doi.org/10.31142/ijtsrd21342",
+                    "apa": "Juneja, S., Mukherjee, D., & Garg, S. (2019). Computational analysis of RNA nucleotide sequences. <em>International Journal of Trend in Scientific Research and Development, 3</em>(2), 369-372. https://doi.org/10.31142/ijtsrd21342",
+                    "abstract": "One of the most fascinating and deeply researched fields of all of the biochemical components are the nucleic acids and proteins, especially because of their dynamic structure and function. This paper presents a program for analyzing the Amino acid sequence from a given sequence of RNA nucleotide bases, enabling interpretation of the corresponding protein.",
+                    "year": 2019
+                }
+            ],
+            "googleScholar": "https://scholar.google.com/citations?hl=en&user=KiZ_YUsAAAAJ",
+            "linkedin": "",
+            "github": ""
+        },
+        {
+            "name": "Rhea S Shrivastava",
+            "email": "rheas@iiitd.ac.in",
+            "image": "PS2.png",
+            "education": [
+                "B.Tech (CSE), Amity University, Noida",
+                "M.Tech (CSE), Amity University, Noida"
+            ],
+            "researchAreas": [
+                "Biologically-Inspired Design Method",
+                "Design Neurocognition"
+            ],
+            "interests": [
+                "Behavioural Design",
+                "Design Research",
+                "HCI"
+            ],
+            "publications": [
+                {
+                    "title": "Determining Image Scale In Real-World Units Using Natural Objects Present In Image",
+                    "link": "https://www.routledge.com/Artificial-Intelligence-and-Machine-Learning-Techniques-in-Image-Processing-and-Computer-Vision/Singh-Rani/p/book/9781774914694",
+                    "apa": "Singh, S., & Shrivastava, R. S. (2024). Determining image scale in real-world units using natural objects present in image. In <em>Artificial Intelligence and Machine Learning Techniques in Image Processing and Computer Vision</em> (pp. 83-92). Apple Academic Press. https://doi.org/10.1201/9781003425700",
+                    "abstract": "This research focuses on a method to determine the real-world scale of objects within an image by utilizing common natural objects present in the visual scene, such as people, cars, or bikes. The approach addresses the challenge of accurately assessing the physical size of objects from images when a real-world unit scale is not explicitly provided.",
+                    "doi": "10.1201/9781003425700",
+                    "year": 2024
+                },
+                {
+                    "title": "Identification of the Important Factors Responsible for the Productivity in Garment Industry",
+                    "link": "https://icit2023.com",
+                    "apa": "Shrivastava, R. S., & Singh, S. (2023). Identification of the important factors responsible for the productivity in garment industry. In <em>Proceedings of International Conference on Intelligent Technologies (ICIT-2023)</em>.",
+                    "abstract": "This study identifies and analyzes the key factors that influence productivity in the garment manufacturing industry, providing insights for improving operational efficiency.",
+                    "year": 2023
+                },
+                {
+                    "title": "Towards Helping Visually Impaired People to Navigate Outdoor",
+                    "doi": "10.1007/978-981-99-5974-7_8",
+                    "link": "https://doi.org/10.1007/978-981-99-5974-7_8",
+                    "apa": "Shrivastava, R. S., Singhal, A., & Chandna, S. (2023). Towards helping visually impaired people to navigate outdoor. In B. Unhelkar et al. (Eds.), <em>Advances and Applications of Artificial Intelligence & Machine Learning</em> (LNEE Vol. 1078, pp. 83–92). Springer. https://doi.org/10.1007/978-981-99-5974-7_8",
+                    "abstract": "This paper addresses navigation systems for visually impaired people, discussing an integrated indoor/outdoor blind navigation approach that employs precise position measurement, wireless connectivity, a wearable computer, and a vocal communication interface to assist blind users in navigating independently and safely.",
+                    "year": 2023
+                }
+            ],
+            "googleScholar": "https://scholar.google.com/citations?user=rhea_shrivastava",
+            "linkedin": "http://www.linkedin.com/in/rhea-s-shrivastava-183344268",
+            "github": "https://github.com/RheaS18"
+        }
+    ]
+}

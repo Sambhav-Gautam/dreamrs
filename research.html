@@ -12,48 +12,102 @@
     <script>
         tailwind.config = { darkMode: 'class' }
     </script>
+    <style>
+        .featured-slide {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .publication-gradient {
+            background: linear-gradient(135deg, rgba(22, 163, 74, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+        }
+
+        .publication-gradient-dark {
+            background: linear-gradient(135deg, rgba(22, 163, 74, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+        }
+    </style>
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
 
-    <!-- Publications Section -->
-    <section id="Publications" class="py-8 pt-36 px-6 bg-gray-50 dark:bg-gray-900">
-        <div class="container mx-auto max-w-6xl">
-            <!-- Global Slideshow Container -->
-            <!-- Global Slideshow Container -->
-            <div id="global-slideshow-container"
-                class="mb-12 relative w-full max-w-4xl mx-auto h-[400px] md:h-[500px] rounded-2xl overflow-hidden shadow-2xl bg-black hidden group">
-                <!-- Slides Track -->
-                <div id="global-slideshow-track" class="flex h-full transition-transform duration-700 ease-in-out">
-                    <!-- Slides injected here -->
-                </div>
+    <!-- Hero Section with Featured Publications Slideshow -->
+    <section id="Featured"
+        class="pt-28 pb-12 px-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute inset-0"
+                style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 40px 40px;">
+            </div>
+        </div>
 
-                <!-- Navigation Buttons -->
-                <button onclick="moveGlobalSlide(-1)"
-                    class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur-md flex items-center justify-center text-white transition-all opacity-0 group-hover:opacity-100">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
-                        </path>
-                    </svg>
-                </button>
-                <button onclick="moveGlobalSlide(1)"
-                    class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur-md flex items-center justify-center text-white transition-all opacity-0 group-hover:opacity-100">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-
-                <!-- Indicators -->
-                <div id="global-slideshow-indicators" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                    <!-- Indicators injected here -->
-                </div>
+        <div class="container mx-auto max-w-6xl relative z-10">
+            <!-- Section Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Our Publications</h1>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">Exploring the frontiers of design research,
+                    bio-inspired innovation, and human-centered design</p>
             </div>
 
+            <!-- Featured Publication Carousel -->
+            <div id="featured-publications-carousel" class="relative">
+                <!-- Main Slide Container -->
+                <div id="featured-slide-container" class="relative min-h-[400px] md:min-h-[350px]">
+                    <!-- Slides will be injected here -->
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex items-center justify-center gap-4 mt-8">
+                    <button onclick="moveFeaturedSlide(-1)"
+                        class="w-12 h-12 rounded-full bg-white/10 hover:bg-leaf/50 backdrop-blur-sm flex items-center justify-center text-white transition-all duration-300 border border-white/20">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                            </path>
+                        </svg>
+                    </button>
+
+                    <!-- Indicators -->
+                    <div id="featured-indicators" class="flex gap-2">
+                        <!-- Indicators injected here -->
+                    </div>
+
+                    <button onclick="moveFeaturedSlide(1)"
+                        class="w-12 h-12 rounded-full bg-white/10 hover:bg-leaf/50 backdrop-blur-sm flex items-center justify-center text-white transition-all duration-300 border border-white/20">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3">
+                </path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- All Publications Section -->
+    <section id="Publications" class="py-16 px-6 bg-gray-50 dark:bg-gray-900">
+        <div class="container mx-auto max-w-6xl">
             <!-- Header with Google Scholar Link -->
-            <!-- Header with Google Scholar Link -->
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Publications</h2>
-                <p class="text-gray-600 dark:text-gray-400 mt-2">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-3">All Publications</h2>
+                <p class="text-gray-600 dark:text-gray-400">
                     For a complete list, <a class="text-leaf font-semibold hover:underline"
                         title="Link to Google Scholar Page"
                         href="https://scholar.google.co.in/citations?user=NLPFhkMAAAAJ&hl=en" target="_blank"
@@ -66,9 +120,6 @@
                 <!-- List items will be generated by JavaScript -->
             </div>
         </div>
-    </section>
-
-    </div>
     </section>
 
     <!-- Collaborations Section (Moved) -->

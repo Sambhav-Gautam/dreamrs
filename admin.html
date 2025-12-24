@@ -890,6 +890,45 @@
         </div>
     </div>
 
+    <!-- Course Modal -->
+    <div id="course-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+            <h3 class="text-lg font-bold mb-4 dark:text-white" id="course-modal-title">Add Course</h3>
+            <form id="course-form" class="space-y-4">
+                <input type="hidden" id="course-index" value="-1">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Course Code</label>
+                    <input id="course-code" type="text" placeholder="e.g. HCD501"
+                        class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Course Title</label>
+                    <input id="course-title" type="text" placeholder="e.g. Design Research Methods"
+                        class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                    <textarea id="course-desc" rows="3" placeholder="Course description..."
+                        class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Course Link
+                        (Optional)</label>
+                    <input id="course-link" type="url" placeholder="https://..."
+                        class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="closeModal('course-modal')"
+                        class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                    <button type="submit" class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save
+                        Course</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="env.js"></script>
     <script src="admin.js"></script>
 </body>

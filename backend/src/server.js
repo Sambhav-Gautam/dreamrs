@@ -13,6 +13,7 @@ const teamRoutes = require('./routes/team');
 const courseRoutes = require('./routes/courses');
 const openingRoutes = require('./routes/openings');
 const fileRoutes = require('./routes/files');
+const phdRoutes = require('./routes/phd');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -59,6 +60,7 @@ app.use('/api/data/research', researchRoutes);
 app.use('/api/data/team', teamRoutes);
 app.use('/api/data/courses', courseRoutes);
 app.use('/api/data/openings', openingRoutes);
+app.use('/api/data/phd', phdRoutes);
 app.use('/api/files', fileRoutes);
 
 // Settings API
@@ -105,6 +107,8 @@ app.get('/api/data/:section', async (req, res) => {
                 return require('./controllers/courseController').getCourses(req, res);
             case 'openings':
                 return require('./controllers/openingController').getOpenings(req, res);
+            case 'phd':
+                return require('./controllers/phdController').getPhd(req, res);
             default:
                 return res.status(404).json({ error: 'Section not found' });
         }
@@ -127,6 +131,8 @@ app.post('/api/data/:section', async (req, res) => {
                 return require('./controllers/courseController').updateCourses(req, res);
             case 'openings':
                 return require('./controllers/openingController').updateOpenings(req, res);
+            case 'phd':
+                return require('./controllers/phdController').updatePhd(req, res);
             default:
                 return res.status(404).json({ error: 'Section not found' });
         }

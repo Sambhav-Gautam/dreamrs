@@ -136,9 +136,18 @@ async function fetchTeam() {
 }
 
 async function fetchCourses() {
-    const res = await apiFetch('/api/data/courses');
-    coursesData = await res.json();
-    renderCoursesList();
+    try {
+        const res = await apiFetch('/api/data/courses');
+        const data = await res.json();
+        // Ensure coursesData is always an array
+        coursesData = Array.isArray(data) ? data : [];
+        console.log('Courses loaded:', coursesData.length);
+        renderCoursesList();
+    } catch (e) {
+        console.error('Failed to fetch courses:', e);
+        coursesData = [];
+        renderCoursesList();
+    }
 }
 
 // --- RESEARCH MANAGEMENT ---
@@ -242,7 +251,7 @@ document.getElementById('pub-form').addEventListener('submit', async (e) => {
             singleFormData.append('file', fileInput.files[i]);
 
             try {
-                const res = await fetch(`${API_BASE_URL} /api/upload`, {
+                const res = await fetch(`${API_BASE_URL}/api/upload`, {
                     method: 'POST',
                     body: singleFormData
                 });
@@ -789,7 +798,13 @@ function renderCoursesList() {
 }
 
 function openCourseModal() {
-    document.getElementById('course-form').reset();
+    const form = document.getElementById('course-form');
+    const modal = document.getElementById('course-modal');
+    if (!form || !modal) {
+        console.error('Course modal or form not found');
+        return;
+    }
+    form.reset();
     document.getElementById('course-index').value = -1;
     document.getElementById('course-modal-title').textContent = 'Add Course';
     openModal('course-modal');
@@ -797,36 +812,57 @@ function openCourseModal() {
 
 function editCourse(index) {
     const course = coursesData[index];
+    if (!course) {
+        console.error('Course not found at index', index);
+        return;
+    }
     document.getElementById('course-index').value = index;
-    document.getElementById('course-code').value = course.code;
-    document.getElementById('course-title').value = course.title;
-    document.getElementById('course-desc').value = course.description;
-    document.getElementById('course-link').value = course.link;
+    document.getElementById('course-code').value = course.code || '';
+    document.getElementById('course-title').value = course.title || '';
+    document.getElementById('course-desc').value = course.description || '';
+    document.getElementById('course-link').value = course.link || '';
     document.getElementById('course-modal-title').textContent = 'Edit Course';
     openModal('course-modal');
 }
 
-document.getElementById('course-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const index = parseInt(document.getElementById('course-index').value);
+// Course form submit handler - wrapped in null check
+const courseForm = document.getElementById('course-form');
+if (courseForm) {
+    courseForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    const newCourse = {
-        code: document.getElementById('course-code').value,
-        title: document.getElementById('course-title').value,
-        description: document.getElementById('course-desc').value,
-        link: document.getElementById('course-link').value
-    };
+        try {
+            const index = parseInt(document.getElementById('course-index').value);
 
-    if (index === -1) {
-        coursesData.push(newCourse);
-    } else {
-        coursesData[index] = newCourse;
-    }
+            const newCourse = {
+                code: document.getElementById('course-code').value,
+                title: document.getElementById('course-title').value,
+                description: document.getElementById('course-desc').value,
+                link: document.getElementById('course-link').value
+            };
 
-    await saveCourses();
-    renderCoursesList();
-    closeModal('course-modal');
-});
+            // Ensure coursesData is an array
+            if (!Array.isArray(coursesData)) {
+                coursesData = [];
+            }
+
+            if (index === -1) {
+                coursesData.push(newCourse);
+            } else {
+                coursesData[index] = newCourse;
+            }
+
+            await saveCourses();
+            renderCoursesList();
+            closeModal('course-modal');
+        } catch (err) {
+            console.error('Error saving course:', err);
+            alert('Failed to save course. Check console for details.');
+        }
+    });
+} else {
+    console.warn('Course form not found - course editing will not work');
+}
 
 async function deleteCourse(index) {
     if (!confirm('Delete this course?')) return;
@@ -836,10 +872,20 @@ async function deleteCourse(index) {
 }
 
 async function saveCourses() {
-    await apiFetch('/api/data/courses', {
-        method: 'POST',
-        body: JSON.stringify(coursesData)
-    });
+    try {
+        const res = await apiFetch('/api/data/courses', {
+            method: 'POST',
+            body: JSON.stringify(coursesData)
+        });
+        const result = await res.json();
+        if (!res.ok) {
+            throw new Error(result.error || 'Failed to save courses');
+        }
+        console.log('Courses saved successfully');
+    } catch (e) {
+        console.error('Failed to save courses:', e);
+        alert('Failed to save courses: ' + e.message);
+    }
 }
 
 
@@ -1033,6 +1079,32 @@ function saveThemeColor() {
     });
 }
 
+// Save Theme Settings (called from admin.html Settings tab)
+async function saveThemeSettings() {
+    const picker = document.getElementById('theme-color-picker');
+    const color = picker ? picker.value : currentThemeColor;
+
+    try {
+        await apiFetch('/api/settings', {
+            method: 'PUT',
+            body: JSON.stringify({ key: 'themeColor', value: color })
+        });
+
+        // Update local storage for immediate effect
+        localStorage.setItem('themeColor', color);
+
+        // Show success message
+        const status = document.getElementById('theme-save-status');
+        if (status) {
+            status.classList.remove('hidden');
+            setTimeout(() => status.classList.add('hidden'), 3000);
+        }
+    } catch (e) {
+        console.error('Save failed', e);
+        alert('Failed to save theme settings');
+    }
+}
+
 // Color Picker Listeners
 const colorPicker = document.getElementById('theme-color-picker');
 const colorHex = document.getElementById('theme-color-hex');
@@ -1089,12 +1161,125 @@ async function uploadLogo(type = 'nav') {
     }
 }
 
-
 // --- MARKDOWN / TEXT EDITOR LOGIC (For PI Modal) ---
 
 let piEducation = [];
 let piExperience = [];
 let piAwards = [];
+
+// Text Formatting Functions (called from admin.html)
+function formatText(command) {
+    const activeEditor = document.getElementById(window.activeEditorId || 'pi-content-editor');
+    if (activeEditor) activeEditor.focus();
+    document.execCommand(command, false, null);
+    if (activeEditor) activeEditor.focus();
+}
+
+function changeFontSize(size) {
+    if (!size) return;
+    const activeEditor = document.getElementById(window.activeEditorId || 'pi-content-editor');
+    if (activeEditor) activeEditor.focus();
+    document.execCommand('fontSize', false, size);
+    if (activeEditor) activeEditor.focus();
+}
+
+function insertLink() {
+    const url = prompt('Enter URL:');
+    if (url) {
+        document.execCommand('createLink', false, url);
+    }
+}
+
+function applyThemeColorToText() {
+    const color = currentThemeColor || '#16a34a';
+    document.execCommand('foreColor', false, color);
+}
+
+async function savePIContent() {
+    const content = document.getElementById('pi-content-editor').innerHTML;
+    try {
+        await apiFetch('/api/settings', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key: 'piContent', value: content })
+        });
+        const status = document.getElementById('pi-save-status');
+        if (status) {
+            status.classList.remove('hidden');
+            setTimeout(() => status.classList.add('hidden'), 2000);
+        }
+    } catch (err) {
+        console.error('Failed to save PI content:', err);
+        alert('Failed to save PI content');
+    }
+}
+
+// Expose functions to global window for onclick handlers
+window.formatText = formatText;
+window.changeFontSize = changeFontSize;
+window.insertLink = insertLink;
+window.applyThemeColorToText = applyThemeColorToText;
+window.savePIContent = savePIContent;
+
+// Selection management for rich text editor
+let savedSelection = null;
+
+function saveSelection() {
+    const sel = window.getSelection();
+    if (sel.rangeCount > 0) {
+        savedSelection = sel.getRangeAt(0).cloneRange();
+    }
+}
+
+function restoreSelection() {
+    if (savedSelection) {
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(savedSelection);
+    }
+}
+
+function toggleLink() {
+    restoreSelection();
+    const sel = window.getSelection();
+    if (!sel.rangeCount) return;
+
+    const parentLink = sel.anchorNode?.parentElement?.closest('a');
+    if (parentLink) {
+        // Remove link
+        document.execCommand('unlink', false, null);
+    } else {
+        // Add link
+        const url = prompt('Enter URL:');
+        if (url) {
+            document.execCommand('createLink', false, url);
+        }
+    }
+}
+
+function toggleThemeColor() {
+    restoreSelection();
+    const sel = window.getSelection();
+    if (!sel.rangeCount) return;
+
+    const parentSpan = sel.anchorNode?.parentElement;
+    const currentColor = parentSpan?.style?.color;
+    const themeColor = currentThemeColor || '#16a34a';
+
+    if (currentColor && (currentColor === themeColor || currentColor === 'rgb(22, 163, 74)')) {
+        // Remove color - set to inherit
+        document.execCommand('removeFormat', false, null);
+    } else {
+        // Apply theme color
+        document.execCommand('foreColor', false, themeColor);
+    }
+}
+
+// Export selection and toggle functions
+window.saveSelection = saveSelection;
+window.restoreSelection = restoreSelection;
+window.toggleLink = toggleLink;
+window.toggleThemeColor = toggleThemeColor;
 
 // PI Profile Editor Logic
 function setActiveEditor(id) {
@@ -1160,9 +1345,24 @@ async function loadPISettings() {
 }
 
 async function fetchPISettings() {
-    // Helper to allow external calls if needed, simply reuses internal load if appropriate
-    // But this is usually called by openPIModal
-    // We might want to load it initially for caching if we need to display it on dashboard summary
+    // Load PI settings on page startup so arrays are populated before any edits
+    try {
+        const res = await apiFetch('/api/settings');
+        const settings = await res.json();
+
+        // Populate global arrays with existing data
+        piEducation = settings.piEducation || [];
+        piExperience = settings.piExperience || [];
+        piAwards = settings.piAwards || [];
+
+        console.log('PI data loaded:', {
+            education: piEducation.length,
+            experience: piExperience.length,
+            awards: piAwards.length
+        });
+    } catch (e) {
+        console.error('Error loading PI settings on startup:', e);
+    }
 }
 
 async function savePISettingsContent() {
@@ -1197,7 +1397,7 @@ function renderEducationList() {
                 <div class="font-bold text-gray-800 dark:text-white">${item.degree || 'Degree'}</div>
                 <div class="text-sm text-gray-600 dark:text-gray-300 font-semibold">${item.institution || ''}</div>
                 <div class="text-sm text-gray-500 dark:text-gray-400 italic">${item.year || ''}</div>
-                ${item.thesis ? `<div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Thesis: ${item.thesis}</div>` : ''}
+                ${item.details || item.thesis ? `<div class="text-sm text-gray-500 dark:text-gray-400 mt-1">${item.details || item.thesis}</div>` : ''}
             </div>
             <div class="flex gap-2 ml-4">
                 <button onclick="openEducationModal(${index})" class="text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">Edit</button>
@@ -1218,12 +1418,14 @@ function openEducationModal(index = null) {
         document.getElementById('edu-degree').value = item.degree || '';
         document.getElementById('edu-institution').value = item.institution || '';
         document.getElementById('edu-year').value = item.year || '';
-        document.getElementById('edu-thesis').value = item.thesis || '';
+        const detailsEditor = document.getElementById('edu-details-editor');
+        if (detailsEditor) detailsEditor.innerHTML = item.details || item.thesis || '';
     } else {
         document.getElementById('edu-degree').value = '';
         document.getElementById('edu-institution').value = '';
         document.getElementById('edu-year').value = '';
-        document.getElementById('edu-thesis').value = '';
+        const detailsEditor = document.getElementById('edu-details-editor');
+        if (detailsEditor) detailsEditor.innerHTML = '';
     }
 }
 
@@ -1237,18 +1439,23 @@ async function saveEducationItem() {
         degree: document.getElementById('edu-degree').value,
         institution: document.getElementById('edu-institution').value,
         year: document.getElementById('edu-year').value,
-        thesis: document.getElementById('edu-thesis').value
+        details: document.getElementById('edu-details-editor')?.innerHTML || ''
     };
 
-    if (index !== '') {
+    if (index !== '' && index !== null) {
         piEducation[parseInt(index)] = item;
     } else {
         piEducation.push(item);
     }
 
-    await savePISetting('piEducation', piEducation);
-    renderEducationList();
-    closeEducationModal();
+    try {
+        await savePISetting('piEducation', piEducation);
+        renderEducationList();
+        closeEducationModal();
+    } catch (e) {
+        console.error('Failed to save education:', e);
+        alert('Failed to save education item');
+    }
 }
 
 async function deleteEducation(index) {
@@ -1309,15 +1516,20 @@ async function saveExperienceItem() {
         period: document.getElementById('exp-period').value
     };
 
-    if (index !== '') {
+    if (index !== '' && index !== null) {
         piExperience[parseInt(index)] = item;
     } else {
         piExperience.push(item);
     }
 
-    await savePISetting('piExperience', piExperience);
-    renderExperienceList();
-    closeExperienceModal();
+    try {
+        await savePISetting('piExperience', piExperience);
+        renderExperienceList();
+        closeExperienceModal();
+    } catch (e) {
+        console.error('Failed to save experience:', e);
+        alert('Failed to save experience item');
+    }
 }
 
 async function deleteExperience(index) {
@@ -1372,18 +1584,23 @@ async function saveAwardItem() {
     const index = document.getElementById('award-index').value;
     const item = {
         title: document.getElementById('award-title').value,
-        description: document.getElementById('award-details-editor').innerHTML
+        description: document.getElementById('award-details-editor')?.innerHTML || ''
     };
 
-    if (index !== '') {
+    if (index !== '' && index !== null) {
         piAwards[parseInt(index)] = item;
     } else {
         piAwards.push(item);
     }
 
-    await savePISetting('piAwards', piAwards);
-    renderAwardsList();
-    closeAwardsModal();
+    try {
+        await savePISetting('piAwards', piAwards);
+        renderAwardsList();
+        closeAwardsModal();
+    } catch (e) {
+        console.error('Failed to save award:', e);
+        alert('Failed to save award item');
+    }
 }
 
 async function deleteAward(index) {
@@ -1392,6 +1609,88 @@ async function deleteAward(index) {
     await savePISetting('piAwards', piAwards);
     renderAwardsList();
 }
+
+// --- GLOBAL WINDOW EXPORTS FOR onclick HANDLERS ---
+// PI Profile Functions
+window.openPIModal = openPIModal;
+window.loadPISettings = loadPISettings;
+window.savePISettingsContent = savePISettingsContent;
+window.setActiveEditor = setActiveEditor;
+window.execCmd = execCmd;
+
+// Education Functions
+window.openEducationModal = openEducationModal;
+window.closeEducationModal = closeEducationModal;
+window.saveEducationItem = saveEducationItem;
+window.deleteEducation = deleteEducation;
+
+// Experience Functions
+window.openExperienceModal = openExperienceModal;
+window.closeExperienceModal = closeExperienceModal;
+window.saveExperienceItem = saveExperienceItem;
+window.deleteExperience = deleteExperience;
+
+// Awards Functions
+window.openAwardsModal = openAwardsModal;
+window.closeAwardsModal = closeAwardsModal;
+window.saveAwardItem = saveAwardItem;
+window.deleteAward = deleteAward;
+
+// Research Functions
+window.openPublicationModal = openPublicationModal;
+window.editPublication = editPublication;
+window.deletePublication = deletePublication;
+window.removePubImage = removePubImage;
+window.renderResearchList = renderResearchList;
+window.saveResearch = saveResearch;
+
+// Collaboration Functions
+window.openCollabModal = openCollabModal;
+window.editCollab = editCollab;
+window.deleteCollab = deleteCollab;
+window.renderCollabList = renderCollabList;
+
+// Project Functions
+window.openProjectModal = openProjectModal;
+window.editProject = editProject;
+window.deleteProject = deleteProject;
+window.removeProjectImage = removeProjectImage;
+window.renderProjectsList = renderProjectsList;
+
+// Team Functions
+window.openTeamModal = openTeamModal;
+window.editTeam = editTeam;
+window.deleteTeam = deleteTeam;
+window.removeTeamImage = removeTeamImage;
+window.renderTeamList = renderTeamList;
+window.saveTeam = saveTeam;
+
+// Course Functions
+window.openCourseModal = openCourseModal;
+window.editCourse = editCourse;
+window.deleteCourse = deleteCourse;
+window.renderCoursesList = renderCoursesList;
+window.saveCourses = saveCourses;
+
+// Openings Functions
+window.loadOpeningsAdmin = loadOpeningsAdmin;
+window.saveGeneralOpening = saveGeneralOpening;
+window.deleteGeneralOpeningFile = deleteGeneralOpeningFile;
+
+// Theme Functions
+window.setThemeColor = setThemeColor;
+window.saveThemeColor = saveThemeColor;
+window.saveThemeSettings = saveThemeSettings;
+window.applyThemeColor = applyThemeColor;
+window.fetchThemeSettings = fetchThemeSettings;
+
+// Logo Functions
+window.uploadLogo = uploadLogo;
+
+// Tab/Modal Functions
+window.openTab = openTab;
+window.openModal = openModal;
+window.closeModal = closeModal;
 
 // Initialize
 checkAuth();
