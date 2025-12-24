@@ -1,5 +1,11 @@
 {
     "version": 2,
+    "functions": {
+        "api/index.js": {
+            "memory": 1024,
+            "maxDuration": 30
+        }
+    },
     "builds": [
         {
             "src": "api/index.js",
@@ -37,6 +43,20 @@
         }
     ],
     "routes": [
+        {
+            "src": "/api/files/download/(.*)",
+            "dest": "/api/index.js",
+            "headers": {
+                "Cache-Control": "public, max-age=31536000, immutable"
+            }
+        },
+        {
+            "src": "/api/data/(.*)",
+            "dest": "/api/index.js",
+            "headers": {
+                "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300"
+            }
+        },
         {
             "src": "/api/(.*)",
             "dest": "/api/index.js"

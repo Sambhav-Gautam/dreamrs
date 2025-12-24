@@ -2,34 +2,55 @@ const mongoose = require('mongoose');
 
 let gfs;
 let gridfsBucket;
-let cachedConnection = null;
+
+// Global cached connection promise for serverless
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
 const connectDB = async () => {
-  // Return cached connection if available (for serverless)
-  if (cachedConnection && mongoose.connection.readyState === 1) {
-    return cachedConnection;
+  // Return cached connection if available
+  if (cached.conn && mongoose.connection.readyState === 1) {
+    return cached.conn;
+  }
+
+  // If a connection is in progress, wait for it
+  if (cached.promise) {
+    cached.conn = await cached.promise;
+    return cached.conn;
   }
 
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      bufferCommands: false, // Disable buffering for serverless
-    });
+    // Optimized connection options for serverless
+    const opts = {
+      bufferCommands: false,
+      maxPoolSize: 10,           // Limit connections for serverless
+      minPoolSize: 1,            // Keep at least 1 connection warm
+      serverSelectionTimeoutMS: 5000,  // Faster timeout
+      socketTimeoutMS: 45000,    // Close sockets after 45s
+      maxIdleTimeMS: 10000,      // Close idle connections after 10s
+    };
 
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    cached.promise = mongoose.connect(process.env.MONGODB_URI, opts);
+    cached.conn = await cached.promise;
+
+    console.log(`MongoDB Connected: ${cached.conn.connection.host}`);
 
     // Initialize GridFS bucket after connection
-    const db = conn.connection.db;
+    const db = cached.conn.connection.db;
     gridfsBucket = new mongoose.mongo.GridFSBucket(db, {
       bucketName: 'uploads'
     });
 
     console.log('GridFS bucket initialized');
 
-    cachedConnection = conn;
-    return conn;
+    return cached.conn;
   } catch (error) {
+    cached.promise = null; // Reset on error to allow retry
     console.error('MongoDB connection error:', error.message);
-    throw error; // Don't exit in serverless, just throw
+    throw error;
   }
 };
 
