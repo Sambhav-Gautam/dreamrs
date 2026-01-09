@@ -29,35 +29,30 @@
                 </p>
             </div>
 
-            <!-- Opening Cards -->
-            <div class="max-w-4xl mx-auto w-full">
-                <!-- General Opening -->
-                <div class="card-enhanced text-center p-12 flex flex-col items-center shadow-2xl dark:shadow-none border border-gray-100 dark:border-gray-800"
-                    style="transform: none !important;">
-                    <div id="opening-actions" class="w-full max-w-md space-y-4">
-                        <!-- Actions will be inserted here by JavaScript -->
-                        <div class="animate-pulse flex space-x-4 justify-center">
-                            <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-                        </div>
+            <!-- Opening Categories -->
+            <div id="openings-container" class="w-full px-4 md:px-8">
+                <!-- Loading State -->
+                <div id="loading-state" class="text-center py-12">
+                    <div class="animate-pulse flex flex-col items-center gap-4">
+                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+                        <div class="h-32 bg-gray-100 dark:bg-gray-800 rounded-xl w-full max-w-2xl"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Contact CTA -->
-            <div class="mt-16 text-center glass-card rounded-2xl p-8 max-w-2xl mx-auto w-full">
-                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">Questions?</h3>
-                <p class="text-gray-600 dark:text-gray-400 mb-6">
-                    Contact Dr. Sonal Keshwani with your CV and research interests
-                </p>
-                <a href="mailto:sonal.keshwani@iiitd.ac.in" class="btn-primary inline-flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                        </path>
-                    </svg>
-                    Send Email
-                </a>
-            </div>
+            <!-- Template for Sections (to be used by JS) -->
+            <template id="category-template">
+                <div class="category-section">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-1 h-8 bg-leaf rounded-full"></div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white category-title">Category
+                            Name</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 category-grid">
+                        <!-- Cards injected here -->
+                    </div>
+                </div>
+            </template>
         </div>
     </section>
 
@@ -77,69 +72,95 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/api/data/openings`);
                 const data = await response.json();
-                // Expecting { generalOpening: { file: "...", link: "..." } } or old format fallback
+                const categories = data.categories || { phd: [], ra: [], btech: [], mtech: [] };
 
-                const item = data.generalOpening || {};
-
-                renderOpeningActions(item);
+                renderCategories(categories);
             } catch (error) {
                 console.error('Error loading openings:', error);
-
-                // Fallback / Clear loading state
-                const container = document.getElementById('opening-actions');
-                if (container) {
-                    container.innerHTML = `<div class="text-red-500">Failed to load openings.</div>`;
-                }
+                document.getElementById('loading-state').innerHTML = `<p class="text-red-500">Failed to load openings.</p>`;
             }
         }
 
-        function renderOpeningActions(item) {
-            const container = document.getElementById('opening-actions');
-            if (!container) return;
+        function renderCategories(data) {
+            const container = document.getElementById('openings-container');
+            container.innerHTML = ''; // Clear loading
 
-            // Check if empty
-            if (!item.file && !item.link) {
-                container.innerHTML = `
-                    <div class="py-5 px-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-gray-500 dark:text-gray-400 font-medium border border-dashed border-gray-300 dark:border-gray-700">
-                        Currently no open positions. Please check back later.
-                    </div>
+            // Table-like Grid Container
+            // Uses divide-x to create vertical separators between columns
+            const grid = document.createElement('div');
+            grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-gray-700 border-t border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900';
+
+            const catMap = [
+                { id: 'phd', title: 'PhD Positions' },
+                { id: 'ra', title: 'Research Assistant' },
+                { id: 'btech', title: 'B.Tech Projects' },
+                { id: 'mtech', title: 'M.Tech Projects' }
+            ];
+
+            catMap.forEach(cat => {
+                const items = data[cat.id] || [];
+
+                // Column Container
+                const col = document.createElement('div');
+                col.className = 'p-6 flex flex-col min-h-[300px] hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors';
+
+                // Header (Centered Title)
+                let content = `
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-8 text-center uppercase tracking-wide border-b border-gray-100 dark:border-gray-800 pb-4">${cat.title}</h2>
+                    <div class="flex-1 w-full">
                 `;
-                return;
-            }
 
-            // Create a flex row container for side-by-side buttons
-            container.innerHTML = '';
-            container.className = 'flex flex-row gap-4 w-full max-w-lg justify-center';
+                if (items.length > 0) {
+                    content += `
+                        <table class="w-full text-left border-collapse">
+                            <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                    `;
 
-            // View Opening Button (Left) - if PDF exists
-            if (item.file) {
-                const btnFile = document.createElement('a');
-                btnFile.href = getFileUrl(item.file);
-                btnFile.target = "_blank";
-                btnFile.className = "btn-secondary flex-1 flex items-center justify-center gap-2 text-base py-3 px-4";
-                btnFile.innerHTML = `
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    View Opening
-                `;
-                container.appendChild(btnFile);
-            }
+                    items.forEach((item, index) => {
+                        content += `
+                            <tr>
+                                <td class="py-3 px-2 text-gray-500 dark:text-gray-400 font-medium align-top w-8">${index + 1}.</td>
+                                <td class="py-3 px-2 align-top">
+                                    <span class="text-gray-900 dark:text-gray-100 font-medium text-base leading-snug block">${item.title}</span>
+                                </td>
+                                <td class="py-3 px-2 align-top text-right whitespace-nowrap w-32">
+                                    <div class="flex flex-col items-end gap-1">
+                                        ${item.file ? `
+                                            <a href="${getFileUrl(item.file)}" target="_blank" class="text-leaf hover:text-green-700 font-bold hover:underline inline-flex items-center gap-1 text-sm">
+                                                <span>View PDF</span>
+                                            </a>
+                                        ` : ''}
+                                        
+                                        ${item.link ? `
+                                            <a href="${item.link}" target="_blank" class="text-leaf hover:text-green-700 font-bold hover:underline inline-flex items-center gap-1 text-sm">
+                                                <span>Apply</span>
+                                            </a>
+                                        ` : ''}
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
 
-            // Apply Button (Right) - if Link exists
-            if (item.link) {
-                const btnLink = document.createElement('a');
-                btnLink.href = item.link;
-                btnLink.target = "_blank";
-                btnLink.className = "btn-primary flex-1 flex items-center justify-center gap-2 text-base py-3 px-4 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all";
-                btnLink.innerHTML = `
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                    </svg>
-                    Apply
-                `;
-                container.appendChild(btnLink);
-            }
+                    content += `
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    // Empty State
+                    content += `
+                        <div class="h-full flex flex-col items-center justify-start pt-10 text-gray-400 dark:text-gray-500">
+                            <span class="text-sm italic">-- No Current Openings --</span>
+                        </div>
+                    `;
+                }
+
+                content += `</div>`;
+                col.innerHTML = content;
+                grid.appendChild(col);
+            });
+
+            container.appendChild(grid);
         }
 
         document.addEventListener('DOMContentLoaded', loadOpenings);

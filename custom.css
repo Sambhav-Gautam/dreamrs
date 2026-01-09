@@ -2,16 +2,14 @@
    BASE THEME COLORS
    =================================== */
 :root {
-    --leaf-color: #16a34a;
-    /* Green-600 - base */
-    --leaf-color-light: #22c55e;
-    /* Green-500 - brighter for dark mode */
-    --leaf-color-dark: #15803d;
-    /* Green-700 - for backgrounds */
-    --leaf-r: 22;
-    --leaf-g: 197;
-    --leaf-b: 94;
-    --leaf-bg-light: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.15);
+    --leaf-color: #0891B2;
+    --leaf-r: 8;
+    --leaf-g: 145;
+    --leaf-b: 178;
+    --leaf-color-light: #0891B2;
+    --leaf-color-dark: #06b6d4;
+    /* Cyan-500 equivalent approx */
+    --leaf-bg-light: rgba(8, 145, 178, 0.1);
     --leaf-bg-dark: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.25);
 }
 

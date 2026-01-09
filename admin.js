@@ -889,124 +889,213 @@ async function saveCourses() {
 }
 
 
-// --- OPENINGS (Single Global Item Logic) ---
+// --- OPENINGS (Categorized) ---
 
-let currentOpenings = {};
+let openingsData = { phd: [], ra: [], btech: [], mtech: [] };
 
 async function loadOpeningsAdmin() {
     try {
-        const res = await apiFetch('/api/settings');
-        const settings = await res.json();
-        // Use 'generalOpening' key
-        currentOpenings = settings.generalOpening || {};
-
-        const linkInput = document.getElementById('general-link');
-        const fileDisplay = document.getElementById('general-current-file');
-
-        if (linkInput) linkInput.value = currentOpenings.link || '';
-        if (fileDisplay) {
-            if (currentOpenings.file) {
-                fileDisplay.innerHTML = `
-                    <span class="italic">Current: <a href="${getFileUrl(currentOpenings.file)}" target="_blank" class="text-leaf hover:underline font-medium">${currentOpenings.file}</a></span>
-                    <button onclick="deleteGeneralOpeningFile()" class="text-red-500 hover:text-red-700 text-xs font-medium px-2 py-1 rounded border border-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">Delete PDF</button>
-                `;
-            } else {
-                fileDisplay.innerHTML = '<span class="italic">No file uploaded</span>';
-            }
-        }
-
+        const res = await apiFetch('/api/data/openings');
+        const json = await res.json();
+        // Backend returns { categories: { ... } } or legacy
+        openingsData = json.categories || { phd: [], ra: [], btech: [], mtech: [] };
+        renderOpeningsList();
     } catch (e) {
         console.error('Error loading openings:', e);
     }
 }
 
-async function saveGeneralOpening() {
-    const fileInput = document.getElementById('general-file');
-    const linkInput = document.getElementById('general-link');
-    const linkValue = linkInput ? linkInput.value.trim() : '';
+function renderOpeningsList() {
+    const categories = ['phd', 'ra', 'btech', 'mtech'];
 
-    // Copy existing data to preserve fields not being updated
-    let newData = { ...currentOpenings };
+    categories.forEach(cat => {
+        const listContainer = document.getElementById(`openings-list-${cat}`);
+        if (!listContainer) return;
 
-    try {
-        // 1. Handle File Upload if present
-        if (fileInput && fileInput.files.length > 0) {
-            const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
-            formData.append('folder', 'pdfs');
+        listContainer.innerHTML = '';
+        const items = openingsData[cat] || [];
 
-            const uploadRes = await fetch(`${API_BASE_URL}/api/files/upload`, {
+        if (items.length === 0) {
+            listContainer.innerHTML = '<p class="text-sm text-gray-500 italic p-2">No active openings.</p>';
+            return;
+        }
+
+        items.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'p-3 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600 flex justify-between items-start';
+            div.innerHTML = `
+                <div>
+                    <p class="font-semibold text-gray-800 dark:text-white text-sm">${item.title}</p>
+                    ${item.description ? `<p class="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate max-w-xs">${item.description}</p>` : ''}
+                    ${item.file ? `<div class="text-xs text-leaf mt-1">PDF: <a href="${getFileUrl(item.file)}" target="_blank" class="hover:underline">View</a></div>` : ''}
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="openOpeningModal('${cat}', ${index})" class="text-blue-500 hover:text-blue-700 text-xs font-medium">Edit</button>
+                    <button onclick="deleteOpening('${cat}', ${index})" class="text-red-500 hover:text-red-700 text-xs font-medium">Delete</button>
+                </div>
+            `;
+            listContainer.appendChild(div);
+        });
+    });
+}
+
+function openOpeningModal(category, index = -1) {
+    document.getElementById('opening-form').reset();
+    document.getElementById('opening-category').value = category;
+    document.getElementById('opening-index').value = index;
+    document.getElementById('opening-current-file').innerHTML = '';
+
+    const titleEl = document.getElementById('opening-modal-title');
+    // Map category codes to nice names for title
+    const catNames = { phd: 'PhD', ra: 'RA', btech: 'B.Tech', mtech: 'M.Tech' };
+    const niceCat = catNames[category] || category.toUpperCase();
+
+    if (index === -1 || index === '-1') {
+        titleEl.textContent = `Add ${niceCat} Opening`;
+    } else {
+        const item = openingsData[category][index];
+        titleEl.textContent = `Edit ${niceCat} Opening`;
+
+        document.getElementById('opening-title').value = item.title || '';
+        document.getElementById('opening-desc').value = item.description || '';
+        document.getElementById('opening-link').value = item.link || '';
+
+        if (item.file) {
+            document.getElementById('opening-current-file').innerHTML = `
+                <div class="flex items-center gap-2 mt-1">
+                    <span class="text-gray-600 dark:text-gray-400 italic">Current: ${item.file}</span>
+                </div>
+            `;
+        }
+    }
+
+    openModal('opening-modal');
+}
+
+// Opening Form Submit
+document.getElementById('opening-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const category = document.getElementById('opening-category').value;
+    const index = parseInt(document.getElementById('opening-index').value);
+
+    const title = document.getElementById('opening-title').value;
+    const desc = document.getElementById('opening-desc').value;
+    const link = document.getElementById('opening-link').value;
+    const fileInput = document.getElementById('opening-file');
+
+    let filename = null;
+
+    // 1. Handle File Upload
+    if (fileInput.files.length > 0) {
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        formData.append('folder', 'pdfs');
+
+        try {
+            // Delete old file if editing
+            if (index !== -1) {
+                const oldItem = openingsData[category][index];
+                if (oldItem && oldItem.file) {
+                    await apiFetch('/api/delete-file', {
+                        method: 'POST',
+                        body: JSON.stringify({ filename: oldItem.file, type: 'pdf' })
+                    });
+                }
+            }
+
+            const res = await fetch(`${API_BASE_URL}/api/upload`, {
                 method: 'POST',
                 body: formData
             });
+            const data = await res.json();
+            if (data.filename) filename = data.filename;
 
-            if (!uploadRes.ok) throw new Error('File upload failed');
-
-            const uploadData = await uploadRes.json();
-            newData.file = uploadData.filename;
+        } catch (err) {
+            console.error("Upload failed", err);
+            alert("File upload failed");
+            return;
         }
-
-        // 2. Update Link
-        newData.link = linkValue;
-
-        // 3. Update Local State
-        currentOpenings = newData;
-
-        // 4. Save to Settings under 'generalOpening'
-        await apiFetch('/api/settings', {
-            method: 'PUT',
-            body: JSON.stringify({ key: 'generalOpening', value: currentOpenings })
-        });
-
-        alert('Openings settings saved successfully!');
-
-        // Refresh UI
-        loadOpeningsAdmin();
-
-        // Clear file input
-        if (fileInput) fileInput.value = '';
-
-    } catch (e) {
-        console.error('Error saving opening:', e);
-        alert('Failed to save opening: ' + e.message);
-    }
-}
-
-async function deleteGeneralOpeningFile() {
-    if (!currentOpenings.file) {
-        alert('No file to delete.');
-        return;
+    } else if (index !== -1) {
+        // Keep existing file
+        filename = openingsData[category][index].file;
     }
 
-    if (!confirm('Are you sure you want to delete the current PDF?')) return;
+    const newItem = {
+        title,
+        description: desc,
+        link,
+        file: filename
+    };
 
     try {
-        // 1. Delete file from server (optional - could leave orphaned files)
-        await apiFetch('/api/delete-file', {
-            method: 'POST',
-            body: JSON.stringify({ filename: currentOpenings.file, type: 'pdf' })
-        });
+        if (index === -1) {
+            // Add new
+            await apiFetch(`/api/data/openings/${category}`, {
+                method: 'POST',
+                body: JSON.stringify(newItem)
+            });
+            // Update local state optimistically or re-fetch? Re-fetching is safer
+        } else {
+            // Edit existing - we need to update the entire array for this category?
+            // Or the backend supports index editing? 
+            // The current backend controller supports:
+            // POST /:category -> add
+            // DELETE /:category/:index -> delete
+            // POST / -> update ALL data (updateOpenings)
 
-        // 2. Remove from settings
-        delete currentOpenings.file;
+            // To edit specific item via index, we should modify local array and send ALL data 
+            // OR improve backend to support edit. 
+            // Given implemented backend 'updateOpenings' replaces `data.data` with req.body:
 
-        await apiFetch('/api/settings', {
-            method: 'PUT',
-            body: JSON.stringify({ key: 'generalOpening', value: currentOpenings })
-        });
+            // Let's modify local state and save ALL data.
+            openingsData[category][index] = newItem;
 
-        alert('PDF deleted successfully!');
-        loadOpeningsAdmin();
+            await apiFetch('/api/data/openings', {
+                method: 'POST',
+                body: JSON.stringify(openingsData)
+            });
+        }
+
+        await loadOpeningsAdmin();
+        closeModal('opening-modal');
 
     } catch (e) {
-        console.error('Error deleting file:', e);
-        alert('Failed to delete file: ' + e.message);
+        console.error("Save failed", e);
+        alert("Failed to save opening");
+    }
+});
+
+async function deleteOpening(category, index) {
+    if (!confirm('Are you sure you want to delete this opening?')) return;
+
+    // Delete file if exists
+    const item = openingsData[category][index];
+    if (item.file) {
+        try {
+            await apiFetch('/api/delete-file', {
+                method: 'POST',
+                body: JSON.stringify({ filename: item.file, type: 'pdf' })
+            });
+        } catch (e) {
+            console.error("File delete error", e);
+        }
+    }
+
+    try {
+        await apiFetch(`/api/data/openings/${category}/${index}`, {
+            method: 'DELETE'
+        });
+        await loadOpeningsAdmin();
+    } catch (e) {
+        console.error("Delete failed", e);
+        alert("Failed to delete opening");
     }
 }
 
 // --- THEME SETTINGS MANAGEMENT ---
 
-let currentThemeColor = '#16a34a';
+let currentThemeColor = '#0891B2';
 
 // Apply cached theme immediately to prevent flash of green
 const cachedTheme = localStorage.getItem('themeColor');

@@ -176,55 +176,111 @@
             </div>
 
             <!-- Openings Tab -->
-            <div id="openings-tab" class="tab-content hidden max-w-2xl mx-auto">
-                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-8">
+            <div id="openings-tab" class="tab-content hidden">
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6 border-b dark:border-gray-700 pb-4">
-                        General Opening Settings
+                        Manage Openings (Categorized)
                     </h3>
-                    <div class="space-y-6">
-                        <!-- Description PDF -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Job Description / Details PDF
-                            </label>
-                            <div
-                                class="flex flex-col gap-3 bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
-                                <input type="file" id="general-file" accept=".pdf"
-                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20 connection-action" />
-                                <div id="general-current-file"
-                                    class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                                    <!-- Will be populated by JS -->
-                                </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- PhD Openings -->
+                        <div
+                            class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200">PhD Positions</h4>
+                                <button onclick="openOpeningModal('phd')"
+                                    class="bg-leaf hover:bg-green-600 text-white px-3 py-1.5 rounded text-sm">+
+                                    Add</button>
                             </div>
+                            <div id="openings-list-phd" class="space-y-3 min-h-[50px]"></div>
                         </div>
 
-                        <!-- Application Link -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Application Link (Google Form)
-                            </label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <input type="url" id="general-link" placeholder="https://forms.google.com/..."
-                                    class="w-full pl-10 border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-leaf focus:border-transparent transition-all" />
+                        <!-- RA Openings -->
+                        <div
+                            class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200">Research Assistants (RA)</h4>
+                                <button onclick="openOpeningModal('ra')"
+                                    class="bg-leaf hover:bg-green-600 text-white px-3 py-1.5 rounded text-sm">+
+                                    Add</button>
                             </div>
+                            <div id="openings-list-ra" class="space-y-3 min-h-[50px]"></div>
                         </div>
 
-                        <!-- Save Action -->
-                        <div class="pt-4 flex justify-end">
-                            <button onclick="saveGeneralOpening()"
-                                class="bg-leaf hover:bg-green-600 text-white px-6 py-2.5 rounded-lg font-medium shadow-md transition-all hover:-translate-y-0.5">
-                                Save Settings
-                            </button>
+                        <!-- B.Tech Projects -->
+                        <div
+                            class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200">B.Tech Projects</h4>
+                                <button onclick="openOpeningModal('btech')"
+                                    class="bg-leaf hover:bg-green-600 text-white px-3 py-1.5 rounded text-sm">+
+                                    Add</button>
+                            </div>
+                            <div id="openings-list-btech" class="space-y-3 min-h-[50px]"></div>
+                        </div>
+
+                        <!-- M.Tech Projects -->
+                        <div
+                            class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200">M.Tech Projects</h4>
+                                <button onclick="openOpeningModal('mtech')"
+                                    class="bg-leaf hover:bg-green-600 text-white px-3 py-1.5 rounded text-sm">+
+                                    Add</button>
+                            </div>
+                            <div id="openings-list-mtech" class="space-y-3 min-h-[50px]"></div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Opening Modal (New) -->
+            <div id="opening-modal"
+                class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+                    <h3 id="opening-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add
+                        Opening</h3>
+                    <form id="opening-form" class="space-y-4">
+                        <input type="hidden" id="opening-index">
+                        <input type="hidden" id="opening-category">
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Title / Project
+                                Name</label>
+                            <input type="text" id="opening-title"
+                                class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description
+                                (Optional)</label>
+                            <textarea id="opening-desc" rows="3"
+                                class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">PDF File
+                                (Optional)</label>
+                            <input type="file" id="opening-file" accept=".pdf"
+                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20">
+                            <div id="opening-current-file" class="mt-2 text-sm"></div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Application Link
+                                (Optional)</label>
+                            <input type="url" id="opening-link" placeholder="https://..."
+                                class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+
+                        <div class="flex justify-end gap-3 mt-6">
+                            <button type="button" onclick="closeModal('opening-modal')"
+                                class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                            <button type="submit"
+                                class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 

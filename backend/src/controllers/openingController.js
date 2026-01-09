@@ -1,15 +1,17 @@
 const Settings = require('../models/Settings');
+const OpeningsData = require('../models/Opening');
 
 // Get all openings
 exports.getOpenings = async (req, res) => {
     try {
-        // Query for the specific generalOpening key
-        const openingSetting = await Settings.findOne({ key: 'generalOpening' });
+        let data = await OpeningsData.findOne();
 
-        // Return object structure expected by frontend
-        // frontend expects { generalOpening: { file: ..., link: ... } }
+        // Return object structure
         res.json({
-            generalOpening: openingSetting?.value || {}
+            // Legacy support or migration if needed, but we focus on the 'data' field
+            // The schema has a 'data' mixed field. 
+            // We expect data.data to contain { phd: [], ra: [], btech: [], mtech: [] }
+            categories: data?.data || { phd: [], ra: [], btech: [], mtech: [] }
         });
     } catch (error) {
         console.error('Error fetching openings:', error);

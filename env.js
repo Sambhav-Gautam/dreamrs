@@ -7,12 +7,11 @@
 
 window.ENV = {
     // API Base URL - Update this when deploying backend separately
-    // For local development: 'http://localhost:5000'
-    // For production: '' for same origin (Vercel deployment)
-    API_BASE_URL: '',
+    // For local development: 'http://localhost:5001'
+    API_BASE_URL: 'http://localhost:5001',
 
     // Environment mode
-    NODE_ENV: 'production',
+    NODE_ENV: 'development',
 
     // Feature flags (optional)
     ENABLE_DEBUG: true

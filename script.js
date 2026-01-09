@@ -358,11 +358,15 @@ document.addEventListener('DOMContentLoaded', function () {
     applyTheme(getThemePreference());
 
     // Toggle theme on button click
-    themeToggle.addEventListener('click', function () {
-        const currentTheme = html.classList.contains('dark') ? 'dark' : 'light';
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        applyTheme(newTheme);
-    });
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function () {
+            const currentTheme = html.classList.contains('dark') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+        });
+    } else {
+        console.warn('Theme toggle button not found');
+    }
 
     // Listen for system theme changes
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
