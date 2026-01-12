@@ -558,9 +558,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const files = await res.json();
 
             // Map files to slides
-            files.forEach(filename => {
-                // Ignore system files
-                if (!filename.match(/\.(jpg|jpeg|png|gif|webp)$/i)) return;
+            files.forEach(file => {
+                const filename = typeof file === 'string' ? file : file.filename;
+
+                // Ignore system files & ensure we have a valid filename string
+                if (!filename || !filename.match(/\.(jpg|jpeg|png|gif|webp)$/i)) return;
 
                 // Find metadata if available
                 let title = "";
