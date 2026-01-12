@@ -450,7 +450,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         container.innerHTML = `
-            <div class="featured-slide bg-white dark:bg-gradient-to-br dark:from-white/10 dark:to-white/5 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/10 p-8 md:p-10 shadow-xl dark:shadow-2xl">
+            <div class="featured-slide bg-gray-50 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-gray-700 p-8 md:p-10 shadow-xl">
                 <!-- Title -->
                 <h3 class="text-xl md:text-2xl text-gray-800 dark:text-white mb-4 leading-tight">
                     <a href="${pub.Link}" target="_blank" rel="noopener" class="hover:text-leaf transition-colors">
