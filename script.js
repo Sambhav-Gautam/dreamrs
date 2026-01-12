@@ -918,72 +918,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // --- PI Profile Rendering ---
-async function loadPIProfile() {
-    const containers = {
-        bio: document.getElementById('pi-content-display'),
-        education: document.getElementById('education-container'),
-        experience: document.getElementById('experience-container'),
-        awards: document.getElementById('awards-container')
-    };
-
-    // If no PI containers exist, we might not be on the PI page
-    if (!Object.values(containers).some(c => c)) return;
-
-    try {
-        const res = await apiFetch('/api/settings');
-        if (!res.ok) return;
-        const settings = await res.json();
-
-        // 1. Render Bio
-        if (containers.bio && settings.piContent) {
-            containers.bio.innerHTML = settings.piContent;
-        }
-
-        // 2. Render Education
-        if (containers.education && settings.piEducation && settings.piEducation.length > 0) {
-            const eduList = settings.piEducation;
-            document.getElementById('education-section')?.classList.remove('hidden');
-            containers.education.innerHTML = eduList.map(item => `
-                <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md transition-colors duration-300">
-                    <h3 class="text-xl font-medium text-gray-700 dark:text-gray-200">${item.degree || ''}</h3>
-                    <p class="mt-2 text-gray-600 dark:text-gray-400 font-medium">${item.institution || ''} <span class="text-gray-500 font-normal">(${item.year || ''})</span></p>
-                    ${item.details ? `<div class="mt-2 text-gray-600 dark:text-gray-400">${item.details}</div>` : ''}
-                </div>
-            `).join('');
-        }
-
-        // 3. Render Experience
-        if (containers.experience && settings.piExperience && settings.piExperience.length > 0) {
-            const expList = settings.piExperience;
-            document.getElementById('experience-section')?.classList.remove('hidden');
-            containers.experience.innerHTML = expList.map(item => `
-                <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md transition-colors duration-300">
-                    <h3 class="text-xl font-medium text-gray-700 dark:text-gray-200">${item.role || ''}</h3>
-                    <p class="mt-2 text-gray-600 dark:text-gray-400">${item.institution || ''} <span class="text-gray-500">(${item.period || ''})</span></p>
-                </div>
-            `).join('');
-        }
-
-        // 4. Render Awards
-        if (containers.awards && settings.piAwards && settings.piAwards.length > 0) {
-            const awardsList = settings.piAwards;
-            document.getElementById('awards-section')?.classList.remove('hidden');
-            containers.awards.className = "mt-4 space-y-4"; // Ensure container has spacing for cards
-            containers.awards.innerHTML = awardsList.map(item => `
-                <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md transition-colors duration-300">
-                    <h3 class="font-medium text-gray-700 dark:text-gray-200">${item.title}</h3>
-                    ${item.description ? `<div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">${item.description}</div>` : ''}
-                </div>
-            `).join('');
-        }
-
-    } catch (e) {
-        console.error('Error loading PI profile:', e);
-    }
-}
-
-document.addEventListener('DOMContentLoaded', loadPIProfile);
-// --- Fixed PI Profile Rendering (Append) ---
+// --- PI Profile Rendering ---
 async function initPIProfile() {
     const containers = {
         bio: document.getElementById('pi-content-display'),
@@ -1008,40 +943,55 @@ async function initPIProfile() {
             containers.bio.innerHTML = settings.piContent;
         }
 
-        // 2. Render Education
+        // 2. Render Education (Timeline Style)
         if (containers.education && settings.piEducation && settings.piEducation.length > 0) {
             const eduList = settings.piEducation;
             document.getElementById('education-section')?.classList.remove('hidden');
-            containers.education.innerHTML = eduList.map(item => `
-                <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md transition-colors duration-300">
-                    <h3 class="text-xl font-medium text-gray-700 dark:text-gray-200">${item.degree || ''}</h3>
-                    <p class="mt-2 text-gray-600 dark:text-gray-400 font-medium">${item.institution || ''} <span class="text-gray-500 font-normal">(${item.year || ''})</span></p>
-                    ${item.details ? `<div class="mt-2 text-gray-600 dark:text-gray-400">${item.details}</div>` : ''}
+            containers.education.className = "mt-6 space-y-0 pl-2"; // Remove generalized space-y
+            containers.education.innerHTML = eduList.map((item, index) => `
+                <div class="relative pl-8 border-l-2 border-gray-200 dark:border-gray-700 pb-8 last:pb-0">
+                    <div class="absolute -left-[9px] top-1.5 w-4 h-4 bg-white dark:bg-gray-900 border-2 border-leaf rounded-full"></div>
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 leading-tight">${item.degree || ''}</h3>
+                    <div class="flex flex-wrap items-center gap-2 mt-1.5 text-sm text-gray-600 dark:text-gray-400">
+                        <span class="font-medium text-gray-700 dark:text-gray-300">${item.institution || ''}</span>
+                        ${item.year ? `<span class="w-1 h-1 bg-gray-400 rounded-full"></span><span>${item.year}</span>` : ''}
+                    </div>
+                    ${item.details ? `<div class="mt-2 text-sm text-gray-500 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-800/50 p-3 rounded border-l-2 border-leaf/30">${item.details}</div>` : ''}
                 </div>
             `).join('');
         }
 
-        // 3. Render Experience
+        // 3. Render Experience (Timeline Style)
         if (containers.experience && settings.piExperience && settings.piExperience.length > 0) {
             const expList = settings.piExperience;
             document.getElementById('experience-section')?.classList.remove('hidden');
+            containers.experience.className = "mt-6 space-y-0 pl-2";
             containers.experience.innerHTML = expList.map(item => `
-                <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md transition-colors duration-300">
-                    <h3 class="text-xl font-medium text-gray-700 dark:text-gray-200">${item.role || ''}</h3>
-                    <p class="mt-2 text-gray-600 dark:text-gray-400">${item.institution || ''} <span class="text-gray-500">(${item.period || ''})</span></p>
+                <div class="relative pl-8 border-l-2 border-gray-200 dark:border-gray-700 pb-8 last:pb-0">
+                    <div class="absolute -left-[9px] top-1.5 w-4 h-4 bg-white dark:bg-gray-900 border-2 border-blue-500 rounded-full"></div>
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 leading-tight">${item.role || ''}</h3>
+                    <div class="flex flex-wrap items-center gap-2 mt-1.5 text-sm text-gray-600 dark:text-gray-400">
+                         <span class="font-medium text-gray-700 dark:text-gray-300">${item.institution || ''}</span>
+                         ${item.period ? `<span class="w-1 h-1 bg-gray-400 rounded-full"></span><span>${item.period}</span>` : ''}
+                    </div>
                 </div>
             `).join('');
         }
 
-        // 4. Render Awards
+        // 4. Render Awards (Compact List)
         if (containers.awards && settings.piAwards && settings.piAwards.length > 0) {
             const awardsList = settings.piAwards;
             document.getElementById('awards-section')?.classList.remove('hidden');
-            containers.awards.className = "mt-4 space-y-4";
+            containers.awards.className = "mt-4 grid gap-3 sm:grid-cols-2";
             containers.awards.innerHTML = awardsList.map(item => `
-                <div class="bg-gray-50 dark:bg-gray-800 p-6 md:px-12 rounded-lg shadow-md transition-colors duration-300">
-                    <h3 class="font-medium text-gray-700 dark:text-gray-200">${item.title}</h3>
-                    ${item.description ? `<div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">${item.description}</div>` : ''}
+                <div class="flex gap-3 p-3 rounded-lg border border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+                    <div class="flex-shrink-0 mt-0.5 text-yellow-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 text-sm md:text-base">${item.title}</h3>
+                        ${item.description ? `<p class="mt-1 text-xs text-gray-500 dark:text-gray-400 leading-snug">${item.description}</p>` : ''}
+                    </div>
                 </div>
             `).join('');
         }
