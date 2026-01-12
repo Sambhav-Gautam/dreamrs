@@ -126,7 +126,7 @@ ${member.workDescription ? `<p class="text-sm text-leaf font-medium mt-1">${memb
         });
       } else {
         // Others: Ultra-compact single line layout with aligned columns
-        grid.className = 'space-y-0 px-8';
+        grid.className = 'space-y-0 pl-20 pr-8';
 
         members.forEach((member) => {
           const card = document.createElement('div');
