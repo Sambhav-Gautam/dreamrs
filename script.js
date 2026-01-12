@@ -441,40 +441,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const pub = featuredPublications[index];
 
+        // Helper to bold "Sonal Keshwani" or "S Keshwani" in author string
+        const formatAuthors = (authors) => {
+            if (!authors) return '';
+            return authors
+                .replace(/Sonal Keshwani/gi, '<strong>Sonal Keshwani</strong>')
+                .replace(/S\.?\s*Keshwani/gi, '<strong>S Keshwani</strong>');
+        };
+
         container.innerHTML = `
-            <div class="featured-slide bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 md:p-10 shadow-2xl">
-                <!-- Year Badge -->
-                <div class="flex flex-wrap items-center gap-3 mb-6">
-                    <span class="px-4 py-2 bg-leaf text-white rounded-full text-sm font-bold shadow-lg">${pub.Year}</span>
-                    ${pub.DOI ? `<span class="px-3 py-1.5 bg-white/10 text-gray-300 rounded-full text-xs font-mono">DOI: ${pub.DOI}</span>` : ''}
-                    ${pub.Cited_by ? `<span class="px-3 py-1.5 bg-amber-500/20 text-amber-300 rounded-full text-xs font-semibold">Cited by: ${pub.Cited_by}</span>` : ''}
-                </div>
-                
+            <div class="featured-slide bg-white dark:bg-gradient-to-br dark:from-white/10 dark:to-white/5 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/10 p-8 md:p-10 shadow-xl dark:shadow-2xl">
                 <!-- Title -->
-                <h3 class="text-xl md:text-2xl font-bold text-white mb-4 leading-tight">
+                <h3 class="text-xl md:text-2xl text-gray-800 dark:text-white mb-4 leading-tight">
                     <a href="${pub.Link}" target="_blank" rel="noopener" class="hover:text-leaf transition-colors">
                         ${pub.Title}
                     </a>
                 </h3>
                 
-                <!-- Journal -->
-                <p class="text-leaf font-semibold mb-2">${pub.Journal}</p>
-                
                 <!-- Authors -->
-                <p class="text-gray-400 text-sm mb-6">${pub.Author}</p>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-6">${formatAuthors(pub.Author)}</p>
                 
                 <!-- Abstract -->
                 ${pub.Abstract ? `
-                <div class="relative">
-                    <div class="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-leaf to-transparent rounded-full"></div>
-                    <p class="text-gray-300 text-sm md:text-base leading-relaxed line-clamp-4 md:line-clamp-3">${pub.Abstract}</p>
+                <div class="relative mt-4">
+                    <p class="text-gray-500 dark:text-gray-400 text-xs leading-relaxed italic">${pub.Abstract}</p>
                 </div>
                 ` : ''}
                 
                 <!-- Action Button -->
                 <div class="mt-6 flex items-center gap-4">
                     <a href="${pub.Link}" target="_blank" rel="noopener" 
-                       class="inline-flex items-center gap-2 px-6 py-3 bg-leaf hover:bg-green-600 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-leaf/30">
+                       class="inline-flex items-center gap-2 px-6 py-3 bg-leaf hover:bg-green-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-leaf/30">
                         <span>Read Paper</span>
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
@@ -494,7 +491,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (idx === currentFeaturedSlide) {
                 indicator.className = 'w-8 h-3 bg-leaf rounded-full transition-all duration-300';
             } else {
-                indicator.className = 'w-3 h-3 bg-white/30 hover:bg-white/50 rounded-full transition-all duration-300';
+                indicator.className = 'w-3 h-3 bg-gray-300 dark:bg-white/30 hover:bg-gray-400 dark:hover:bg-white/50 rounded-full transition-all duration-300';
             }
         });
     }
@@ -666,50 +663,33 @@ document.addEventListener('DOMContentLoaded', function () {
         // Initialize Global Slideshow with all images
         initGlobalSlideshow(items);
 
+        // Helper to bold "Sonal Keshwani" or "S Keshwani" in author string
+        const formatAuthors = (authors) => {
+            if (!authors) return '';
+            return authors
+                .replace(/Sonal Keshwani/gi, '<strong>Sonal Keshwani</strong>')
+                .replace(/S\.?\s*Keshwani/gi, '<strong>S Keshwani</strong>');
+        };
+
         publications.innerHTML = '';
         items.forEach((item, index) => {
             const li = document.createElement('div');
             li.className = 'publication-card group relative p-5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 hover:shadow-lg hover:border-leaf/50 transition-all duration-300';
             li.style.animationDelay = `${index * 100}ms`;
 
-            const cardId = `pub-${index}`;
-
             li.innerHTML = `
                 <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-leaf to-green-400 rounded-l-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div class="flex items-start justify-between gap-4">
                     <div class="flex-1">
-                        <div class="flex items-center gap-3 mb-2">
-                            <span class="px-2.5 py-1 text-xs font-semibold bg-leaf/10 text-leaf rounded-full">${item.Year}</span>
-                            ${item.DOI ? `<span class="px-2 py-0.5 text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded">DOI: ${item.DOI}</span>` : ''}
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-leaf transition-colors">
+                        <h3 class="text-lg text-gray-900 dark:text-white mb-2 group-hover:text-leaf transition-colors">
                             <a class="hover:underline" rel="noopener" target="_blank" href="${item.Link}">${item.Title}</a>
                         </h3>
-                        <p class="text-sm text-leaf font-medium mb-1">${item.Journal}</p>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">${item.Author}</p>
-                        ${item.Cited_by ? `<p class="text-xs text-gray-500 mt-1">Cited by: ${item.Cited_by}</p>` : ''}
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${formatAuthors(item.Author)}</p>
                         
                         <!-- Abstract Section -->
                         ${item.Abstract ? `
-                        <div class="mt-4">
-                            <button onclick="toggleDetails('${cardId}')" class="text-sm text-leaf hover:underline flex items-center gap-1">
-                                <span id="${cardId}-btn-text">Show Abstract & Citation</span>
-                                <svg id="${cardId}-chevron" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </button>
-                            <div id="${cardId}-details" class="hidden mt-3 space-y-3">
-                                <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                                    <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">Abstract</h4>
-                                    <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">${item.Abstract}</p>
-                                </div>
-                                ${item.APA ? `
-                                <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                                    <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">APA Citation</h4>
-                                    <p class="text-sm text-gray-600 dark:text-gray-300 italic">${item.APA}</p>
-                                </div>
-                                ` : ''}
-                            </div>
+                        <div class="mt-2">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed italic">${item.Abstract}</p>
                         </div>
                         ` : ''}
                     </div>
