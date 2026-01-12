@@ -1161,6 +1161,82 @@ async function uploadLogo(type = 'nav') {
     }
 }
 
+// Save Logo (called from Settings tab)
+async function saveLogo() {
+    const fileInput = document.getElementById('logo-file-input');
+    const statusEl = document.getElementById('logo-save-status');
+
+    if (!fileInput || fileInput.files.length === 0) {
+        alert('Please select a logo file first');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    try {
+        // Upload the file
+        const uploadRes = await fetch(`${API_BASE_URL}/api/files/upload?folder=images`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!uploadRes.ok) throw new Error('File upload failed');
+
+        const uploadData = await uploadRes.json();
+        const filename = uploadData.filename;
+
+        // Save to settings
+        await apiFetch('/api/settings', {
+            method: 'PUT',
+            body: JSON.stringify({ key: 'siteLogo', value: filename })
+        });
+
+        // Update preview
+        const preview = document.getElementById('current-logo-preview');
+        if (preview) {
+            preview.src = getFileUrl(filename);
+        }
+
+        // Show success status
+        if (statusEl) {
+            statusEl.classList.remove('hidden');
+            setTimeout(() => statusEl.classList.add('hidden'), 3000);
+        }
+
+        // Clear file input
+        fileInput.value = '';
+        document.getElementById('logo-preview-container')?.classList.add('hidden');
+
+        alert('Logo saved successfully!');
+
+    } catch (e) {
+        console.error('Logo save failed:', e);
+        alert('Failed to save logo: ' + e.message);
+    }
+}
+
+// Logo preview on file select
+const logoFileInput = document.getElementById('logo-file-input');
+if (logoFileInput) {
+    logoFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const preview = document.getElementById('new-logo-preview');
+                const container = document.getElementById('logo-preview-container');
+                if (preview) preview.src = event.target.result;
+                if (container) container.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+// Expose saveLogo to global window
+window.saveLogo = saveLogo;
+
 // --- MARKDOWN / TEXT EDITOR LOGIC (For PI Modal) ---
 
 let piEducation = [];
