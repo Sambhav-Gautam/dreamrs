@@ -727,33 +727,20 @@ document.addEventListener('DOMContentLoaded', function () {
         const collaborations = document.getElementById('research-collaborations');
         if (!collaborations) return;
 
-        // Use a vertical list layout for better UI
-        collaborations.className = "flex flex-col gap-4";
+        // Compact single-line layout
+        collaborations.className = "space-y-1";
 
         collaborations.innerHTML = '';
-        items.forEach((item, index) => {
+        items.forEach((item) => {
             const li = document.createElement('div');
-            // Styled as card like teams
-            li.className = 'group w-full p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 hover:shadow-lg hover:border-leaf/50 transition-all duration-300';
-            li.style.animationDelay = `${index * 100}ms`;
+            li.className = 'py-2 border-b border-gray-200 dark:border-gray-700 last:border-b-0';
 
-            // Assuming we don't have photos for external collaborators, we use a nice formatted text card
             li.innerHTML = `
-                <div class="flex items-start gap-4">
-                     <div class="w-12 h-12 rounded-full bg-gradient-to-br from-leaf to-green-400 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-                        ${item.name.charAt(0)}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="text-lg font-semibold text-gray-800 dark:text-white group-hover:text-leaf transition-colors mb-1">
-                            <a href="${item.link}" target="_blank" rel="noopener">${item.name}</a>
-                        </h4>
-                        <p class="text-sm font-medium text-leaf mb-1">${item.position}</p>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                             ${item.department}
-                             ${item.departmentLink ? `<a href="${item.departmentLink}" target="_blank" class="ml-1 text-leaf hover:underline">↗</a>` : ''}
-                        </p>
-                    </div>
-                </div>
+                <a href="${item.link}" target="_blank" rel="noopener" class="flex items-center gap-2 group hover:text-leaf transition-colors">
+                    <span class="text-gray-900 dark:text-white group-hover:text-leaf">${item.name}</span>
+                    <span class="text-gray-400">·</span>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">${item.position}, ${item.department.replace(/<\/?strong>/g, '')}</span>
+                </a>
             `;
             collaborations.appendChild(li);
         });
