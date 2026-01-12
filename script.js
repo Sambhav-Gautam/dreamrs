@@ -835,21 +835,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         section.classList.remove('hidden');
+        container.className = "space-y-1";
 
-        items.forEach((item, index) => {
+        items.forEach((item) => {
             const div = document.createElement('div');
-            div.className = "card-enhanced p-6 flex items-start gap-4 hover:-translate-y-1 transition-transform duration-300";
+            div.className = "py-1.5 pl-4 border-l-2 border-leaf/30 hover:border-leaf transition-colors";
 
-            div.innerHTML = `
-                <div class="w-10 h-10 rounded-lg bg-leaf/10 flex items-center justify-center flex-shrink-0">
-                    <span class="text-leaf font-bold">${index + 1}</span>
-                </div>
-                <div>
-                     <p class="text-gray-700 dark:text-gray-300 font-medium">${item.title}</p>
-                     ${item.description ? `<p class="text-sm text-gray-500 mt-1">${item.description}</p>` : ''}
-                     ${item.link ? `<a href="${item.link}" target="_blank" class="text-xs text-leaf hover:underline mt-1 inline-block">Learn more →</a>` : ''}
-                </div>
-            `;
+            div.innerHTML = `<span class="text-sm text-gray-700 dark:text-gray-300">${item.title}</span>`;
             container.appendChild(div);
         });
     }
