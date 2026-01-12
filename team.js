@@ -10,9 +10,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
   async function loadTeam() {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/data/team`);
-      const team = await response.json();
+      const [teamRes, phdRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/data/team`),
+        fetch(`${API_BASE_URL}/api/data/phd`)
+      ]);
+
+      const team = await teamRes.json();
+      let phdData = { scholars: [] };
+      try {
+        phdData = await phdRes.json();
+      } catch (e) {
+        console.warn('Could not load separate PhD data');
+      }
+
       console.log('Team data loaded:', team);
+
+      // Merge PhD data from phd.json into team data
+      if (phdData && phdData.scholars) {
+        if (!team["PhD Scholars"]) team["PhD Scholars"] = [];
+
+        const existingNames = new Set(team["PhD Scholars"].map(s => s.name));
+        phdData.scholars.forEach(s => {
+          if (!existingNames.has(s.name)) {
+            team["PhD Scholars"].push(s);
+          }
+        });
+      }
+
       renderTeam(team);
     } catch (error) {
       console.error('Error loading team data:', error);
@@ -161,30 +185,37 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // --- PHD SCHOLAR CARD ---
+  // --- PHD SCHOLAR CARD ---
   function createScholarCard(member) {
     const card = document.createElement('div');
-    card.className = 'group bg-white dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:border-leaf/50 hover:shadow-md transition-all duration-300';
+    // Minimal styling - no background box
+    card.className = 'group flex items-center gap-5 py-4 border-b border-gray-100 dark:border-gray-800 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-all rounded-lg px-3';
 
     const initials = member.name ? member.name.split(' ').map(n => n[0]).slice(0, 2).join('') : '??';
     const imageSrc = member.image ? getFileUrl(member.image) : null;
 
+    // Create slug for link
+    const slug = member.name ? member.name.toLowerCase().trim().replace(/\s+/g, '-') : '#';
+
     card.innerHTML = `
-      <div class="flex items-center gap-4">
         <div class="flex-shrink-0">
           ${imageSrc
-        ? `<img src="${imageSrc}" alt="${member.name}" class="w-14 h-14 rounded-full object-cover border-2 border-gray-100 dark:border-gray-600 group-hover:border-leaf transition-colors">`
-        : `<div class="w-14 h-14 rounded-full bg-gradient-to-br from-leaf to-green-400 flex items-center justify-center text-white font-semibold text-lg">${initials}</div>`
+        ? `<img src="${imageSrc}" alt="${member.name}" class="w-16 h-16 rounded-full object-cover border-2 border-gray-100 dark:border-gray-600 group-hover:border-leaf transition-colors">`
+        : `<div class="w-16 h-16 rounded-full bg-gradient-to-br from-leaf to-green-400 flex items-center justify-center text-white font-bold text-xl">${initials}</div>`
       }
         </div>
         <div class="flex-1 min-w-0">
-          <h4 class="font-semibold text-gray-800 dark:text-white group-hover:text-leaf transition-colors truncate">${member.name}</h4>
-          ${member.workDescription ? `<p class="text-sm text-gray-500 dark:text-gray-400 truncate">${member.workDescription}</p>` : ''}
+          <div class="flex items-center gap-3 mb-0.5">
+             <a href="phd.html?scholar=${slug}" class="font-bold text-lg text-gray-800 dark:text-white group-hover:text-leaf transition-colors truncate">
+                ${member.name}
+             </a>
+             <div class="flex items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                ${member.github ? `<a href="${member.github}" target="_blank" rel="noopener" class="text-gray-500 hover:text-leaf transition-colors"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>` : ''}
+                ${member.linkedin ? `<a href="${member.linkedin}" target="_blank" rel="noopener" class="text-gray-500 hover:text-blue-500 transition-colors"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>` : ''}
+             </div>
+          </div>
+          ${member.workDescription ? `<p class="text-sm text-gray-500 dark:text-gray-400 font-medium">${member.workDescription}</p>` : ''}
         </div>
-        <div class="flex items-center gap-2 flex-shrink-0">
-          ${member.github ? `<a href="${member.github}" target="_blank" rel="noopener" class="p-2 rounded-lg text-gray-400 hover:text-leaf hover:bg-leaf/10 transition-all"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>` : ''}
-          ${member.linkedin ? `<a href="${member.linkedin}" target="_blank" rel="noopener" class="p-2 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-500/10 transition-all"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>` : ''}
-        </div>
-      </div>
     `;
 
     return card;

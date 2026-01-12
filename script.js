@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <!-- Logo with Hover Animation -->
                     <a href="index.html" class="logo-container flex items-center group">
                         <div class="logo-glow relative">
-                            <img src="${initialLogoUrl}" alt="DREAMRS Lab" class="header-logo-img h-14 sm:h-16 md:h-20 transition-all duration-300 group-hover:scale-105">
+                            <img src="${initialLogoUrl}" alt="DREAMRS Lab" class="header-logo-img h-10 sm:h-12 md:h-14 transition-all duration-300 group-hover:scale-105">
                             <div class="absolute inset-0 logo-glow-effect blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
                         </div>
                     </a>
