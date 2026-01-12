@@ -663,42 +663,18 @@ document.addEventListener('DOMContentLoaded', function () {
         // Initialize Global Slideshow with all images
         initGlobalSlideshow(items);
 
-        // Helper to bold "Sonal Keshwani" or "S Keshwani" in author string
-        const formatAuthors = (authors) => {
-            if (!authors) return '';
-            return authors
-                .replace(/Sonal Keshwani/gi, '<strong>Sonal Keshwani</strong>')
-                .replace(/S\.?\s*Keshwani/gi, '<strong>S Keshwani</strong>');
-        };
-
         publications.innerHTML = '';
         items.forEach((item, index) => {
             const li = document.createElement('div');
-            li.className = 'publication-card group relative p-5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 hover:shadow-lg hover:border-leaf/50 transition-all duration-300';
-            li.style.animationDelay = `${index * 100}ms`;
+            li.className = 'publication-item py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0';
 
             li.innerHTML = `
-                <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-leaf to-green-400 rounded-l-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="flex items-start justify-between gap-4">
-                    <div class="flex-1">
-                        <h3 class="text-lg text-gray-900 dark:text-white mb-2 group-hover:text-leaf transition-colors">
-                            <a class="hover:underline" rel="noopener" target="_blank" href="${item.Link}">${item.Title}</a>
-                        </h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${formatAuthors(item.Author)}</p>
-                        
-                        <!-- Abstract Section -->
-                        ${item.Abstract ? `
-                        <div class="mt-2">
-                            <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed italic">${item.Abstract}</p>
-                        </div>
-                        ` : ''}
-                    </div>
-                    <a href="${item.Link}" target="_blank" rel="noopener" class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 hover:bg-leaf hover:text-white transition-all duration-300">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </a>
-                </div>
+                <a href="${item.Link}" target="_blank" rel="noopener" class="block group">
+                    <h3 class="text-base text-gray-900 dark:text-white group-hover:text-leaf transition-colors leading-snug mb-1">
+                        ${item.Title}
+                    </h3>
+                    ${item.APA ? `<p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">${item.APA}</p>` : ''}
+                </a>
             `;
             publications.appendChild(li);
         });
