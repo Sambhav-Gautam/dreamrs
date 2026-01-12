@@ -97,49 +97,62 @@
             const container = document.getElementById('opening-actions');
             if (!container) return;
 
-            // Check if empty
-            if (!item.file && !item.link) {
-                container.innerHTML = `
-                    <div class="py-5 px-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-gray-500 dark:text-gray-400 font-medium border border-dashed border-gray-300 dark:border-gray-700">
-                        Currently no open positions. Please check back later.
+            // Clear container and set grid layout
+            container.innerHTML = '';
+            container.className = 'w-full grid md:grid-cols-3 gap-6';
+
+            // Define the 3 categories
+            const openings = [
+                {
+                    title: "PhD Positions",
+                    desc: "Full-time research positions for doctoral candidates passionate about design and human factors.",
+                    type: "phd"
+                },
+                {
+                    title: "M.Tech Projects",
+                    desc: "Research opportunities for M.Tech students to work on cutting-edge design problems.",
+                    type: "mtech"
+                },
+                {
+                    title: "B.Tech Projects",
+                    desc: "Hands-on projects for undergraduates to gain research experience in the lab.",
+                    type: "btech"
+                }
+            ];
+
+            openings.forEach(op => {
+                const card = document.createElement('div');
+                card.className = "group relative bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-leaf/50 hover:shadow-lg transition-all duration-300 flex flex-col items-center text-center";
+
+                card.innerHTML = `
+                    <div class="w-12 h-12 bg-gray-50 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4 group-hover:bg-leaf/10 transition-colors">
+                        <svg class="w-6 h-6 text-gray-400 group-hover:text-leaf transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2 group-hover:text-leaf transition-colors">${op.title}</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">${op.desc}</p>
+                    
+                    <div class="mt-auto w-full space-y-3">
+                        ${item.file ? `
+                        <a href="${getFileUrl(item.file)}" target="_blank" class="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-leaf transition-all text-sm font-medium">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                            View Details
+                        </a>` : ''}
+                        
+                        ${item.link ? `
+                        <a href="${item.link}" target="_blank" class="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-leaf text-white hover:bg-green-600 shadow-md hover:shadow-lg transition-all text-sm font-medium">
+                            <span>Apply Now</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </a>` : `
+                        <button disabled class="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed text-sm font-medium">
+                            Coming Soon
+                        </button>
+                        `}
                     </div>
                 `;
-                return;
-            }
-
-            // Create a flex row container for side-by-side buttons
-            container.innerHTML = '';
-            container.className = 'flex flex-row gap-4 w-full max-w-lg justify-center';
-
-            // View Opening Button (Left) - if PDF exists
-            if (item.file) {
-                const btnFile = document.createElement('a');
-                btnFile.href = getFileUrl(item.file);
-                btnFile.target = "_blank";
-                btnFile.className = "btn-secondary flex-1 flex items-center justify-center gap-2 text-base py-3 px-4";
-                btnFile.innerHTML = `
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    View Opening
-                `;
-                container.appendChild(btnFile);
-            }
-
-            // Apply Button (Right) - if Link exists
-            if (item.link) {
-                const btnLink = document.createElement('a');
-                btnLink.href = item.link;
-                btnLink.target = "_blank";
-                btnLink.className = "btn-primary flex-1 flex items-center justify-center gap-2 text-base py-3 px-4 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all";
-                btnLink.innerHTML = `
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                    </svg>
-                    Apply
-                `;
-                container.appendChild(btnLink);
-            }
+                container.appendChild(card);
+            });
         }
 
         document.addEventListener('DOMContentLoaded', loadOpenings);

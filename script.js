@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <!-- Logo with Hover Animation -->
                     <a href="index.html" class="logo-container flex items-center group">
                         <div class="logo-glow relative">
-                            <img src="${initialLogoUrl}" alt="DREAMRS Lab" class="header-logo-img h-10 sm:h-12 md:h-14 transition-all duration-300 group-hover:scale-105">
+                            <img src="${initialLogoUrl}" alt="DREAMRS Lab" class="header-logo-img h-10 transition-all duration-300 group-hover:scale-105">
                             <div class="absolute inset-0 logo-glow-effect blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
                         </div>
                     </a>
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <!-- Brand Section -->
                 <div class="space-y-4">
                     <div class="logo-glow relative inline-block group">
-                        <img src="${initialLogoUrl}" alt="DREAMRS Lab Logo" class="footer-logo-img h-20 md:h-24 lg:h-32 transition-all duration-300 group-hover:scale-105">
+                        <img src="${initialLogoUrl}" alt="DREAMRS Lab Logo" class="footer-logo-img h-10 transition-all duration-300 group-hover:scale-105">
                         <div class="absolute inset-0 logo-glow-effect blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
                     </div>
                     <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -956,7 +956,7 @@ async function initPIProfile() {
                         <span class="font-medium text-gray-700 dark:text-gray-300">${item.institution || ''}</span>
                         ${item.year ? `<span class="w-1 h-1 bg-gray-400 rounded-full"></span><span>${item.year}</span>` : ''}
                     </div>
-                    ${item.details ? `<div class="mt-2 text-sm text-gray-500 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-800/50 p-3 rounded border-l-2 border-leaf/30">${item.details}</div>` : ''}
+                    ${item.details ? `<div class="mt-2 text-sm text-gray-600 dark:text-gray-400 italic">${item.details}</div>` : ''}
                 </div>
             `).join('');
         }
