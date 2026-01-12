@@ -919,6 +919,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // --- PI Profile Rendering ---
 // --- PI Profile Rendering ---
+// Helper to strip inline styles and classes that might conflict
+function cleanContent(html) {
+    if (!html) return '';
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+    temp.querySelectorAll('*').forEach(el => {
+        el.removeAttribute('style');
+        el.classList.remove('bg-gray-900', 'bg-black', 'text-white', 'dark:bg-gray-800'); // Remove potential dark mode conflict classes
+    });
+    return temp.innerHTML;
+}
+
+// --- PI Profile Rendering ---
 async function initPIProfile() {
     const containers = {
         bio: document.getElementById('pi-content-display'),
@@ -956,7 +969,7 @@ async function initPIProfile() {
                         <span class="font-medium text-gray-700 dark:text-gray-300">${item.institution || ''}</span>
                         ${item.year ? `<span class="w-1 h-1 bg-gray-400 rounded-full"></span><span>${item.year}</span>` : ''}
                     </div>
-                    ${item.details ? `<div class="mt-2 text-sm text-gray-600 dark:text-gray-400 italic">${item.details}</div>` : ''}
+                    ${item.details ? `<div class="mt-2 text-sm text-gray-600 dark:text-gray-400 italic">${cleanContent(item.details)}</div>` : ''}
                 </div>
             `).join('');
         }
