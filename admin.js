@@ -232,6 +232,78 @@ async function fetchThemeSettings() {
     }
 }
 
+if (settings.siteFont) {
+    applyFontSetting(settings.siteFont);
+}
+    } catch (e) {
+    console.error('Error fetching settings:', e);
+}
+}
+
+// Preset Color Handler
+function setThemeColor(color) {
+    const input = document.getElementById('theme-color');
+    if (input) {
+        input.value = color;
+        // Trigger save immediately for better UX
+        saveThemeColor();
+    }
+}
+
+// --- LOGO SETTINGS ---
+function previewLogo(input) {
+    const container = document.getElementById('logo-preview-container');
+    const preview = document.getElementById('new-logo-preview');
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            container.classList.remove('hidden');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+async function saveLogo() {
+    const input = document.getElementById('logo-file-input');
+    if (!input.files || !input.files[0]) {
+        alert('Please select a logo file first.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', input.files[0]); // Multer expects 'file'
+
+    try {
+        // First upload the file
+        const uploadRes = await apiFetch('/api/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!uploadRes.ok) throw new Error('Upload failed');
+        const uploadData = await uploadRes.json();
+        const logoPath = uploadData.filename;
+
+        // Then save the setting
+        const settingRes = await apiFetch('/api/settings', {
+            method: 'POST',
+            body: JSON.stringify({ key: 'siteLogo', value: logoPath })
+        });
+
+        if (settingRes.ok) {
+            alert('Logo saved successfully!');
+            document.getElementById('current-logo-preview').src = getFileUrl(logoPath);
+            document.getElementById('logo-preview-container').classList.add('hidden');
+            input.value = ''; // Reset input
+        }
+    } catch (e) {
+        console.error('Error saving logo:', e);
+        alert('Failed to save logo.');
+    }
+}
+
 // --- RESEARCH MANAGEMENT ---
 
 function renderResearchList() {
