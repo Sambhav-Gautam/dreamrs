@@ -2,15 +2,15 @@
    BASE THEME COLORS
    =================================== */
 :root {
-    --leaf-color: #16a34a;
-    /* Green-600 - base */
-    --leaf-color-light: #22c55e;
-    /* Green-500 - brighter for dark mode */
-    --leaf-color-dark: #15803d;
-    /* Green-700 - for backgrounds */
-    --leaf-r: 22;
-    --leaf-g: 197;
-    --leaf-b: 94;
+    --leaf-color: #0891B2;
+    /* Cyan-600 - base */
+    --leaf-color-light: #22d3ee;
+    /* Cyan-400 - brighter for dark mode */
+    --leaf-color-dark: #0e7490;
+    /* Cyan-700 - for backgrounds */
+    --leaf-r: 8;
+    --leaf-g: 145;
+    --leaf-b: 178;
     --leaf-bg-light: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.15);
     --leaf-bg-dark: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.25);
     --font-primary: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;

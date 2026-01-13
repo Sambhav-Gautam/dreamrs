@@ -568,8 +568,12 @@
                             <div class="flex items-center gap-2">
                                 <input type="color" id="theme-color"
                                     class="h-10 w-20 cursor-pointer rounded border border-gray-300 dark:border-gray-600"
-                                    value="#16a34a">
-                                <span class="text-xs text-gray-500 dark:text-gray-400">Click to pick</span>
+                                    value="#0891B2"
+                                    oninput="document.getElementById('theme-color-hex').value = this.value">
+                                <input type="text" id="theme-color-hex" value="#0891B2"
+                                    class="border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white w-28 uppercase"
+                                    maxlength="7"
+                                    oninput="if(this.value.match(/^#[0-9A-Fa-f]{6}$/)) document.getElementById('theme-color').value = this.value">
                             </div>
                         </div>
                         <div class="self-end pb-0.5">
