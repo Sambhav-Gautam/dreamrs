@@ -13,10 +13,11 @@
     --leaf-b: 94;
     --leaf-bg-light: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.15);
     --leaf-bg-dark: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.25);
+    --font-primary: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 body {
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-family: var(--font-primary);
 }
 
 /* Enforce non-bold text globally, but allow specific overrides */

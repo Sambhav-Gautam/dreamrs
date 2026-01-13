@@ -14,28 +14,54 @@ document.addEventListener('DOMContentLoaded', function () {
         return `${API_BASE_URL}/api/files/download/${encodeURIComponent(filename)}`;
     }
 
-    // Load and apply theme color from settings
-    // First apply cached color from localStorage for instant display
+    // Load and apply settings (Theme & Font)
+    // First apply cached settings
     const cachedTheme = localStorage.getItem('themeColor');
-    if (cachedTheme) {
-        applyThemeColor(cachedTheme);
-    }
+    if (cachedTheme) applyThemeColor(cachedTheme);
 
-    async function loadThemeSettings() {
+    const cachedFont = localStorage.getItem('siteFont');
+    if (cachedFont) applyFontSetting(cachedFont);
+
+    async function loadGlobalSettings() {
         try {
             const response = await fetch(`${API_BASE_URL}/api/settings`);
             if (response.ok) {
                 const settings = await response.json();
+
                 if (settings.themeColor) {
                     applyThemeColor(settings.themeColor);
-                    // Cache the theme color for instant loading on next page visit
                     localStorage.setItem('themeColor', settings.themeColor);
+                }
+
+                if (settings.siteFont) {
+                    applyFontSetting(settings.siteFont);
+                    localStorage.setItem('siteFont', settings.siteFont);
                 }
             }
         } catch (e) {
-            console.log('Using default/cached theme color');
+            console.log('Using default settings');
         }
     }
+
+    function applyFontSetting(fontName) {
+        if (!fontName) return;
+
+        // Prevent duplicate links
+        if (document.getElementById(`font-${fontName}`)) return;
+
+        // Create new Google Fonts link
+        const link = document.createElement('link');
+        link.id = `font-${fontName}`; // Unique ID to track loaded fonts
+        link.rel = 'stylesheet';
+        link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:wght@300;400;500;600;700&display=swap`;
+        document.head.appendChild(link);
+
+        // Update global CSS variable
+        document.documentElement.style.setProperty('--font-primary', `'${fontName}', sans-serif`);
+    }
+
+    // Load settings on init
+    loadGlobalSettings();
 
     function applyThemeColor(color) {
         document.documentElement.style.setProperty('--leaf-color', color);
@@ -56,8 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.documentElement.style.setProperty('--leaf-bg-light', lighter);
     }
 
-    // Load theme on page initialization
-    loadThemeSettings();
+
 
     // Load PI content for dynamic rendering
     async function loadPIContent() {

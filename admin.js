@@ -152,6 +152,86 @@ async function fetchCourses() {
     }
 }
 
+// --- FONT SETTINGS LOGIC ---
+const FONT_OPTIONS = {
+    'Inter': 'Inter',
+    'Roboto': 'Roboto',
+    'Open Sans': 'Open Sans',
+    'Lato': 'Lato',
+    'Montserrat': 'Montserrat',
+    'Playfair Display': 'Playfair Display',
+    'Merriweather': 'Merriweather',
+    'Poppins': 'Poppins',
+    'Nunito': 'Nunito',
+    'Raleway': 'Raleway'
+};
+
+async function saveFontSetting() {
+    const fontName = document.getElementById('font-selector').value;
+
+    try {
+        const res = await apiFetch('/api/settings', {
+            method: 'POST',
+            body: JSON.stringify({ key: 'siteFont', value: fontName })
+        });
+
+        if (res.ok) {
+            alert('Font setting saved successfully!');
+            applyFontSetting(fontName);
+        } else {
+            alert('Failed to save font setting.');
+        }
+    } catch (e) {
+        console.error('Error saving font:', e);
+        alert('Error saving font setting.');
+    }
+}
+
+function applyFontSetting(fontName) {
+    if (!fontName || !FONT_OPTIONS[fontName]) return;
+
+    // Remove existing dynamic font link if any
+    const existingLink = document.getElementById('dynamic-font-link');
+    if (existingLink) existingLink.remove();
+
+    // Create new Google Fonts link
+    const link = document.createElement('link');
+    link.id = 'dynamic-font-link';
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:wght@300;400;500;600;700&display=swap`;
+    document.head.appendChild(link);
+
+    // Update global CSS variable
+    document.documentElement.style.setProperty('--font-primary', `'${fontName}', sans-serif`);
+
+    // Update selector value if this call came from load
+    const selector = document.getElementById('font-selector');
+    if (selector) selector.value = fontName;
+}
+
+// Update fetchThemeSettings to also fetch Font
+async function fetchThemeSettings() {
+    try {
+        const res = await apiFetch('/api/settings');
+        const settings = await res.json();
+
+        if (settings.themeColor) {
+            if (document.getElementById('theme-color')) {
+                document.getElementById('theme-color').value = settings.themeColor;
+            }
+            if (typeof applyThemeColor === 'function') {
+                applyThemeColor(settings.themeColor);
+            }
+        }
+
+        if (settings.siteFont) {
+            applyFontSetting(settings.siteFont);
+        }
+    } catch (e) {
+        console.error('Error fetching settings:', e);
+    }
+}
+
 // --- RESEARCH MANAGEMENT ---
 
 function renderResearchList() {
