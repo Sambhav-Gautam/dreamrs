@@ -305,7 +305,8 @@ u a {
 }
 
 .dark .nav-link-modern {
-    color: #d1d5db;
+    color: #4b5563;
+    /* Keep text dark in dark mode due to bright video background */
 }
 
 .nav-link-modern:hover {
