@@ -3,7 +3,7 @@ const ResearchData = require('../models/Research');
 // Get all research data
 exports.getResearch = async (req, res) => {
     try {
-        const data = await ResearchData.findOne();
+        const data = await ResearchData.findOne().lean();
 
         if (!data || !data.data) {
             return res.json({

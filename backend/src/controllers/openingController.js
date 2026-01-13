@@ -13,7 +13,7 @@ const VALID_CATEGORIES = ['phd', 'mtech', 'btech', 'analyst'];
 // Get all openings
 exports.getOpenings = async (req, res) => {
     try {
-        const setting = await Settings.findOne({ key: 'openings' });
+        const setting = await Settings.findOne({ key: 'openings' }).lean();
         const rawData = setting?.value || {};
 
         // Helper to ensure category is an array (handles old object format)

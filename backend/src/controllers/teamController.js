@@ -1,122 +1,140 @@
 const Team = require('../models/Team');
+const TeamMember = require('../models/TeamMember');
 const { getGridFSBucket } = require('../config/database');
 const mongoose = require('mongoose');
 
-// Get all team data
+// Helper to migrate old single-doc data to new collection
+const migrateData = async () => {
+    try {
+        const count = await TeamMember.countDocuments();
+        if (count > 0) return; // Already migrated
+
+        const oldDoc = await Team.findOne().lean();
+        if (!oldDoc || !oldDoc.data) return;
+
+        console.log('Migrating Team data to TeamMember collection...');
+        const operations = [];
+
+        Object.keys(oldDoc.data).forEach(category => {
+            const members = oldDoc.data[category];
+            if (Array.isArray(members)) {
+                members.forEach((member, index) => {
+                    operations.push({
+                        insertOne: {
+                            document: {
+                                ...member,
+                                category,
+                                order: index
+                            }
+                        }
+                    });
+                });
+            }
+        });
+
+        if (operations.length > 0) {
+            await TeamMember.bulkWrite(operations);
+            console.log(`Migrated ${operations.length} team members.`);
+        }
+    } catch (error) {
+        console.error('Migration error:', error);
+    }
+};
+
+// Get all team data (Grouped by category to match legacy frontend format)
 exports.getTeam = async (req, res) => {
     try {
-        let team = await Team.findOne();
+        await migrateData(); // Ensure migration runs once
 
-        if (!team || !team.data) {
-            return res.json({});
-        }
+        const members = await TeamMember.find().sort({ category: 1, order: 1 }).lean();
 
-        res.json(team.data);
+        // Group by category to match old JSON structure
+        const groupedData = {};
+        members.forEach(member => {
+            if (!groupedData[member.category]) {
+                groupedData[member.category] = [];
+            }
+            groupedData[member.category].push(member);
+        });
+
+        res.json(groupedData);
     } catch (error) {
         console.error('Error fetching team:', error);
         res.status(500).json({ error: 'Failed to fetch team data' });
     }
 };
 
-// Update all team data (replaces entire dataset)
+// Update all team data (Legacy support - ideally deprecated)
 exports.updateTeam = async (req, res) => {
-    try {
-        let team = await Team.findOne();
-
-        if (!team) {
-            team = new Team({ data: req.body });
-        } else {
-            team.data = req.body;
-            team.markModified('data'); // Required for Mixed type
-        }
-
-        await team.save();
-
-        res.json({
-            success: true,
-            message: 'Team data updated successfully'
-        });
-    } catch (error) {
-        console.error('Error updating team:', error);
-        res.status(500).json({ error: 'Failed to update team data' });
-    }
+    res.status(405).json({ error: 'Bulk update deprecated. Use individual add/update.' });
 };
 
-// Add a team member to a specific category
+// Add a team member
 exports.addMember = async (req, res) => {
     try {
         const { category } = req.params;
-        let team = await Team.findOne();
-
-        if (!team) {
-            team = new Team({ data: {} });
-        }
-
-        if (!team.data) {
-            team.data = {};
-        }
-
-        if (!team.data[category]) {
-            team.data[category] = [];
-        }
-
-        team.data[category].push(req.body);
-        team.markModified('data');
-        await team.save();
-
-        res.json({
-            success: true,
-            member: team.data[category][team.data[category].length - 1]
+        const newMember = new TeamMember({
+            ...req.body,
+            category
         });
+
+        await newMember.save();
+        res.json({ success: true, member: newMember });
     } catch (error) {
         console.error('Error adding team member:', error);
         res.status(500).json({ error: 'Failed to add team member' });
     }
 };
 
-// Update a team member
+// Update a team member (By ID)
 exports.updateMember = async (req, res) => {
     try {
-        const { category, index } = req.params;
-        let team = await Team.findOne();
+        const { index } = req.params; // Using 'index' param as ID in new routes
+        // Check if index is a valid ObjectId (refining route param later)
 
-        if (!team || !team.data || !team.data[category] || !team.data[category][index]) {
-            return res.status(404).json({ error: 'Team member not found' });
+        let updateId = index;
+
+        // Handle legacy index-based calls gracefully if possible? 
+        // Realistically, frontend MUST send ID. Validation:
+        if (!mongoose.Types.ObjectId.isValid(updateId)) {
+            return res.status(400).json({ error: 'Invalid ID format. Please refresh page.' });
         }
 
-        team.data[category][index] = {
-            ...team.data[category][index],
-            ...req.body
-        };
-        team.markModified('data');
-        await team.save();
+        const updatedMember = await TeamMember.findByIdAndUpdate(
+            updateId,
+            { ...req.body },
+            { new: true }
+        );
 
-        res.json({
-            success: true,
-            member: team.data[category][index]
-        });
+        if (!updatedMember) {
+            return res.status(404).json({ error: 'Member not found' });
+        }
+
+        res.json({ success: true, member: updatedMember });
     } catch (error) {
         console.error('Error updating team member:', error);
         res.status(500).json({ error: 'Failed to update team member' });
     }
 };
 
-// Delete a team member
+// Delete a team member (By ID)
 exports.deleteMember = async (req, res) => {
     try {
-        const { category, index } = req.params;
-        let team = await Team.findOne();
+        const { index } = req.params; // 'index' param is now ID
 
-        if (!team || !team.data || !team.data[category] || !team.data[category][index]) {
-            return res.status(404).json({ error: 'Team member not found' });
+        if (!mongoose.Types.ObjectId.isValid(index)) {
+            return res.status(400).json({ error: 'Invalid ID format' });
+        }
+
+        const member = await TeamMember.findById(index);
+        if (!member) {
+            return res.status(404).json({ error: 'Member not found' });
         }
 
         // Delete associated image from GridFS if exists
-        const member = team.data[category][index];
         if (member.image) {
             try {
                 const bucket = getGridFSBucket();
-                // Try to find and delete the file by filename
                 const files = await bucket.find({ filename: member.image }).toArray();
                 for (const file of files) {
                     await bucket.delete(file._id);
@@ -126,9 +144,7 @@ exports.deleteMember = async (req, res) => {
             }
         }
 
-        team.data[category].splice(parseInt(index), 1);
-        team.markModified('data');
-        await team.save();
+        await TeamMember.findByIdAndDelete(index);
 
         res.json({ success: true, message: 'Team member deleted' });
     } catch (error) {

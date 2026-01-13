@@ -687,15 +687,23 @@ function editTeam(category, index) {
 async function removeTeamImage(category, index) {
     if (!confirm('Remove this image?')) return;
     const member = teamData[category][index];
+    if (!member || !member._id) return;
 
     try {
+        // 1. Delete file
         await apiFetch('/api/delete-file', {
             method: 'POST',
             body: JSON.stringify({ filename: member.image, type: 'team_image' })
         });
-        delete member.image; // Remove property
-        await saveTeam();
-        editTeam(category, index); // Refresh
+
+        // 2. Update member to remove image reference
+        await apiFetch(`/api/data/team/members/${category}/${member._id}`, {
+            method: 'PUT',
+            body: JSON.stringify({ image: '' })
+        });
+
+        await fetchTeam();
+        closeModal('team-modal');
     } catch (e) {
         console.error("Delete failed", e);
     }
@@ -714,6 +722,7 @@ document.getElementById('team-form').addEventListener('submit', async (e) => {
     if (fileInput.files.length > 0) {
         const formData = new FormData();
         formData.append('file', fileInput.files[0]);
+        formData.append('folder', 'images/team');
 
         try {
             // Check if editing and has old image -> delete it
@@ -738,9 +747,7 @@ document.getElementById('team-form').addEventListener('submit', async (e) => {
             console.error("Team image upload failed", err);
         }
     } else if (index !== -1) {
-        // Keep existing image if no new file
-        // Logic fix: index is valid, so we are editing. 
-        // We get image from old category (if present) OR from the current member being edited (which is safer)
+        // Keep existing image
         if (oldCategory && teamData[oldCategory] && teamData[oldCategory][index]) {
             const oldMember = teamData[oldCategory][index];
             if (oldMember) imageName = oldMember.image;
@@ -756,32 +763,59 @@ document.getElementById('team-form').addEventListener('submit', async (e) => {
 
     if (imageName) member.image = imageName;
 
-    // Logic for updating list
-    if (index !== -1 && oldCategory) {
-        // Remove from old
-        teamData[oldCategory].splice(index, 1);
+    try {
+        if (index !== -1 && oldCategory) {
+            // EDIT EXISTING
+            const oldMember = teamData[oldCategory][index];
+            if (!oldMember || !oldMember._id) throw new Error('Member ID missing');
+
+            member.category = newCategory; // Update category if changed
+
+            await apiFetch(`/api/data/team/members/${oldCategory}/${oldMember._id}`, {
+                method: 'PUT',
+                body: JSON.stringify(member)
+            });
+        } else {
+            // ADD NEW
+            await apiFetch(`/api/data/team/members/${newCategory}`, {
+                method: 'POST',
+                body: JSON.stringify(member)
+            });
+        }
+
+        await fetchTeam(); // Refresh Data
+        closeModal('team-modal');
+
+    } catch (e) {
+        console.error('Error saving team member:', e);
+        alert('Failed to save team member: ' + e.message);
     }
-
-    if (!teamData[newCategory]) teamData[newCategory] = [];
-    teamData[newCategory].push(member);
-
-    await saveTeam();
-    renderTeamList();
-    closeModal('team-modal');
 });
 
 async function deleteTeam(category, index) {
     if (!confirm('Delete this team member?')) return;
-    teamData[category].splice(index, 1);
-    await saveTeam();
-    renderTeamList();
+
+    const member = teamData[category][index];
+    if (!member || !member._id) {
+        alert('Error: Member ID not found. Please reload the page.');
+        return;
+    }
+
+    try {
+        await apiFetch(`/api/data/team/members/${category}/${member._id}`, {
+            method: 'DELETE'
+        });
+
+        await fetchTeam();
+    } catch (e) {
+        console.error('Error deleting team member:', e);
+        alert('Failed to delete member');
+    }
 }
 
+// Deprecated: saveTeam() removed as it was for bulk updates
 async function saveTeam() {
-    await apiFetch('/api/data/team', {
-        method: 'POST',
-        body: JSON.stringify(teamData)
-    });
+    console.warn('saveTeam is deprecated in ID-based system');
 }
 
 // --- COURSES MANAGEMENT ---
@@ -1902,12 +1936,17 @@ function editPhD(index) {
 }
 
 async function deletePhD(index) {
+    const scholar = phdScholars[index];
+    if (!scholar || !scholar._id) {
+        alert('Error: Scholar ID not found. Reload page.');
+        return;
+    }
+
     if (!confirm('Are you sure you want to delete this PhD scholar?')) return;
 
     try {
-        await apiFetch(`/api/data/phd/scholar/${index}`, { method: 'DELETE' });
+        await apiFetch(`/api/data/phd/scholar/${scholar._id}`, { method: 'DELETE' });
         await loadPhDScholars();
-        alert('Scholar deleted!');
     } catch (e) {
         console.error('Error deleting PhD scholar:', e);
         alert('Failed to delete scholar');
@@ -1954,7 +1993,9 @@ document.getElementById('phd-form')?.addEventListener('submit', async (e) => {
         if (index === -1) {
             await apiFetch('/api/data/phd/scholar', { method: 'POST', body: JSON.stringify(scholarData) });
         } else {
-            await apiFetch(`/api/data/phd/scholar/${index}`, { method: 'PUT', body: JSON.stringify(scholarData) });
+            const scholar = phdScholars[index];
+            if (!scholar || !scholar._id) throw new Error('Scholar ID missing');
+            await apiFetch(`/api/data/phd/scholar/${scholar._id}`, { method: 'PUT', body: JSON.stringify(scholarData) });
         }
 
         closeModal('phd-modal');

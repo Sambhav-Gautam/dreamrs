@@ -80,6 +80,9 @@ exports.getFile = async (req, res) => {
             res.set('Content-Type', file.metadata.contentType);
         }
 
+        // Cache files for 1 year (immutable via filename timestamp)
+        res.set('Cache-Control', 'public, max-age=31536000, immutable');
+
         // Set content disposition for download
         res.set('Content-Disposition', `inline; filename="${file.metadata?.originalName || filename}"`);
 
@@ -119,6 +122,8 @@ exports.getFileById = async (req, res) => {
         }
 
         res.set('Content-Disposition', `inline; filename="${file.metadata?.originalName || file.filename}"`);
+        // Cache files for 1 year
+        res.set('Cache-Control', 'public, max-age=31536000, immutable');
 
         // Stream the file
         const downloadStream = bucket.openDownloadStream(objectId);

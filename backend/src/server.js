@@ -37,6 +37,17 @@ app.use(cors({
     credentials: true
 }));
 
+app.use(require('compression')());
+
+// Cache Control Middleware
+app.use((req, res, next) => {
+    // Cache GET requests to data endpoints
+    if (req.method === 'GET' && req.path.startsWith('/api/data/')) {
+        res.set('Cache-Control', 'public, max-age=300, s-maxage=600'); // Cache for 5-10 mins
+    }
+    next();
+});
+
 // Middleware
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
