@@ -556,6 +556,7 @@
                             </p>
                         </div>
 
+
                         <!-- Theme Color Settings -->
                         <div class="mb-8">
                             <h4 class="text-base font-semibold text-gray-800 dark:text-gray-200 mb-2">Theme Color</h4>
@@ -572,485 +573,539 @@
                                     </div>
                                 </div>
                                 <div class="self-end pb-0.5">
-                                    <button onclick="saveLogo()"
-                                        class="bg-leaf hover:opacity-90 text-white px-6 py-2 rounded text-sm">
-                                        Save Logo
+                                    <button onclick="saveThemeColor()"
+                                        class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded text-sm transition-colors">
+                                        Save Theme Color
                                     </button>
                                 </div>
                             </div>
+
+                            <!-- Preset Colors -->
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quick
+                                    Presets</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button" onclick="setThemeColor('#16a34a')"
+                                        class="w-8 h-8 rounded shadow hover:scale-110 transition-transform"
+                                        style="background-color: #16a34a;" title="Green"></button>
+                                    <button type="button" onclick="setThemeColor('#2563eb')"
+                                        class="w-8 h-8 rounded shadow hover:scale-110 transition-transform"
+                                        style="background-color: #2563eb;" title="Blue"></button>
+                                    <button type="button" onclick="setThemeColor('#7c3aed')"
+                                        class="w-8 h-8 rounded shadow hover:scale-110 transition-transform"
+                                        style="background-color: #7c3aed;" title="Purple"></button>
+                                    <button type="button" onclick="setThemeColor('#db2777')"
+                                        class="w-8 h-8 rounded shadow hover:scale-110 transition-transform"
+                                        style="background-color: #db2777;" title="Pink"></button>
+                                    <button type="button" onclick="setThemeColor('#ea580c')"
+                                        class="w-8 h-8 rounded shadow hover:scale-110 transition-transform"
+                                        style="background-color: #ea580c;" title="Orange"></button>
+                                    <button type="button" onclick="setThemeColor('#0891b2')"
+                                        class="w-8 h-8 rounded shadow hover:scale-110 transition-transform"
+                                        style="background-color: #0891b2;" title="Cyan"></button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <!-- Modals -->
-                    <!-- Education Modal -->
-                    <div id="education-modal"
-                        class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-                        <div
-                            class="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
-                            <h3 class="text-lg font-bold mb-4 dark:text-white" id="edu-modal-title">Add Education</h3>
-                            <input type="hidden" id="edu-index">
-                            <div class="space-y-4">
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Degree</label>
-                                    <input id="edu-degree" type="text" placeholder="e.g. Doctor of Philosophy (Ph.D.)"
-                                        class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Institution</label>
-                                    <input id="edu-institution" type="text"
-                                        class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Year/Period</label>
-                                    <input id="edu-year" type="text" placeholder="e.g. 2011–2018"
-                                        class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Details
-                                        (Optional)</label>
-                                    <div class="text-xs text-gray-500 mb-1">Use the main formatting toolbar at
-                                        top if needed
-                                        (click inside box first)</div>
-                                    <div id="edu-details-editor" contenteditable="true"
-                                        onfocus="setActiveEditor('edu-details-editor')"
-                                        class="min-h-24 p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:border-leaf">
+
+                    <!-- Logo Settings -->
+                    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-6">Logo Settings</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Current
+                                    Logo</label>
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-24 h-24 rounded-lg border-2 border-gray-200 dark:border-gray-600 flex items-center justify-center overflow-hidden bg-gray-50 dark:bg-gray-700">
+                                        <img id="current-logo-preview" src="images/logo.png" alt="Current Logo"
+                                            class="max-w-full max-h-full object-contain">
+                                    </div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                        <p>Recommended: PNG with transparent background</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-6 flex justify-end gap-3">
-                                <button onclick="closeEducationModal()"
-                                    class="px-4 py-2 bg-gray-200 dark:bg-gray-600 dark:text-white rounded hover:opacity-90">Cancel</button>
-                                <button onclick="saveEducationItem()"
-                                    class="px-4 py-2 bg-leaf text-white rounded hover:opacity-90">Save</button>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Upload
+                                    New Logo</label>
+                                <div class="flex items-center gap-4">
+                                    <input type="file" id="logo-file-input" accept="image/*"
+                                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20"
+                                        onchange="previewLogo(this)">
+                                </div>
+                                <div id="logo-preview-container" class="mt-4 hidden">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">New logo preview:</p>
+                                    <img id="new-logo-preview" src="" alt="New Logo Preview"
+                                        class="max-w-32 max-h-32 object-contain rounded-lg border border-gray-200 dark:border-gray-600">
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-t dark:border-gray-700">
+                                <button onclick="saveLogo()"
+                                    class="bg-leaf hover:opacity-90 text-white px-6 py-2 rounded text-sm">
+                                    Save Logo
+                                </button>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Experience Modal -->
-                    <div id="experience-modal"
-                        class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-                        <div
-                            class="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
-                            <h3 class="text-lg font-bold mb-4 dark:text-white" id="exp-modal-title">Add
-                                Experience</h3>
-                            <input type="hidden" id="exp-index">
-                            <div class="space-y-4">
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role/Title</label>
-                                    <input id="exp-role" type="text"
-                                        class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Institution</label>
-                                    <input id="exp-institution" type="text"
-                                        class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Period</label>
-                                    <input id="exp-period" type="text" placeholder="e.g. July 2023 – Present"
-                                        class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
+                <!-- Modals -->
+                <!-- Education Modal -->
+                <div id="education-modal"
+                    class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <div
+                        class="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+                        <h3 class="text-lg font-bold mb-4 dark:text-white" id="edu-modal-title">Add Education</h3>
+                        <input type="hidden" id="edu-index">
+                        <div class="space-y-4">
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Degree</label>
+                                <input id="edu-degree" type="text" placeholder="e.g. Doctor of Philosophy (Ph.D.)"
+                                    class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                             </div>
-                            <div class="mt-6 flex justify-end gap-3">
-                                <button onclick="closeExperienceModal()"
-                                    class="px-4 py-2 bg-gray-200 dark:bg-gray-600 dark:text-white rounded hover:opacity-90">Cancel</button>
-                                <button onclick="saveExperienceItem()"
-                                    class="px-4 py-2 bg-leaf text-white rounded hover:opacity-90">Save</button>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Institution</label>
+                                <input id="edu-institution" type="text"
+                                    class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Awards Modal -->
-                    <div id="awards-modal"
-                        class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-                        <div
-                            class="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
-                            <h3 class="text-lg font-bold mb-4 dark:text-white" id="award-modal-title">Add Award
-                            </h3>
-                            <input type="hidden" id="award-index">
-                            <div class="space-y-4">
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
-                                    <input id="award-title" type="text"
-                                        class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description/Details</label>
-                                    <div class="text-xs text-gray-500 mb-1">Use formatting toolbar for
-                                        lists/bold etc.</div>
-                                    <div id="award-details-editor" contenteditable="true"
-                                        onfocus="setActiveEditor('award-details-editor')"
-                                        class="min-h-32 p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:border-leaf">
-                                    </div>
-                                </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Year/Period</label>
+                                <input id="edu-year" type="text" placeholder="e.g. 2011–2018"
+                                    class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                             </div>
-                            <div class="mt-6 flex justify-end gap-3">
-                                <button onclick="closeAwardsModal()"
-                                    class="px-4 py-2 bg-gray-200 dark:bg-gray-600 dark:text-white rounded hover:opacity-90">Cancel</button>
-                                <button onclick="saveAwardItem()"
-                                    class="px-4 py-2 bg-leaf text-white rounded hover:opacity-90">Save</button>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Details
+                                    (Optional)</label>
+                                <div class="text-xs text-gray-500 mb-1">Use the main formatting toolbar at
+                                    top if needed
+                                    (click inside box first)</div>
+                                <div id="edu-details-editor" contenteditable="true"
+                                    onfocus="setActiveEditor('edu-details-editor')"
+                                    class="min-h-24 p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:border-leaf">
+                                </div>
                             </div>
                         </div>
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button onclick="closeEducationModal()"
+                                class="px-4 py-2 bg-gray-200 dark:bg-gray-600 dark:text-white rounded hover:opacity-90">Cancel</button>
+                            <button onclick="saveEducationItem()"
+                                class="px-4 py-2 bg-leaf text-white rounded hover:opacity-90">Save</button>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Experience Modal -->
+                <div id="experience-modal"
+                    class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <div
+                        class="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+                        <h3 class="text-lg font-bold mb-4 dark:text-white" id="exp-modal-title">Add
+                            Experience</h3>
+                        <input type="hidden" id="exp-index">
+                        <div class="space-y-4">
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role/Title</label>
+                                <input id="exp-role" type="text"
+                                    class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Institution</label>
+                                <input id="exp-institution" type="text"
+                                    class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Period</label>
+                                <input id="exp-period" type="text" placeholder="e.g. July 2023 – Present"
+                                    class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button onclick="closeExperienceModal()"
+                                class="px-4 py-2 bg-gray-200 dark:bg-gray-600 dark:text-white rounded hover:opacity-90">Cancel</button>
+                            <button onclick="saveExperienceItem()"
+                                class="px-4 py-2 bg-leaf text-white rounded hover:opacity-90">Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Awards Modal -->
+                <div id="awards-modal"
+                    class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <div
+                        class="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+                        <h3 class="text-lg font-bold mb-4 dark:text-white" id="award-modal-title">Add Award
+                        </h3>
+                        <input type="hidden" id="award-index">
+                        <div class="space-y-4">
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
+                                <input id="award-title" type="text"
+                                    class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description/Details</label>
+                                <div class="text-xs text-gray-500 mb-1">Use formatting toolbar for
+                                    lists/bold etc.</div>
+                                <div id="award-details-editor" contenteditable="true"
+                                    onfocus="setActiveEditor('award-details-editor')"
+                                    class="min-h-32 p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:border-leaf">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button onclick="closeAwardsModal()"
+                                class="px-4 py-2 bg-gray-200 dark:bg-gray-600 dark:text-white rounded hover:opacity-90">Cancel</button>
+                            <button onclick="saveAwardItem()"
+                                class="px-4 py-2 bg-leaf text-white rounded hover:opacity-90">Save</button>
+                        </div>
+                    </div>
+                </div>
 
 
 
-                    <!-- Modals -->
+                <!-- Modals -->
 
-                    <!-- Publication Modal -->
-                    <div id="publication-modal"
-                        class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-                        <div
-                            class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full max-h-screen overflow-y-auto">
-                            <h3 id="pub-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add
-                                Publication</h3>
-                            <form id="pub-form" class="space-y-4">
-                                <input type="hidden" id="pub-index">
+                <!-- Publication Modal -->
+                <div id="publication-modal"
+                    class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full max-h-screen overflow-y-auto">
+                        <h3 id="pub-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add
+                            Publication</h3>
+                        <form id="pub-form" class="space-y-4">
+                            <input type="hidden" id="pub-index">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
+                                <input type="text" id="pub-title"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Author</label>
+                                <input type="text" id="pub-author"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    required>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Journal</label>
+                                <input type="text" id="pub-journal"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    required>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
-                                    <input type="text" id="pub-title"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Year</label>
+                                    <input type="number" id="pub-year"
                                         class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                         required>
                                 </div>
                                 <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Author</label>
-                                    <input type="text" id="pub-author"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                        required>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cited
+                                        By</label>
+                                    <input type="text" id="pub-cited"
+                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Link</label>
+                                <input type="url" id="pub-link"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+
+                            <!-- Image Upload -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Posters
+                                    (Images)</label>
+                                <input type="file" id="pub-images" multiple accept="image/*"
+                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20">
+                                <div id="pub-current-images" class="mt-2 flex gap-2 flex-wrap"></div>
+                            </div>
+
+                            <div class="flex justify-end gap-3 mt-6">
+                                <button type="button" onclick="closeModal('publication-modal')"
+                                    class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                                <button type="submit"
+                                    class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Team Modal -->
+                <div id="team-modal"
+                    class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full">
+                        <h3 id="team-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add
+                            Team Member</h3>
+                        <form id="team-form" class="space-y-4">
+                            <input type="hidden" id="team-index">
+                            <input type="hidden" id="team-old-category"> <!-- To track category changes -->
+
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+                                <select id="team-category"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    <option value="Principal Investigator">Principal Investigator</option>
+                                    <option value="M.Tech Project Students">M.Tech Project Students</option>
+                                    <option value="B.Tech Project Students">B.Tech Project Students</option>
+                                    <option value="Independent Project Students">Independent Project Students
+                                    </option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                                <input type="text" id="team-name"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Work Done
+                                    /
+                                    Description</label>
+                                <textarea id="team-work" rows="3"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    placeholder="Brief description of work done..."></textarea>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">LinkedIn</label>
+                                <input type="url" id="team-linkedin"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile
+                                    Image
+                                    (Optional)</label>
+                                <input type="file" id="team-image" accept="image/*"
+                                    class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20">
+                                <div id="team-current-image" class="mt-2"></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">GitHub</label>
+                                <input type="url" id="team-github"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+
+                            <div class="flex justify-end gap-3 mt-6">
+                                <button type="button" onclick="closeModal('team-modal')"
+                                    class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                                <button type="submit"
+                                    class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Course Modal -->
+                <div id="course-modal"
+                    class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full">
+                        <h3 id="course-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add
+                            Course</h3>
+                        <form id="course-form" class="space-y-4">
+                            <input type="hidden" id="course-index">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Code</label>
+                                <input type="text" id="course-code"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
+                                <input type="text" id="course-title"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    required>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                                <textarea id="course-desc" rows="4"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    required></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Link</label>
+                                <input type="url" id="course-link"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+
+                            <div class="flex justify-end gap-3 mt-6">
+                                <button type="button" onclick="closeModal('course-modal')"
+                                    class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                                <button type="submit"
+                                    class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Collab Modal -->
+                <div id="collab-modal"
+                    class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full">
+                        <h3 id="collab-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add
+                            Collaboration
+                        </h3>
+                        <form id="collab-form" class="space-y-4">
+                            <input type="hidden" id="collab-index">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                                <input type="text" id="collab-name"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Link</label>
+                                <input type="url" id="collab-link"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Position</label>
+                                <input type="text" id="collab-position"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Department</label>
+                                <input type="text" id="collab-dept"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Department
+                                    Link</label>
+                                <input type="url" id="collab-dept-link"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+
+                            <div class="flex justify-end gap-3 mt-6">
+                                <button type="button" onclick="closeModal('collab-modal')"
+                                    class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                                <button type="submit"
+                                    class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Project Modal -->
+                <div id="project-modal"
+                    class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full max-h-screen overflow-y-auto">
+                        <h3 id="project-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+                            Add Project</h3>
+                        <form id="project-form" class="space-y-4">
+                            <input type="hidden" id="project-index">
+                            <input type="hidden" id="project-type"> <!-- 'funded' or 'other' -->
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Project
+                                    Title</label>
+                                <input type="text" id="project-title"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    required>
+                            </div>
+
+                            <!-- Fields for Funded Projects -->
+                            <div id="project-agency-field">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Funding
+                                    Agency</label>
+                                <input type="text" id="project-agency"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+
+                            <div id="project-amount-field" class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Amount
+                                        / Grant
+                                        No</label>
+                                    <input type="text" id="project-amount"
+                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                 </div>
                                 <div>
                                     <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Journal</label>
-                                    <input type="text" id="pub-journal"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                        required>
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Duration/Year</label>
+                                    <input type="text" id="project-duration"
+                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description /
+                                    Role</label>
+                                <textarea id="project-desc" rows="3"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                            </div>
+
+                            <!-- Collaborator Link Helper -->
+                            <div
+                                class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                    Add Collaborator Link (Optional)
+                                    <span class="text-xs text-gray-500 block mt-1">This will add a clickable link in
+                                        the
+                                        description</span>
+                                </label>
+                                <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label
-                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Year</label>
-                                        <input type="number" id="pub-year"
-                                            class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                            required>
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Link
+                                            Label</label>
+                                        <input type="text" id="project-collab-name" placeholder="e.g. Prof. John Doe"
+                                            class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cited
-                                            By</label>
-                                        <input type="text" id="pub-cited"
-                                            class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Link
+                                            URL</label>
+                                        <input type="url" id="project-collab-url" placeholder="https://..."
+                                            class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                     </div>
                                 </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Link</label>
-                                    <input type="url" id="pub-link"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
+                            </div>
 
-                                <!-- Image Upload -->
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Posters
-                                        (Images)</label>
-                                    <input type="file" id="pub-images" multiple accept="image/*"
-                                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20">
-                                    <div id="pub-current-images" class="mt-2 flex gap-2 flex-wrap"></div>
-                                </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Project
+                                    Link
+                                    (Optional)</label>
+                                <input type="url" id="project-link"
+                                    class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
 
-                                <div class="flex justify-end gap-3 mt-6">
-                                    <button type="button" onclick="closeModal('publication-modal')"
-                                        class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
-                                    <button type="submit"
-                                        class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
-                                </div>
-                            </form>
-                        </div>
+                            <!-- Image Upload -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project
+                                    Image
+                                    (Optional)</label>
+                                <input type="file" id="project-image" accept="image/*"
+                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20">
+                                <div id="project-current-image" class="mt-2"></div>
+                            </div>
+
+
+                            <div class="flex justify-end gap-3 mt-6">
+                                <button type="button" onclick="closeModal('project-modal')"
+                                    class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                                <button type="submit"
+                                    class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
+                            </div>
+                        </form>
                     </div>
+                </div>
 
-                    <!-- Team Modal -->
-                    <div id="team-modal"
-                        class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full">
-                            <h3 id="team-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add
-                                Team Member</h3>
-                            <form id="team-form" class="space-y-4">
-                                <input type="hidden" id="team-index">
-                                <input type="hidden" id="team-old-category"> <!-- To track category changes -->
-
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
-                                    <select id="team-category"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                        <option value="Principal Investigator">Principal Investigator</option>
-                                        <option value="M.Tech Project Students">M.Tech Project Students</option>
-                                        <option value="B.Tech Project Students">B.Tech Project Students</option>
-                                        <option value="Independent Project Students">Independent Project Students
-                                        </option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-                                    <input type="text" id="team-name"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                        required>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Work Done
-                                        /
-                                        Description</label>
-                                    <textarea id="team-work" rows="3"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                        placeholder="Brief description of work done..."></textarea>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">LinkedIn</label>
-                                    <input type="url" id="team-linkedin"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile
-                                        Image
-                                        (Optional)</label>
-                                    <input type="file" id="team-image" accept="image/*"
-                                        class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20">
-                                    <div id="team-current-image" class="mt-2"></div>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">GitHub</label>
-                                    <input type="url" id="team-github"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-
-                                <div class="flex justify-end gap-3 mt-6">
-                                    <button type="button" onclick="closeModal('team-modal')"
-                                        class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
-                                    <button type="submit"
-                                        class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Course Modal -->
-                    <div id="course-modal"
-                        class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full">
-                            <h3 id="course-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add
-                                Course</h3>
-                            <form id="course-form" class="space-y-4">
-                                <input type="hidden" id="course-index">
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Code</label>
-                                    <input type="text" id="course-code"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                        required>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
-                                    <input type="text" id="course-title"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                        required>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-                                    <textarea id="course-desc" rows="4"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                        required></textarea>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Link</label>
-                                    <input type="url" id="course-link"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-
-                                <div class="flex justify-end gap-3 mt-6">
-                                    <button type="button" onclick="closeModal('course-modal')"
-                                        class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
-                                    <button type="submit"
-                                        class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Collab Modal -->
-                    <div id="collab-modal"
-                        class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full">
-                            <h3 id="collab-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add
-                                Collaboration
-                            </h3>
-                            <form id="collab-form" class="space-y-4">
-                                <input type="hidden" id="collab-index">
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-                                    <input type="text" id="collab-name"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                        required>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Link</label>
-                                    <input type="url" id="collab-link"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Position</label>
-                                    <input type="text" id="collab-position"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Department</label>
-                                    <input type="text" id="collab-dept"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Department
-                                        Link</label>
-                                    <input type="url" id="collab-dept-link"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-
-                                <div class="flex justify-end gap-3 mt-6">
-                                    <button type="button" onclick="closeModal('collab-modal')"
-                                        class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
-                                    <button type="submit"
-                                        class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Project Modal -->
-                    <div id="project-modal"
-                        class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-                        <div
-                            class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-lg w-full max-h-screen overflow-y-auto">
-                            <h3 id="project-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">
-                                Add Project</h3>
-                            <form id="project-form" class="space-y-4">
-                                <input type="hidden" id="project-index">
-                                <input type="hidden" id="project-type"> <!-- 'funded' or 'other' -->
-
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Project
-                                        Title</label>
-                                    <input type="text" id="project-title"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                        required>
-                                </div>
-
-                                <!-- Fields for Funded Projects -->
-                                <div id="project-agency-field">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Funding
-                                        Agency</label>
-                                    <input type="text" id="project-agency"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-
-                                <div id="project-amount-field" class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Amount
-                                            / Grant
-                                            No</label>
-                                        <input type="text" id="project-amount"
-                                            class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                    </div>
-                                    <div>
-                                        <label
-                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Duration/Year</label>
-                                        <input type="text" id="project-duration"
-                                            class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description /
-                                        Role</label>
-                                    <textarea id="project-desc" rows="3"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
-                                </div>
-
-                                <!-- Collaborator Link Helper -->
-                                <div
-                                    class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                                        Add Collaborator Link (Optional)
-                                        <span class="text-xs text-gray-500 block mt-1">This will add a clickable link in
-                                            the
-                                            description</span>
-                                    </label>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Link
-                                                Label</label>
-                                            <input type="text" id="project-collab-name"
-                                                placeholder="e.g. Prof. John Doe"
-                                                class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Link
-                                                URL</label>
-                                            <input type="url" id="project-collab-url" placeholder="https://..."
-                                                class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Project
-                                        Link
-                                        (Optional)</label>
-                                    <input type="url" id="project-link"
-                                        class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-
-                                <!-- Image Upload -->
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project
-                                        Image
-                                        (Optional)</label>
-                                    <input type="file" id="project-image" accept="image/*"
-                                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20">
-                                    <div id="project-current-image" class="mt-2"></div>
-                                </div>
-
-
-                                <div class="flex justify-end gap-3 mt-6">
-                                    <button type="button" onclick="closeModal('project-modal')"
-                                        class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
-                                    <button type="submit"
-                                        class="bg-leaf hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <script src="env.js"></script>
-                    <script src="admin.js"></script>
+                <script src="env.js"></script>
+                <script src="admin.js"></script>
 </body>
 
 </html>
