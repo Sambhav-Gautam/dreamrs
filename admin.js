@@ -623,6 +623,7 @@ function renderTeamList() {
     container.innerHTML = '';
 
     Object.keys(teamData).forEach(category => {
+        if (category === 'PhD Scholars') return; // Managed in separate tab
         const catDiv = document.createElement('div');
         catDiv.className = 'mb-4';
         catDiv.innerHTML = `<h4 class="font-bold text-gray-700 dark:text-gray-300 mb-2">${category}</h4>`;
