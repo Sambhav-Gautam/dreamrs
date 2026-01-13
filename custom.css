@@ -305,8 +305,15 @@ u a {
 }
 
 .dark .nav-link-modern {
-    color: #4b5563;
-    /* Keep text dark in dark mode due to bright video background */
+    color: #e5e7eb;
+    /* Default light text for dark mode (Research, Team pages, etc.) */
+}
+
+/* SPECIAL CASE: Home Page Video Background (Bright) */
+/* When on Home Page AND Header is Transparent (Unscrolled) AND Dark Mode is Active */
+.home-page .dark .header-backdrop.bg-transparent .nav-link-modern {
+    color: #1f2937 !important;
+    /* Force Dark Text */
 }
 
 .nav-link-modern:hover {

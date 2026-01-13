@@ -4,6 +4,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const API_BASE_URL = window.ENV?.API_BASE_URL || window.API_CONFIG?.API_BASE_URL || '';
 
     // Helper to get file URL
+    if (document.getElementById('Hero')) {
+        document.body.classList.add('home-page');
+    }
+
     function getFileUrl(filename) {
         if (!filename) return '';
         if (filename.startsWith('http://') || filename.startsWith('https://')) return filename;
