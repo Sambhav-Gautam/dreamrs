@@ -50,6 +50,7 @@ function openTab(tabName) {
     // Refresh specific data if needed
     if (tabName === 'openings') loadOpeningsAdmin();
     if (tabName === 'phd-scholars') loadPhDScholars();
+    if (tabName === 'pi-profile') loadPISettings();
 }
 
 function openModal(id) {
