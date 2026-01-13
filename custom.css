@@ -311,9 +311,16 @@ u a {
 
 /* SPECIAL CASE: Home Page Video Background (Bright) */
 /* When on Home Page AND Header is Transparent (Unscrolled) AND Dark Mode is Active */
-.home-page .dark .header-backdrop.bg-transparent .nav-link-modern {
-    color: #1f2937 !important;
-    /* Force Dark Text */
+.home-page .dark .header-backdrop.bg-transparent .nav-link-modern,
+.home-page .dark .header-backdrop.bg-transparent .theme-toggle,
+.home-page .dark .header-backdrop.bg-transparent .mobile-menu-button {
+    color: #000000 !important;
+    /* Force Pure Black Text */
+}
+
+/* Ensure hover state is also visible */
+.home-page .dark .header-backdrop.bg-transparent .nav-link-modern:hover {
+    color: var(--leaf-color) !important;
 }
 
 .nav-link-modern:hover {
