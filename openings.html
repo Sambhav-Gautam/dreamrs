@@ -93,12 +93,12 @@
             container.innerHTML = '';
             container.className = 'w-full grid md:grid-cols-2 lg:grid-cols-4 gap-6';
 
-            // Define the 4 categories with their styling
+            // Define the 4 categories - using consistent styling
             const openings = [
-                { key: 'phd', title: "PhD Positions", icon: "📚", color: "green" },
-                { key: 'mtech', title: "M.Tech Projects", icon: "🎓", color: "blue" },
-                { key: 'btech', title: "B.Tech Projects", icon: "💻", color: "purple" },
-                { key: 'analyst', title: "Research Analyst", icon: "🔬", color: "orange" }
+                { key: 'phd', title: "PhD Positions", icon: "📚" },
+                { key: 'mtech', title: "M.Tech Projects", icon: "🎓" },
+                { key: 'btech', title: "B.Tech Projects", icon: "💻" },
+                { key: 'analyst', title: "Research Analyst", icon: "🔬" }
             ];
 
             openings.forEach(op => {
@@ -108,24 +108,24 @@
                 const hasAny = hasFile || hasLink;
 
                 const card = document.createElement('div');
-                card.className = `group relative bg-white dark:bg-gray-800 p-6 rounded-xl border-l-4 border-${op.color}-500 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col`;
+                card.className = 'group relative bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col';
+                card.style.borderLeft = '4px solid #0891B2';
 
                 card.innerHTML = `
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="w-10 h-10 bg-${op.color}-100 dark:bg-${op.color}-900/30 rounded-full flex items-center justify-center text-lg">${op.icon}</span>
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="w-10 h-10 rounded-full flex items-center justify-center text-lg" style="background: rgba(8, 145, 178, 0.1);">${op.icon}</span>
                         <h3 class="text-lg font-bold text-gray-800 dark:text-white">${op.title}</h3>
                     </div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 leading-relaxed flex-1">${item.description || 'Check back soon for opportunities.'}</p>
                     
                     <div class="mt-auto space-y-2">
                         ${hasFile ? `
-                        <a href="${getFileUrl(item.file)}" target="_blank" class="flex items-center justify-center gap-2 w-full py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-leaf transition-all text-sm font-medium">
+                        <a href="${getFileUrl(item.file)}" target="_blank" class="flex items-center justify-center gap-2 w-full py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all text-sm font-medium" style="color: #0891B2;">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                             View Details
                         </a>` : ''}
                         
                         ${hasLink ? `
-                        <a href="${item.link}" target="_blank" class="flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-leaf text-white hover:bg-green-600 shadow-sm transition-all text-sm font-medium">
+                        <a href="${item.link}" target="_blank" class="flex items-center justify-center gap-2 w-full py-2 rounded-lg text-white shadow-sm transition-all text-sm font-medium" style="background: #0891B2;">
                             Apply Now
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </a>` : ''}
@@ -133,7 +133,7 @@
                         ${!hasAny ? `
                         <div class="flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-400 text-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            Coming Soon
+                            Not Opened Yet
                         </div>` : ''}
                     </div>
                 `;

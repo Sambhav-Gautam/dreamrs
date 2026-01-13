@@ -2,10 +2,10 @@ const Settings = require('../models/Settings');
 
 // Default structure for openings
 const DEFAULT_OPENINGS = {
-    phd: { file: '', link: '', description: 'Full-time research positions for doctoral candidates.' },
-    mtech: { file: '', link: '', description: 'Research opportunities for M.Tech students.' },
-    btech: { file: '', link: '', description: 'Hands-on projects for undergraduates.' },
-    analyst: { file: '', link: '', description: 'Research analyst positions in the lab.' }
+    phd: { file: '', link: '' },
+    mtech: { file: '', link: '' },
+    btech: { file: '', link: '' },
+    analyst: { file: '', link: '' }
 };
 
 // Get all openings
