@@ -171,7 +171,7 @@ async function saveFontSetting() {
 
     try {
         const res = await apiFetch('/api/settings', {
-            method: 'POST',
+            method: 'PUT',
             body: JSON.stringify({ key: 'siteFont', value: fontName })
         });
 
@@ -1304,13 +1304,15 @@ function applyThemeColor(color) {
 }
 
 function saveThemeColor() {
-    const picker = document.getElementById('theme-color-picker');
-    const color = picker ? picker.value : currentThemeColor;
+    const picker = document.getElementById('theme-color');
+    const color = picker ? picker.value : '#0891B2';
 
     apiFetch('/api/settings', {
         method: 'PUT',
         body: JSON.stringify({ key: 'themeColor', value: color })
     }).then(() => {
+        // Also apply the color immediately
+        if (typeof applyThemeColor === 'function') applyThemeColor(color);
         alert('Theme color saved!');
     }).catch(e => {
         console.error('Save failed', e);
