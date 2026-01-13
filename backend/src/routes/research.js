@@ -13,6 +13,7 @@ router.delete('/publications/:index', researchController.deletePublication);
 
 // Collaboration routes
 router.post('/collaborations', researchController.addCollaboration);
+router.put('/collaborations/:index', researchController.updateCollaboration);
 router.delete('/collaborations/:index', researchController.deleteCollaboration);
 
 module.exports = router;
