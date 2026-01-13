@@ -232,13 +232,7 @@ async function fetchThemeSettings() {
     }
 }
 
-if (settings.siteFont) {
-    applyFontSetting(settings.siteFont);
-}
-    } catch (e) {
-    console.error('Error fetching settings:', e);
-}
-}
+
 
 // Preset Color Handler
 function setThemeColor(color) {
