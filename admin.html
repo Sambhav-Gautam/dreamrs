@@ -177,149 +177,109 @@
 
             <!-- Openings Tab -->
             <div id="openings-tab" class="tab-content hidden">
-                <div class="max-w-4xl mx-auto">
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Manage Opening Types</h3>
-                    <p class="text-gray-600 dark:text-gray-400 mb-8">Configure job details and application links for
-                        each position type.</p>
+                <div class="max-w-5xl mx-auto">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Manage Openings</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">Add multiple positions per category. Each item has
+                        a title, PDF, and application form link.</p>
 
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <!-- PhD Opening -->
-                        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6"
+                    <!-- Opening Categories -->
+                    <div class="space-y-6">
+                        <!-- PhD Positions -->
+                        <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden"
                             style="border-left: 4px solid #0891B2;">
-                            <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm"
-                                    style="background: rgba(8, 145, 178, 0.1); color: #0891B2;">📚</span>
-                                PhD Positions
-                            </h4>
-                            <div class="space-y-4">
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description
-                                        PDF</label>
-                                    <input type="file" id="opening-phd-file" accept=".pdf"
-                                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20">
-                                    <div id="opening-phd-current-file" class="text-xs text-gray-500 mt-1"></div>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Application
-                                        Link</label>
-                                    <input type="url" id="opening-phd-link" placeholder="https://forms.google.com/..."
-                                        class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-                                <div class="flex gap-2">
-                                    <button onclick="saveOpening('phd')"
-                                        class="text-white px-4 py-2 rounded text-sm flex-1"
-                                        style="background: #0891B2;">Save</button>
-                                    <button onclick="clearOpening('phd')"
-                                        class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-4 py-2 rounded text-sm">Clear</button>
-                                </div>
+                            <div
+                                class="px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
+                                <h4 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <span class="text-xl">📚</span> PhD Positions
+                                </h4>
+                                <button onclick="openOpeningModal('phd')" class="text-white px-4 py-2 rounded text-sm"
+                                    style="background: #0891B2;">+ Add New</button>
                             </div>
+                            <div id="opening-phd-table" class="p-4"></div>
                         </div>
 
-                        <!-- M.Tech Opening -->
-                        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6"
+                        <!-- M.Tech Projects -->
+                        <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden"
                             style="border-left: 4px solid #0891B2;">
-                            <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm"
-                                    style="background: rgba(8, 145, 178, 0.1); color: #0891B2;">🎓</span>
-                                M.Tech Projects
-                            </h4>
-                            <div class="space-y-4">
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description
-                                        PDF</label>
-                                    <input type="file" id="opening-mtech-file" accept=".pdf"
-                                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20">
-                                    <div id="opening-mtech-current-file" class="text-xs text-gray-500 mt-1"></div>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Application
-                                        Link</label>
-                                    <input type="url" id="opening-mtech-link" placeholder="https://forms.google.com/..."
-                                        class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-                                <div class="flex gap-2">
-                                    <button onclick="saveOpening('mtech')"
-                                        class="text-white px-4 py-2 rounded text-sm flex-1"
-                                        style="background: #0891B2;">Save</button>
-                                    <button onclick="clearOpening('mtech')"
-                                        class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-4 py-2 rounded text-sm">Clear</button>
-                                </div>
+                            <div
+                                class="px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
+                                <h4 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <span class="text-xl">🎓</span> M.Tech Projects
+                                </h4>
+                                <button onclick="openOpeningModal('mtech')" class="text-white px-4 py-2 rounded text-sm"
+                                    style="background: #0891B2;">+ Add New</button>
                             </div>
+                            <div id="opening-mtech-table" class="p-4"></div>
                         </div>
 
-                        <!-- B.Tech Opening -->
-                        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6"
+                        <!-- B.Tech Projects -->
+                        <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden"
                             style="border-left: 4px solid #0891B2;">
-                            <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm"
-                                    style="background: rgba(8, 145, 178, 0.1); color: #0891B2;">💻</span>
-                                B.Tech Projects
-                            </h4>
-                            <div class="space-y-4">
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description
-                                        PDF</label>
-                                    <input type="file" id="opening-btech-file" accept=".pdf"
-                                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20">
-                                    <div id="opening-btech-current-file" class="text-xs text-gray-500 mt-1"></div>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Application
-                                        Link</label>
-                                    <input type="url" id="opening-btech-link" placeholder="https://forms.google.com/..."
-                                        class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-                                <div class="flex gap-2">
-                                    <button onclick="saveOpening('btech')"
-                                        class="text-white px-4 py-2 rounded text-sm flex-1"
-                                        style="background: #0891B2;">Save</button>
-                                    <button onclick="clearOpening('btech')"
-                                        class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-4 py-2 rounded text-sm">Clear</button>
-                                </div>
+                            <div
+                                class="px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
+                                <h4 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <span class="text-xl">💻</span> B.Tech Projects
+                                </h4>
+                                <button onclick="openOpeningModal('btech')" class="text-white px-4 py-2 rounded text-sm"
+                                    style="background: #0891B2;">+ Add New</button>
                             </div>
+                            <div id="opening-btech-table" class="p-4"></div>
                         </div>
 
-                        <!-- Research Analyst Opening -->
-                        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6"
+                        <!-- Research Analyst -->
+                        <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden"
                             style="border-left: 4px solid #0891B2;">
-                            <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm"
-                                    style="background: rgba(8, 145, 178, 0.1); color: #0891B2;">🔬</span>
-                                Research Analyst
-                            </h4>
-                            <div class="space-y-4">
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description
-                                        PDF</label>
-                                    <input type="file" id="opening-analyst-file" accept=".pdf"
-                                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-leaf/10 file:text-leaf hover:file:bg-leaf/20">
-                                    <div id="opening-analyst-current-file" class="text-xs text-gray-500 mt-1"></div>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Application
-                                        Link</label>
-                                    <input type="url" id="opening-analyst-link"
-                                        placeholder="https://forms.google.com/..."
-                                        class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
-                                <div class="flex gap-2">
-                                    <button onclick="saveOpening('analyst')"
-                                        class="text-white px-4 py-2 rounded text-sm flex-1"
-                                        style="background: #0891B2;">Save</button>
-                                    <button onclick="clearOpening('analyst')"
-                                        class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-4 py-2 rounded text-sm">Clear</button>
-                                </div>
+                            <div
+                                class="px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
+                                <h4 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <span class="text-xl">🔬</span> Research Analyst
+                                </h4>
+                                <button onclick="openOpeningModal('analyst')"
+                                    class="text-white px-4 py-2 rounded text-sm" style="background: #0891B2;">+ Add
+                                    New</button>
                             </div>
+                            <div id="opening-analyst-table" class="p-4"></div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Opening Item Modal -->
+            <div id="opening-modal"
+                class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
+                    <h3 id="opening-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add
+                        Opening</h3>
+                    <form id="opening-form" class="space-y-4">
+                        <input type="hidden" id="opening-category">
+                        <input type="hidden" id="opening-index">
+                        <input type="hidden" id="opening-existing-file">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title
+                                *</label>
+                            <input type="text" id="opening-title" required placeholder="e.g. PhD Opening 2025"
+                                class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description
+                                PDF</label>
+                            <input type="file" id="opening-file" accept=".pdf"
+                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold">
+                            <div id="opening-current-file" class="text-xs text-gray-500 mt-1"></div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Application
+                                Form Link</label>
+                            <input type="url" id="opening-form-link" placeholder="https://forms.google.com/..."
+                                class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                        <div class="flex justify-end gap-3 mt-6">
+                            <button type="button" onclick="closeModal('opening-modal')"
+                                class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                            <button type="submit" class="text-white px-4 py-2 rounded"
+                                style="background: #0891B2;">Save</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 

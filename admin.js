@@ -900,9 +900,9 @@ async function saveCourses() {
 }
 
 
-// --- OPENINGS (4-Type System: phd, mtech, btech, analyst) ---
+// --- OPENINGS (Multi-Item System: arrays per category) ---
 
-let openingsData = {};
+let openingsData = { phd: [], mtech: [], btech: [], analyst: [] };
 
 async function loadOpeningsAdmin() {
     try {
@@ -910,21 +910,9 @@ async function loadOpeningsAdmin() {
         const data = await res.json();
         openingsData = data;
 
-        // Populate each opening type
-        ['phd', 'mtech', 'btech', 'analyst'].forEach(type => {
-            const opening = data[type] || {};
-
-            const linkInput = document.getElementById(`opening-${type}-link`);
-            const fileDisplay = document.getElementById(`opening-${type}-current-file`);
-
-            if (linkInput) linkInput.value = opening.link || '';
-            if (fileDisplay) {
-                if (opening.file) {
-                    fileDisplay.innerHTML = `<span class="text-leaf">📄 ${opening.file}</span>`;
-                } else {
-                    fileDisplay.innerHTML = '<span class="italic text-gray-400">No PDF uploaded</span>';
-                }
-            }
+        // Render tables for each category
+        ['phd', 'mtech', 'btech', 'analyst'].forEach(cat => {
+            renderOpeningTable(cat, data[cat] || []);
         });
 
     } catch (e) {
@@ -932,16 +920,88 @@ async function loadOpeningsAdmin() {
     }
 }
 
-async function saveOpening(category) {
-    const fileInput = document.getElementById(`opening-${category}-file`);
-    const linkInput = document.getElementById(`opening-${category}-link`);
-    const linkValue = linkInput ? linkInput.value.trim() : '';
+function renderOpeningTable(category, items) {
+    const container = document.getElementById(`opening-${category}-table`);
+    if (!container) return;
 
-    // Start with existing data for this category
-    let newData = { ...(openingsData[category] || {}) };
+    if (items.length === 0) {
+        container.innerHTML = '<p class="text-gray-400 italic text-sm">No openings added yet. Click "Add New" to create one.</p>';
+        return;
+    }
+
+    let html = `<table class="w-full text-sm">
+        <thead>
+            <tr class="text-left text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+                <th class="py-2 px-2">Title</th>
+                <th class="py-2 px-2 text-center">View PDF</th>
+                <th class="py-2 px-2 text-center">Apply Link</th>
+                <th class="py-2 px-2 text-right">Actions</th>
+            </tr>
+        </thead>
+        <tbody>`;
+
+    items.forEach((item, index) => {
+        const hasFile = item.file && item.file.trim();
+        const hasForm = item.form && item.form.trim();
+
+        html += `<tr class="border-b border-gray-100 dark:border-gray-700">
+            <td class="py-3 px-2 font-medium text-gray-800 dark:text-white">${item.title || 'Untitled'}</td>
+            <td class="py-3 px-2 text-center">
+                ${hasFile ? `<a href="${getFileUrl(item.file)}" target="_blank" style="color: #0891B2;" class="hover:underline">📄 View</a>` : '<span class="text-gray-400">—</span>'}
+            </td>
+            <td class="py-3 px-2 text-center">
+                ${hasForm ? `<a href="${item.form}" target="_blank" style="color: #0891B2;" class="hover:underline">🔗 Apply</a>` : '<span class="text-gray-400">—</span>'}
+            </td>
+            <td class="py-3 px-2 text-right">
+                <button onclick="editOpeningItem('${category}', ${index})" class="text-blue-500 hover:underline mr-2">Edit</button>
+                <button onclick="deleteOpeningItem('${category}', ${index})" class="text-red-500 hover:underline">Delete</button>
+            </td>
+        </tr>`;
+    });
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+function openOpeningModal(category, index = -1) {
+    document.getElementById('opening-form').reset();
+    document.getElementById('opening-category').value = category;
+    document.getElementById('opening-index').value = index;
+    document.getElementById('opening-existing-file').value = '';
+    document.getElementById('opening-current-file').innerHTML = '';
+
+    const categoryNames = { phd: 'PhD', mtech: 'M.Tech', btech: 'B.Tech', analyst: 'Research Analyst' };
+    document.getElementById('opening-modal-title').textContent = index === -1 ? `Add ${categoryNames[category]} Opening` : `Edit ${categoryNames[category]} Opening`;
+
+    openModal('opening-modal');
+}
+
+function editOpeningItem(category, index) {
+    const item = openingsData[category]?.[index];
+    if (!item) return;
+
+    openOpeningModal(category, index);
+    document.getElementById('opening-title').value = item.title || '';
+    document.getElementById('opening-form-link').value = item.form || '';
+    document.getElementById('opening-existing-file').value = item.file || '';
+
+    if (item.file) {
+        document.getElementById('opening-current-file').innerHTML = `<span style="color: #0891B2;">Current: ${item.file}</span>`;
+    }
+}
+
+document.getElementById('opening-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const category = document.getElementById('opening-category').value;
+    const index = parseInt(document.getElementById('opening-index').value);
+    const title = document.getElementById('opening-title').value.trim();
+    const formLink = document.getElementById('opening-form-link').value.trim();
+    const fileInput = document.getElementById('opening-file');
+    let file = document.getElementById('opening-existing-file').value;
 
     try {
-        // 1. Handle File Upload if present
+        // Upload file if new one selected
         if (fileInput && fileInput.files.length > 0) {
             const formData = new FormData();
             formData.append('file', fileInput.files[0]);
@@ -953,55 +1013,50 @@ async function saveOpening(category) {
             });
 
             if (!uploadRes.ok) throw new Error('File upload failed');
-
             const uploadData = await uploadRes.json();
-            newData.file = uploadData.filename;
+            file = uploadData.filename;
         }
 
-        // 2. Update Link
-        newData.link = linkValue;
+        const itemData = { title, file, form: formLink };
 
-        // 3. Save to backend via PUT /:category
-        await apiFetch(`/api/data/openings/${category}`, {
-            method: 'PUT',
-            body: JSON.stringify(newData)
-        });
+        if (index === -1) {
+            // Add new item
+            await apiFetch(`/api/data/openings/${category}`, {
+                method: 'POST',
+                body: JSON.stringify(itemData)
+            });
+        } else {
+            // Update existing item
+            await apiFetch(`/api/data/openings/${category}/${index}`, {
+                method: 'PUT',
+                body: JSON.stringify(itemData)
+            });
+        }
 
-        // 4. Update local state
-        openingsData[category] = newData;
-
-        alert(`${category.toUpperCase()} opening saved successfully!`);
-
-        // Refresh UI
+        closeModal('opening-modal');
         loadOpeningsAdmin();
-
-        // Clear file input
-        if (fileInput) fileInput.value = '';
+        alert('Opening saved successfully!');
 
     } catch (e) {
-        console.error(`Error saving ${category} opening:`, e);
-        alert(`Failed to save ${category} opening: ` + e.message);
+        console.error('Error saving opening:', e);
+        alert('Failed to save opening: ' + e.message);
     }
-}
+});
 
-async function clearOpening(category) {
-    if (!confirm(`Are you sure you want to clear the ${category.toUpperCase()} opening?`)) return;
+async function deleteOpeningItem(category, index) {
+    if (!confirm('Are you sure you want to delete this opening?')) return;
 
     try {
-        // Delete via backend
-        await apiFetch(`/api/data/openings/${category}`, {
+        await apiFetch(`/api/data/openings/${category}/${index}`, {
             method: 'DELETE'
         });
 
-        // Update local state
-        openingsData[category] = { file: '', link: '', description: '' };
-
-        alert(`${category.toUpperCase()} opening cleared!`);
         loadOpeningsAdmin();
+        alert('Opening deleted!');
 
     } catch (e) {
-        console.error(`Error clearing ${category} opening:`, e);
-        alert(`Failed to clear ${category} opening: ` + e.message);
+        console.error('Error deleting opening:', e);
+        alert('Failed to delete opening: ' + e.message);
     }
 }
 
@@ -1751,8 +1806,9 @@ window.saveCourses = saveCourses;
 
 // Openings Functions
 window.loadOpeningsAdmin = loadOpeningsAdmin;
-window.saveOpening = saveOpening;
-window.clearOpening = clearOpening;
+window.openOpeningModal = openOpeningModal;
+window.editOpeningItem = editOpeningItem;
+window.deleteOpeningItem = deleteOpeningItem;
 
 // Theme Functions
 window.setThemeColor = setThemeColor;

@@ -1,22 +1,26 @@
 const Settings = require('../models/Settings');
 
-// Default structure for openings
+// Default structure for openings - each category is an array of items
 const DEFAULT_OPENINGS = {
-    phd: { file: '', link: '' },
-    mtech: { file: '', link: '' },
-    btech: { file: '', link: '' },
-    analyst: { file: '', link: '' }
+    phd: [],
+    mtech: [],
+    btech: [],
+    analyst: []
 };
+
+const VALID_CATEGORIES = ['phd', 'mtech', 'btech', 'analyst'];
 
 // Get all openings
 exports.getOpenings = async (req, res) => {
     try {
         const setting = await Settings.findOne({ key: 'openings' });
 
-        // Merge with defaults to ensure all types exist
+        // Merge with defaults to ensure all types exist as arrays
         const openings = {
-            ...DEFAULT_OPENINGS,
-            ...(setting?.value || {})
+            phd: (setting?.value?.phd) || [],
+            mtech: (setting?.value?.mtech) || [],
+            btech: (setting?.value?.btech) || [],
+            analyst: (setting?.value?.analyst) || []
         };
 
         res.json(openings);
@@ -26,13 +30,13 @@ exports.getOpenings = async (req, res) => {
     }
 };
 
-// Update a specific opening type (phd, mtech, btech, analyst)
-exports.updateOpeningType = async (req, res) => {
+// Add an item to a category
+exports.addItem = async (req, res) => {
     try {
         const { category } = req.params;
-        const validCategories = ['phd', 'mtech', 'btech', 'analyst'];
+        const { title, file, form } = req.body;
 
-        if (!validCategories.includes(category)) {
+        if (!VALID_CATEGORIES.includes(category)) {
             return res.status(400).json({ error: 'Invalid opening category' });
         }
 
@@ -41,14 +45,13 @@ exports.updateOpeningType = async (req, res) => {
         if (!setting) {
             setting = new Settings({
                 key: 'openings',
-                value: { ...DEFAULT_OPENINGS, [category]: req.body }
+                value: { ...DEFAULT_OPENINGS, [category]: [{ title, file, form }] }
             });
         } else {
-            setting.value = {
-                ...DEFAULT_OPENINGS,
-                ...(setting.value || {}),
-                [category]: req.body
-            };
+            if (!setting.value) setting.value = { ...DEFAULT_OPENINGS };
+            if (!Array.isArray(setting.value[category])) setting.value[category] = [];
+
+            setting.value[category].push({ title: title || '', file: file || '', form: form || '' });
             setting.markModified('value');
         }
 
@@ -56,41 +59,78 @@ exports.updateOpeningType = async (req, res) => {
 
         res.json({
             success: true,
-            message: `${category} opening updated successfully`,
-            opening: setting.value[category]
+            message: `Item added to ${category}`,
+            items: setting.value[category]
         });
     } catch (error) {
-        console.error('Error updating opening:', error);
-        res.status(500).json({ error: 'Failed to update opening' });
+        console.error('Error adding item:', error);
+        res.status(500).json({ error: 'Failed to add item' });
     }
 };
 
-// Delete/clear a specific opening type
-exports.deleteOpeningType = async (req, res) => {
+// Update an item in a category
+exports.updateItem = async (req, res) => {
     try {
-        const { category } = req.params;
-        const validCategories = ['phd', 'mtech', 'btech', 'analyst'];
+        const { category, index } = req.params;
+        const { title, file, form } = req.body;
+        const idx = parseInt(index);
 
-        if (!validCategories.includes(category)) {
+        if (!VALID_CATEGORIES.includes(category)) {
             return res.status(400).json({ error: 'Invalid opening category' });
         }
 
         let setting = await Settings.findOne({ key: 'openings' });
 
-        if (setting && setting.value && setting.value[category]) {
-            // Reset to default (clear file and link but keep description)
-            setting.value[category] = {
-                file: '',
-                link: '',
-                description: DEFAULT_OPENINGS[category].description
-            };
-            setting.markModified('value');
-            await setting.save();
+        if (!setting || !setting.value || !Array.isArray(setting.value[category]) || !setting.value[category][idx]) {
+            return res.status(404).json({ error: 'Item not found' });
         }
 
-        res.json({ success: true, message: `${category} opening cleared` });
+        setting.value[category][idx] = {
+            title: title !== undefined ? title : setting.value[category][idx].title,
+            file: file !== undefined ? file : setting.value[category][idx].file,
+            form: form !== undefined ? form : setting.value[category][idx].form
+        };
+        setting.markModified('value');
+        await setting.save();
+
+        res.json({
+            success: true,
+            message: `Item updated in ${category}`,
+            item: setting.value[category][idx]
+        });
     } catch (error) {
-        console.error('Error clearing opening:', error);
-        res.status(500).json({ error: 'Failed to clear opening' });
+        console.error('Error updating item:', error);
+        res.status(500).json({ error: 'Failed to update item' });
+    }
+};
+
+// Delete an item from a category
+exports.deleteItem = async (req, res) => {
+    try {
+        const { category, index } = req.params;
+        const idx = parseInt(index);
+
+        if (!VALID_CATEGORIES.includes(category)) {
+            return res.status(400).json({ error: 'Invalid opening category' });
+        }
+
+        let setting = await Settings.findOne({ key: 'openings' });
+
+        if (!setting || !setting.value || !Array.isArray(setting.value[category]) || !setting.value[category][idx]) {
+            return res.status(404).json({ error: 'Item not found' });
+        }
+
+        setting.value[category].splice(idx, 1);
+        setting.markModified('value');
+        await setting.save();
+
+        res.json({
+            success: true,
+            message: `Item deleted from ${category}`,
+            items: setting.value[category]
+        });
+    } catch (error) {
+        console.error('Error deleting item:', error);
+        res.status(500).json({ error: 'Failed to delete item' });
     }
 };

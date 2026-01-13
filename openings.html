@@ -61,7 +61,6 @@
     <script src="env.js"></script>
     <script src="script.js"></script>
     <script>
-        // Uses window.ENV from env.js
         const API_BASE_URL = window.ENV?.API_BASE_URL || window.API_CONFIG?.API_BASE_URL || '';
 
         function getFileUrl(filename) {
@@ -74,14 +73,12 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/api/data/openings`);
                 const data = await response.json();
-
-                // Data now has: { phd: {...}, mtech: {...}, btech: {...}, analyst: {...} }
                 renderOpeningActions(data);
             } catch (error) {
                 console.error('Error loading openings:', error);
                 const container = document.getElementById('opening-actions');
                 if (container) {
-                    container.innerHTML = `<div class="text-red-500">Failed to load openings.</div>`;
+                    container.innerHTML = '<div class="text-red-500">Failed to load openings.</div>';
                 }
             }
         }
@@ -91,53 +88,69 @@
             if (!container) return;
 
             container.innerHTML = '';
-            container.className = 'w-full grid md:grid-cols-2 lg:grid-cols-4 gap-6';
+            container.className = 'w-full space-y-8';
 
-            // Define the 4 categories - using consistent styling
-            const openings = [
+            const categories = [
                 { key: 'phd', title: "PhD Positions", icon: "📚" },
                 { key: 'mtech', title: "M.Tech Projects", icon: "🎓" },
                 { key: 'btech', title: "B.Tech Projects", icon: "💻" },
                 { key: 'analyst', title: "Research Analyst", icon: "🔬" }
             ];
 
-            openings.forEach(op => {
-                const item = data[op.key] || {};
-                const hasFile = item.file && item.file.trim() !== '';
-                const hasLink = item.link && item.link.trim() !== '';
-                const hasAny = hasFile || hasLink;
+            categories.forEach(cat => {
+                const items = data[cat.key] || [];
 
-                const card = document.createElement('div');
-                card.className = 'group relative bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col';
-                card.style.borderLeft = '4px solid #0891B2';
+                const section = document.createElement('div');
+                section.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden';
+                section.style.borderLeft = '4px solid #0891B2';
 
-                card.innerHTML = `
-                    <div class="flex items-center gap-3 mb-6">
-                        <span class="w-10 h-10 rounded-full flex items-center justify-center text-lg" style="background: rgba(8, 145, 178, 0.1);">${op.icon}</span>
-                        <h3 class="text-lg font-bold text-gray-800 dark:text-white">${op.title}</h3>
-                    </div>
-                    
-                    <div class="mt-auto space-y-2">
-                        ${hasFile ? `
-                        <a href="${getFileUrl(item.file)}" target="_blank" class="flex items-center justify-center gap-2 w-full py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all text-sm font-medium" style="color: #0891B2;">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                            View Details
-                        </a>` : ''}
-                        
-                        ${hasLink ? `
-                        <a href="${item.link}" target="_blank" class="flex items-center justify-center gap-2 w-full py-2 rounded-lg text-white shadow-sm transition-all text-sm font-medium" style="background: #0891B2;">
-                            Apply Now
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                        </a>` : ''}
-                        
-                        ${!hasAny ? `
-                        <div class="flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-400 text-sm">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            Not Opened Yet
-                        </div>` : ''}
+                let html = `
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-full flex items-center justify-center text-lg" style="background: rgba(8, 145, 178, 0.1);">${cat.icon}</span>
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white">${cat.title}</h3>
                     </div>
                 `;
-                container.appendChild(card);
+
+                if (items.length === 0) {
+                    html += `
+                        <div class="p-6 text-center">
+                            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-400 text-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Not Opened Yet
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html += `<table class="w-full">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr class="text-left text-gray-600 dark:text-gray-300 text-sm">
+                                <th class="px-6 py-3 font-medium">Title</th>
+                                <th class="px-6 py-3 font-medium text-center">View Details</th>
+                                <th class="px-6 py-3 font-medium text-center">Apply</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                    items.forEach(item => {
+                        const hasFile = item.file && item.file.trim();
+                        const hasForm = item.form && item.form.trim();
+
+                        html += `<tr class="border-t border-gray-100 dark:border-gray-700">
+                            <td class="px-6 py-4 font-medium text-gray-800 dark:text-white">${item.title || 'Untitled'}</td>
+                            <td class="px-6 py-4 text-center">
+                                ${hasFile ? `<a href="${getFileUrl(item.file)}" target="_blank" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all" style="color: #0891B2;">📄 View</a>` : '<span class="text-gray-400">—</span>'}
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                ${hasForm ? `<a href="${item.form}" target="_blank" class="inline-flex items-center gap-1 px-4 py-1.5 rounded-lg text-white text-sm shadow-sm transition-all" style="background: #0891B2;">Apply →</a>` : '<span class="text-gray-400">—</span>'}
+                            </td>
+                        </tr>`;
+                    });
+
+                    html += '</tbody></table>';
+                }
+
+                section.innerHTML = html;
+                container.appendChild(section);
             });
         }
 
