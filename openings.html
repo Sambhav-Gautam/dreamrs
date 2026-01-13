@@ -88,7 +88,7 @@
             if (!container) return;
 
             container.innerHTML = '';
-            container.className = 'w-full space-y-8';
+            container.className = 'w-full space-y-4';
 
             const categories = [
                 { key: 'phd', title: "PhD Positions", icon: "📚" },
@@ -101,52 +101,35 @@
                 const items = data[cat.key] || [];
 
                 const section = document.createElement('div');
-                section.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden';
-                section.style.borderLeft = '4px solid #0891B2';
+                section.className = 'bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden';
+                section.style.borderLeft = '3px solid #0891B2';
 
                 let html = `
-                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-full flex items-center justify-center text-lg" style="background: rgba(8, 145, 178, 0.1);">${cat.icon}</span>
-                        <h3 class="text-xl font-bold text-gray-800 dark:text-white">${cat.title}</h3>
+                    <div class="px-4 py-2 border-b border-gray-100 dark:border-gray-700 flex items-center gap-2">
+                        <span class="text-base">${cat.icon}</span>
+                        <h3 class="text-sm font-semibold text-gray-800 dark:text-white">${cat.title}</h3>
+                        <span class="ml-auto text-xs text-gray-400">${items.length} opening${items.length !== 1 ? 's' : ''}</span>
                     </div>
                 `;
 
                 if (items.length === 0) {
-                    html += `
-                        <div class="p-6 text-center">
-                            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-400 text-sm">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                Not Opened Yet
-                            </div>
-                        </div>
-                    `;
+                    html += `<div class="px-4 py-2 text-xs text-gray-400 italic">No positions available</div>`;
                 } else {
-                    html += `<table class="w-full">
-                        <thead class="bg-gray-50 dark:bg-gray-700">
-                            <tr class="text-left text-gray-600 dark:text-gray-300 text-sm">
-                                <th class="px-6 py-3 font-medium">Title</th>
-                                <th class="px-6 py-3 font-medium text-center">View Details</th>
-                                <th class="px-6 py-3 font-medium text-center">Apply</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
+                    html += '<div class="divide-y divide-gray-100 dark:divide-gray-700">';
 
                     items.forEach(item => {
                         const hasFile = item.file && item.file.trim();
                         const hasForm = item.form && item.form.trim();
 
-                        html += `<tr class="border-t border-gray-100 dark:border-gray-700">
-                            <td class="px-6 py-4 font-medium text-gray-800 dark:text-white">${item.title || 'Untitled'}</td>
-                            <td class="px-6 py-4 text-center">
-                                ${hasFile ? `<a href="${getFileUrl(item.file)}" target="_blank" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all" style="color: #0891B2;">📄 View</a>` : '<span class="text-gray-400">—</span>'}
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                ${hasForm ? `<a href="${item.form}" target="_blank" class="inline-flex items-center gap-1 px-4 py-1.5 rounded-lg text-white text-sm shadow-sm transition-all" style="background: #0891B2;">Apply →</a>` : '<span class="text-gray-400">—</span>'}
-                            </td>
-                        </tr>`;
+                        html += `<div class="px-4 py-2 flex items-center gap-3 text-sm">
+                            <span class="flex-1 font-medium text-gray-800 dark:text-white truncate">${item.title || 'Untitled'}</span>
+                            ${hasFile ? `<a href="${getFileUrl(item.file)}" target="_blank" class="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-600 hover:bg-gray-50" style="color: #0891B2;">View PDF</a>` : ''}
+                            ${hasForm ? `<a href="${item.form}" target="_blank" class="text-xs px-2.5 py-1 rounded text-white" style="background: #0891B2;">Apply</a>` : ''}
+                            ${!hasFile && !hasForm ? '<span class="text-xs text-gray-400">Details pending</span>' : ''}
+                        </div>`;
                     });
 
-                    html += '</tbody></table>';
+                    html += '</div>';
                 }
 
                 section.innerHTML = html;

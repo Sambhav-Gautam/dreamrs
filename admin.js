@@ -49,6 +49,7 @@ function openTab(tabName) {
 
     // Refresh specific data if needed
     if (tabName === 'openings') loadOpeningsAdmin();
+    if (tabName === 'phd-scholars') loadPhDScholars();
 }
 
 function openModal(id) {
@@ -1796,6 +1797,138 @@ window.deleteTeam = deleteTeam;
 window.removeTeamImage = removeTeamImage;
 window.renderTeamList = renderTeamList;
 window.saveTeam = saveTeam;
+
+// --- PhD SCHOLARS MANAGEMENT ---
+
+let phdScholars = [];
+
+async function loadPhDScholars() {
+    try {
+        const res = await apiFetch('/api/data/phd');
+        const data = await res.json();
+        phdScholars = data.scholars || [];
+        renderPhDList();
+    } catch (e) {
+        console.error('Error loading PhD scholars:', e);
+        phdScholars = [];
+        renderPhDList();
+    }
+}
+
+function renderPhDList() {
+    const container = document.getElementById('phd-list');
+    if (!container) return;
+
+    if (phdScholars.length === 0) {
+        container.innerHTML = '<p class="text-gray-400 italic text-sm">No PhD scholars added yet.</p>';
+        return;
+    }
+
+    container.innerHTML = phdScholars.map((s, i) => `
+        <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                ${s.image ? `<img src="${getFileUrl(s.image)}" class="w-10 h-10 rounded-full object-cover">` : '<div class="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-500">👤</div>'}
+                <div>
+                    <span class="font-medium text-gray-800 dark:text-white">${s.name}</span>
+                    ${s.email ? `<span class="text-sm text-gray-500 ml-2">${s.email}</span>` : ''}
+                </div>
+            </div>
+            <div class="flex gap-2 text-sm">
+                <button onclick="editPhD(${i})" class="text-blue-500 hover:text-blue-700">Edit</button>
+                <button onclick="deletePhD(${i})" class="text-red-500 hover:text-red-700">Delete</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function openPhDModal(index = -1) {
+    document.getElementById('phd-form').reset();
+    document.getElementById('phd-index').value = index;
+    document.getElementById('phd-existing-image').value = '';
+    document.getElementById('phd-current-image').innerHTML = '';
+    document.getElementById('phd-modal-title').textContent = index === -1 ? 'Add PhD Scholar' : 'Edit PhD Scholar';
+    openModal('phd-modal');
+}
+
+function editPhD(index) {
+    const s = phdScholars[index];
+    if (!s) return;
+
+    openPhDModal(index);
+    document.getElementById('phd-name').value = s.name || '';
+    document.getElementById('phd-email').value = s.email || '';
+    document.getElementById('phd-education').value = (s.education || []).join('\n');
+    document.getElementById('phd-interests').value = (s.interests || []).join('\n');
+    document.getElementById('phd-scholar-url').value = s.googleScholar || '';
+    document.getElementById('phd-linkedin').value = s.linkedin || '';
+    document.getElementById('phd-existing-image').value = s.image || '';
+
+    if (s.image) {
+        document.getElementById('phd-current-image').innerHTML = `<span style="color: #0891B2;">Current: ${s.image}</span>`;
+    }
+}
+
+async function deletePhD(index) {
+    if (!confirm('Are you sure you want to delete this PhD scholar?')) return;
+
+    try {
+        await apiFetch(`/api/data/phd/scholar/${index}`, { method: 'DELETE' });
+        await loadPhDScholars();
+        alert('Scholar deleted!');
+    } catch (e) {
+        console.error('Error deleting PhD scholar:', e);
+        alert('Failed to delete scholar');
+    }
+}
+
+document.getElementById('phd-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const index = parseInt(document.getElementById('phd-index').value);
+    const name = document.getElementById('phd-name').value.trim();
+    const email = document.getElementById('phd-email').value.trim();
+    const education = document.getElementById('phd-education').value.split('\n').map(s => s.trim()).filter(s => s);
+    const interests = document.getElementById('phd-interests').value.split('\n').map(s => s.trim()).filter(s => s);
+    const googleScholar = document.getElementById('phd-scholar-url').value.trim();
+    const linkedin = document.getElementById('phd-linkedin').value.trim();
+    const imageInput = document.getElementById('phd-image');
+    let image = document.getElementById('phd-existing-image').value;
+
+    try {
+        if (imageInput && imageInput.files.length > 0) {
+            const formData = new FormData();
+            formData.append('file', imageInput.files[0]);
+            formData.append('folder', 'images');
+            const uploadRes = await fetch(`${API_BASE_URL}/api/files/upload`, { method: 'POST', body: formData });
+            if (uploadRes.ok) {
+                const uploadData = await uploadRes.json();
+                image = uploadData.filename;
+            }
+        }
+
+        const scholarData = { name, email, image, education, interests, googleScholar, linkedin };
+
+        if (index === -1) {
+            await apiFetch('/api/data/phd/scholar', { method: 'POST', body: JSON.stringify(scholarData) });
+        } else {
+            await apiFetch(`/api/data/phd/scholar/${index}`, { method: 'PUT', body: JSON.stringify(scholarData) });
+        }
+
+        closeModal('phd-modal');
+        await loadPhDScholars();
+        alert('Scholar saved!');
+
+    } catch (e) {
+        console.error('Error saving PhD scholar:', e);
+        alert('Failed to save scholar: ' + e.message);
+    }
+});
+
+// PhD Functions
+window.loadPhDScholars = loadPhDScholars;
+window.openPhDModal = openPhDModal;
+window.editPhD = editPhD;
+window.deletePhD = deletePhD;
 
 // Course Functions
 window.openCourseModal = openCourseModal;

@@ -81,10 +81,13 @@
                     onclick="openTab('team')">Team Members</button>
                 <button
                     class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent focus:outline-none"
+                    onclick="openTab('phd-scholars')">PhD Scholars</button>
+                <button
+                    class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent focus:outline-none"
                     onclick="openTab('courses')">Courses</button>
                 <button
                     class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent focus:outline-none"
-                    onclick="openTab('openings')">Openings (PDFs)</button>
+                    onclick="openTab('openings')">Openings</button>
                 <button
                     class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent focus:outline-none"
                     onclick="openTab('pi-profile')">PI Profile</button>
@@ -159,6 +162,87 @@
                             Member</button>
                     </div>
                     <div id="team-list" class="space-y-6"></div>
+                </div>
+            </div>
+
+            <!-- PhD Scholars Tab -->
+            <div id="phd-scholars-tab" class="tab-content hidden">
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">PhD Scholars</h3>
+                        <button onclick="openPhDModal()" class="text-white px-4 py-2 rounded text-sm"
+                            style="background: #0891B2;">+ Add Scholar</button>
+                    </div>
+                    <div id="phd-list" class="space-y-2"></div>
+                </div>
+            </div>
+
+            <!-- PhD Scholar Modal -->
+            <div id="phd-modal"
+                class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    <h3 id="phd-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add PhD
+                        Scholar</h3>
+                    <form id="phd-form" class="space-y-4">
+                        <input type="hidden" id="phd-index" value="-1">
+                        <input type="hidden" id="phd-existing-image" value="">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name
+                                    *</label>
+                                <input type="text" id="phd-name" required
+                                    class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                                <input type="email" id="phd-email"
+                                    class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Photo</label>
+                            <input type="file" id="phd-image" accept="image/*"
+                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold">
+                            <div id="phd-current-image" class="text-xs text-gray-500 mt-1"></div>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Education
+                                    (one per line)</label>
+                                <textarea id="phd-education" rows="3"
+                                    class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    placeholder="B.Tech ECE - GGSIPU&#10;MSc. Cognitive Science"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Research
+                                    Interests (one per line)</label>
+                                <textarea id="phd-interests" rows="3"
+                                    class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    placeholder="Behavioural Design&#10;Signal Processing"></textarea>
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Google
+                                    Scholar URL</label>
+                                <input type="url" id="phd-scholar-url"
+                                    class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">LinkedIn
+                                    URL</label>
+                                <input type="url" id="phd-linkedin"
+                                    class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                        </div>
+                        <div class="flex justify-end gap-3 mt-6">
+                            <button type="button" onclick="closeModal('phd-modal')"
+                                class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                            <button type="submit" class="text-white px-4 py-2 rounded" style="background: #0891B2;">Save
+                                Scholar</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
