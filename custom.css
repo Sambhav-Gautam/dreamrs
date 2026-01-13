@@ -160,12 +160,16 @@ u a {
 
 .btn-hero-secondary {
     padding: 0.875rem 2rem;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.5);
+    /* More opaque */
     backdrop-filter: blur(10px);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #1f2937;
+    /* Dark Gray text */
+    border: 2px solid #1f2937;
+    /* Dark Gray border */
     border-radius: 9999px;
-    font-weight: 600;
+    font-weight: 700;
+    /* Bolder */
     transition: all 0.3s ease;
 }
 
