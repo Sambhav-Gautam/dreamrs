@@ -557,12 +557,23 @@ document.getElementById('project-form').addEventListener('submit', async (e) => 
         if (oldProject) imageName = oldProject.image;
     }
 
+    // Get description and auto-generate collaborator link if provided
+    let description = document.getElementById('project-desc').value;
+    const collabName = document.getElementById('project-collab-name')?.value?.trim() || '';
+    const collabUrl = document.getElementById('project-collab-url')?.value?.trim() || '';
+
+    // If collaborator info is provided, append the link HTML
+    if (collabName && collabUrl) {
+        const linkHtml = `<a href="${collabUrl}" target="_blank" class="text-leaf hover:underline">${collabName}</a>`;
+        description = description ? `${description}\n${linkHtml}` : linkHtml;
+    }
+
     const newProject = {
         title: document.getElementById('project-title').value,
         agency: document.getElementById('project-agency').value,
         amount: document.getElementById('project-amount').value,
         duration: document.getElementById('project-duration').value,
-        description: document.getElementById('project-desc').value,
+        description: description,
         link: document.getElementById('project-link').value,
     };
     if (imageName) newProject.image = imageName;
@@ -889,44 +900,45 @@ async function saveCourses() {
 }
 
 
-// --- OPENINGS (Single Global Item Logic) ---
+// --- OPENINGS (4-Type System: phd, mtech, btech, analyst) ---
 
-let currentOpenings = {};
+let openingsData = {};
 
 async function loadOpeningsAdmin() {
     try {
-        const res = await apiFetch('/api/settings');
-        const settings = await res.json();
-        // Use 'generalOpening' key
-        currentOpenings = settings.generalOpening || {};
+        const res = await apiFetch('/api/data/openings');
+        const data = await res.json();
+        openingsData = data;
 
-        const linkInput = document.getElementById('general-link');
-        const fileDisplay = document.getElementById('general-current-file');
+        // Populate each opening type
+        ['phd', 'mtech', 'btech', 'analyst'].forEach(type => {
+            const opening = data[type] || {};
 
-        if (linkInput) linkInput.value = currentOpenings.link || '';
-        if (fileDisplay) {
-            if (currentOpenings.file) {
-                fileDisplay.innerHTML = `
-                    <span class="italic">Current: <a href="${getFileUrl(currentOpenings.file)}" target="_blank" class="text-leaf hover:underline font-medium">${currentOpenings.file}</a></span>
-                    <button onclick="deleteGeneralOpeningFile()" class="text-red-500 hover:text-red-700 text-xs font-medium px-2 py-1 rounded border border-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">Delete PDF</button>
-                `;
-            } else {
-                fileDisplay.innerHTML = '<span class="italic">No file uploaded</span>';
+            const linkInput = document.getElementById(`opening-${type}-link`);
+            const fileDisplay = document.getElementById(`opening-${type}-current-file`);
+
+            if (linkInput) linkInput.value = opening.link || '';
+            if (fileDisplay) {
+                if (opening.file) {
+                    fileDisplay.innerHTML = `<span class="text-leaf">📄 ${opening.file}</span>`;
+                } else {
+                    fileDisplay.innerHTML = '<span class="italic text-gray-400">No PDF uploaded</span>';
+                }
             }
-        }
+        });
 
     } catch (e) {
         console.error('Error loading openings:', e);
     }
 }
 
-async function saveGeneralOpening() {
-    const fileInput = document.getElementById('general-file');
-    const linkInput = document.getElementById('general-link');
+async function saveOpening(category) {
+    const fileInput = document.getElementById(`opening-${category}-file`);
+    const linkInput = document.getElementById(`opening-${category}-link`);
     const linkValue = linkInput ? linkInput.value.trim() : '';
 
-    // Copy existing data to preserve fields not being updated
-    let newData = { ...currentOpenings };
+    // Start with existing data for this category
+    let newData = { ...(openingsData[category] || {}) };
 
     try {
         // 1. Handle File Upload if present
@@ -949,16 +961,16 @@ async function saveGeneralOpening() {
         // 2. Update Link
         newData.link = linkValue;
 
-        // 3. Update Local State
-        currentOpenings = newData;
-
-        // 4. Save to Settings under 'generalOpening'
-        await apiFetch('/api/settings', {
+        // 3. Save to backend via PUT /:category
+        await apiFetch(`/api/data/openings/${category}`, {
             method: 'PUT',
-            body: JSON.stringify({ key: 'generalOpening', value: currentOpenings })
+            body: JSON.stringify(newData)
         });
 
-        alert('Openings settings saved successfully!');
+        // 4. Update local state
+        openingsData[category] = newData;
+
+        alert(`${category.toUpperCase()} opening saved successfully!`);
 
         // Refresh UI
         loadOpeningsAdmin();
@@ -967,40 +979,29 @@ async function saveGeneralOpening() {
         if (fileInput) fileInput.value = '';
 
     } catch (e) {
-        console.error('Error saving opening:', e);
-        alert('Failed to save opening: ' + e.message);
+        console.error(`Error saving ${category} opening:`, e);
+        alert(`Failed to save ${category} opening: ` + e.message);
     }
 }
 
-async function deleteGeneralOpeningFile() {
-    if (!currentOpenings.file) {
-        alert('No file to delete.');
-        return;
-    }
-
-    if (!confirm('Are you sure you want to delete the current PDF?')) return;
+async function clearOpening(category) {
+    if (!confirm(`Are you sure you want to clear the ${category.toUpperCase()} opening?`)) return;
 
     try {
-        // 1. Delete file from server (optional - could leave orphaned files)
-        await apiFetch('/api/delete-file', {
-            method: 'POST',
-            body: JSON.stringify({ filename: currentOpenings.file, type: 'pdf' })
+        // Delete via backend
+        await apiFetch(`/api/data/openings/${category}`, {
+            method: 'DELETE'
         });
 
-        // 2. Remove from settings
-        delete currentOpenings.file;
+        // Update local state
+        openingsData[category] = { file: '', link: '', description: '' };
 
-        await apiFetch('/api/settings', {
-            method: 'PUT',
-            body: JSON.stringify({ key: 'generalOpening', value: currentOpenings })
-        });
-
-        alert('PDF deleted successfully!');
+        alert(`${category.toUpperCase()} opening cleared!`);
         loadOpeningsAdmin();
 
     } catch (e) {
-        console.error('Error deleting file:', e);
-        alert('Failed to delete file: ' + e.message);
+        console.error(`Error clearing ${category} opening:`, e);
+        alert(`Failed to clear ${category} opening: ` + e.message);
     }
 }
 
@@ -1750,8 +1751,8 @@ window.saveCourses = saveCourses;
 
 // Openings Functions
 window.loadOpeningsAdmin = loadOpeningsAdmin;
-window.saveGeneralOpening = saveGeneralOpening;
-window.deleteGeneralOpeningFile = deleteGeneralOpeningFile;
+window.saveOpening = saveOpening;
+window.clearOpening = clearOpening;
 
 // Theme Functions
 window.setThemeColor = setThemeColor;

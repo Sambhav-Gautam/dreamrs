@@ -1,90 +1,96 @@
 const Settings = require('../models/Settings');
 
+// Default structure for openings
+const DEFAULT_OPENINGS = {
+    phd: { file: '', link: '', description: 'Full-time research positions for doctoral candidates.' },
+    mtech: { file: '', link: '', description: 'Research opportunities for M.Tech students.' },
+    btech: { file: '', link: '', description: 'Hands-on projects for undergraduates.' },
+    analyst: { file: '', link: '', description: 'Research analyst positions in the lab.' }
+};
+
 // Get all openings
 exports.getOpenings = async (req, res) => {
     try {
-        // Query for the specific generalOpening key
-        const openingSetting = await Settings.findOne({ key: 'generalOpening' });
+        const setting = await Settings.findOne({ key: 'openings' });
 
-        // Return object structure expected by frontend
-        // frontend expects { generalOpening: { file: ..., link: ... } }
-        res.json({
-            generalOpening: openingSetting?.value || {}
-        });
+        // Merge with defaults to ensure all types exist
+        const openings = {
+            ...DEFAULT_OPENINGS,
+            ...(setting?.value || {})
+        };
+
+        res.json(openings);
     } catch (error) {
         console.error('Error fetching openings:', error);
         res.status(500).json({ error: 'Failed to fetch openings data' });
     }
 };
 
-// Update all openings
-exports.updateOpenings = async (req, res) => {
-    try {
-        let data = await OpeningsData.findOne();
-
-        if (!data) {
-            data = new OpeningsData({ data: req.body });
-        } else {
-            data.data = req.body;
-            data.markModified('data');
-        }
-
-        await data.save();
-
-        res.json({
-            success: true,
-            message: 'Openings updated successfully'
-        });
-    } catch (error) {
-        console.error('Error updating openings:', error);
-        res.status(500).json({ error: 'Failed to update openings data' });
-    }
-};
-
-// Add an opening to a category
-exports.addOpening = async (req, res) => {
+// Update a specific opening type (phd, mtech, btech, analyst)
+exports.updateOpeningType = async (req, res) => {
     try {
         const { category } = req.params;
-        let data = await OpeningsData.findOne();
+        const validCategories = ['phd', 'mtech', 'btech', 'analyst'];
 
-        if (!data) {
-            data = new OpeningsData({ data: { [category]: [req.body] } });
-        } else {
-            if (!data.data) data.data = {};
-            if (!data.data[category]) data.data[category] = [];
-            data.data[category].push(req.body);
-            data.markModified('data');
+        if (!validCategories.includes(category)) {
+            return res.status(400).json({ error: 'Invalid opening category' });
         }
 
-        await data.save();
+        let setting = await Settings.findOne({ key: 'openings' });
+
+        if (!setting) {
+            setting = new Settings({
+                key: 'openings',
+                value: { ...DEFAULT_OPENINGS, [category]: req.body }
+            });
+        } else {
+            setting.value = {
+                ...DEFAULT_OPENINGS,
+                ...(setting.value || {}),
+                [category]: req.body
+            };
+            setting.markModified('value');
+        }
+
+        await setting.save();
 
         res.json({
             success: true,
-            opening: req.body
+            message: `${category} opening updated successfully`,
+            opening: setting.value[category]
         });
     } catch (error) {
-        console.error('Error adding opening:', error);
-        res.status(500).json({ error: 'Failed to add opening' });
+        console.error('Error updating opening:', error);
+        res.status(500).json({ error: 'Failed to update opening' });
     }
 };
 
-// Delete an opening
-exports.deleteOpening = async (req, res) => {
+// Delete/clear a specific opening type
+exports.deleteOpeningType = async (req, res) => {
     try {
-        const { category, index } = req.params;
-        let data = await OpeningsData.findOne();
+        const { category } = req.params;
+        const validCategories = ['phd', 'mtech', 'btech', 'analyst'];
 
-        if (!data || !data.data || !data.data[category] || !data.data[category][index]) {
-            return res.status(404).json({ error: 'Opening not found' });
+        if (!validCategories.includes(category)) {
+            return res.status(400).json({ error: 'Invalid opening category' });
         }
 
-        data.data[category].splice(parseInt(index), 1);
-        data.markModified('data');
-        await data.save();
+        let setting = await Settings.findOne({ key: 'openings' });
 
-        res.json({ success: true, message: 'Opening deleted' });
+        if (setting && setting.value && setting.value[category]) {
+            // Reset to default (clear file and link but keep description)
+            setting.value[category] = {
+                file: '',
+                link: '',
+                description: DEFAULT_OPENINGS[category].description
+            };
+            setting.markModified('value');
+            await setting.save();
+        }
+
+        res.json({ success: true, message: `${category} opening cleared` });
     } catch (error) {
-        console.error('Error deleting opening:', error);
-        res.status(500).json({ error: 'Failed to delete opening' });
+        console.error('Error clearing opening:', error);
+        res.status(500).json({ error: 'Failed to clear opening' });
     }
 };
