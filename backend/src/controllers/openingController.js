@@ -14,13 +14,23 @@ const VALID_CATEGORIES = ['phd', 'mtech', 'btech', 'analyst'];
 exports.getOpenings = async (req, res) => {
     try {
         const setting = await Settings.findOne({ key: 'openings' });
+        const rawData = setting?.value || {};
 
-        // Merge with defaults to ensure all types exist as arrays
+        // Helper to ensure category is an array (handles old object format)
+        const ensureArray = (data) => {
+            if (Array.isArray(data)) return data;
+            // If old format (object with file/link), convert to array with one item
+            if (data && typeof data === 'object' && (data.file || data.link)) {
+                return [{ title: 'Opening', file: data.file || '', form: data.link || '' }];
+            }
+            return [];
+        };
+
         const openings = {
-            phd: (setting?.value?.phd) || [],
-            mtech: (setting?.value?.mtech) || [],
-            btech: (setting?.value?.btech) || [],
-            analyst: (setting?.value?.analyst) || []
+            phd: ensureArray(rawData.phd),
+            mtech: ensureArray(rawData.mtech),
+            btech: ensureArray(rawData.btech),
+            analyst: ensureArray(rawData.analyst)
         };
 
         res.json(openings);
