@@ -1850,6 +1850,27 @@ function openPhDModal(index = -1) {
     openModal('phd-modal');
 }
 
+// Helper to add publication inputs
+function addPhDPublication(data = {}) {
+    const container = document.getElementById('phd-publications-list');
+    const div = document.createElement('div');
+    div.className = 'p-3 bg-gray-50 dark:bg-gray-700 rounded border border-gray-100 dark:border-gray-600 relative group';
+    div.innerHTML = `
+        <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <div class="space-y-2">
+            <input type="text" placeholder="Publication Title" value="${data.title || ''}" class="phd-pub-title w-full bg-transparent border-b border-gray-200 dark:border-gray-600 focus:border-blue-500 text-sm py-1 dark:text-white">
+            <div class="grid grid-cols-2 gap-2">
+                <input type="text" placeholder="Description/Note (Optional)" value="${data.note || ''}" class="phd-pub-note w-full bg-transparent border-b border-gray-200 dark:border-gray-600 focus:border-blue-500 text-xs py-1 dark:text-gray-300">
+                <input type="url" placeholder="Link (DOI/PDF)" value="${data.doi || data.citation || ''}" class="phd-pub-link w-full bg-transparent border-b border-gray-200 dark:border-gray-600 focus:border-blue-500 text-xs py-1 dark:text-gray-300">
+            </div>
+        </div>
+    `;
+    container.appendChild(div);
+}
+window.addPhDPublication = addPhDPublication;
+
 function editPhD(index) {
     const s = phdScholars[index];
     if (!s) return;
@@ -1863,9 +1884,20 @@ function editPhD(index) {
     document.getElementById('phd-linkedin').value = s.linkedin || '';
     document.getElementById('phd-existing-image').value = s.image || '';
 
+    const pubContainer = document.getElementById('phd-publications-list');
+    pubContainer.innerHTML = '';
+    if (s.publications && s.publications.length > 0) {
+        s.publications.forEach(pub => {
+            // Adapt new format to addPhDPublication input
+            addPhDPublication({ title: pub.title, note: pub.note || pub.abstract || pub.apa, doi: pub.link || pub.doi });
+        });
+    }
+
     if (s.image) {
         document.getElementById('phd-current-image').innerHTML = `<span style="color: #0891B2;">Current: ${s.image}</span>`;
     }
+
+
 }
 
 async function deletePhD(index) {
@@ -1906,7 +1938,17 @@ document.getElementById('phd-form')?.addEventListener('submit', async (e) => {
             }
         }
 
-        const scholarData = { name, email, image, education, interests, googleScholar, linkedin };
+        const publications = [];
+        document.querySelectorAll('#phd-publications-list > div').forEach(div => {
+            const title = div.querySelector('.phd-pub-title').value.trim();
+            const note = div.querySelector('.phd-pub-note').value.trim();
+            const link = div.querySelector('.phd-pub-link').value.trim();
+            if (title) {
+                publications.push({ title, note, link });
+            }
+        });
+
+        const scholarData = { name, email, image, education, interests, googleScholar, linkedin, publications };
 
         if (index === -1) {
             await apiFetch('/api/data/phd/scholar', { method: 'POST', body: JSON.stringify(scholarData) });

@@ -194,34 +194,35 @@ document.addEventListener('DOMContentLoaded', function () {
                     <!-- Right Column (Research/Publications) -->
                     <div class="lg:col-span-2 space-y-12">
                         
-                        ${scholar.publications && scholar.publications.length > 0 ? `
+                            ${scholar.publications && scholar.publications.length > 0 ? `
                         <div>
                             <h3 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-6 flex items-center gap-2 border-b border-gray-200 dark:border-gray-800 pb-2">
                                 <svg class="w-5 h-5 text-leaf" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
                                 Selected Publications
                             </h3>
                             <div class="space-y-6">
-                                ${scholar.publications.map(pub => `
+                                ${scholar.publications.map(pub => {
+                const link = pub.link || pub.doi || '#';
+                const hasLink = link && link !== '#';
+                const description = pub.note || pub.abstract || pub.apa;
+                return `
                                     <div class="group">
-                                        ${pub.link ? `<a href="${pub.link}" target="_blank" rel="noopener" class="block group-hover:bg-gray-50 dark:group-hover:bg-gray-800 p-4 -mx-4 rounded-xl transition-colors">` : '<div class="block">'}
+                                        ${hasLink ? `<a href="${link}" target="_blank" rel="noopener" class="block group-hover:bg-gray-50 dark:group-hover:bg-gray-800 p-4 -mx-4 rounded-xl transition-colors">` : '<div class="block">'}
                                         
                                         <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 leading-tight group-hover:text-leaf transition-colors">
                                             ${pub.title}
                                         </h4>
                                         
-                                        <p class="text-sm text-gray-500 dark:text-gray-400 italic mb-2">
-                                            ${pub.apa || (pub.title + '. ' + (pub.year ? pub.year : ''))}
-                                        </p>
-                                        
-                                        ${pub.abstract ? `
+                                        ${description ? `
                                             <p class="text-sm text-gray-600 dark:text-gray-300 mt-2 line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
-                                                ${pub.abstract}
+                                                ${description}
                                             </p>
                                         ` : ''}
 
-                                        ${pub.link ? '</a>' : '</div>'}
+                                        ${hasLink ? '</a>' : '</div>'}
                                     </div>
-                                `).join('')}
+                                    `;
+            }).join('')}
                             </div>
                         </div>` : ''}
 

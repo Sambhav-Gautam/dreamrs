@@ -183,64 +183,49 @@
                 <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                     <h3 id="phd-modal-title" class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Add PhD
                         Scholar</h3>
-                    <form id="phd-form" class="space-y-4">
+                    <form id="phd-form" class="space-y-3">
                         <input type="hidden" id="phd-index" value="-1">
                         <input type="hidden" id="phd-existing-image" value="">
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name
-                                    *</label>
-                                <input type="text" id="phd-name" required
-                                    class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                            </div>
-                            <div>
-                                <label
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
-                                <input type="email" id="phd-email"
-                                    class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                            </div>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <input type="text" id="phd-name" required placeholder="Name *"
+                                class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <input type="email" id="phd-email" placeholder="Email"
+                                class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Photo</label>
+                        <div class="flex items-center gap-3">
                             <input type="file" id="phd-image" accept="image/*"
-                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold">
-                            <div id="phd-current-image" class="text-xs text-gray-500 mt-1"></div>
+                                class="text-sm text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold">
+                            <span id="phd-current-image" class="text-xs text-gray-500"></span>
                         </div>
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Education
-                                    (one per line)</label>
-                                <textarea id="phd-education" rows="3"
-                                    class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                    placeholder="B.Tech ECE - GGSIPU&#10;MSc. Cognitive Science"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Research
-                                    Interests (one per line)</label>
-                                <textarea id="phd-interests" rows="3"
-                                    class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                    placeholder="Behavioural Design&#10;Signal Processing"></textarea>
-                            </div>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <textarea id="phd-education" rows="2"
+                                class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                placeholder="Education (one per line)"></textarea>
+                            <textarea id="phd-interests" rows="2"
+                                class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                placeholder="Research Interests (one per line)"></textarea>
                         </div>
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Google
-                                    Scholar URL</label>
-                                <input type="url" id="phd-scholar-url"
-                                    class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">LinkedIn
-                                    URL</label>
-                                <input type="url" id="phd-linkedin"
-                                    class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                            </div>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <input type="url" id="phd-scholar-url" placeholder="Google Scholar URL"
+                                class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <input type="url" id="phd-linkedin" placeholder="LinkedIn URL"
+                                class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
-                        <div class="flex justify-end gap-3 mt-6">
+                        <!-- Publications Section -->
+                        <div class="border-t pt-3 mt-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Selected
+                                    Publications</span>
+                                <button type="button" onclick="addPhDPublication()" class="text-xs px-2 py-1 rounded"
+                                    style="background: #0891B2; color: white;">+ Add</button>
+                            </div>
+                            <div id="phd-publications-list" class="space-y-2"></div>
+                        </div>
+                        <div class="flex justify-end gap-3 mt-4">
                             <button type="button" onclick="closeModal('phd-modal')"
                                 class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
-                            <button type="submit" class="text-white px-4 py-2 rounded" style="background: #0891B2;">Save
-                                Scholar</button>
+                            <button type="submit" class="text-white px-4 py-2 rounded"
+                                style="background: #0891B2;">Save</button>
                         </div>
                     </form>
                 </div>
@@ -832,7 +817,6 @@
                     <select id="team-category"
                         class="mt-1 block w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         <option value="Principal Investigator">Principal Investigator</option>
-                        <option value="PhD Scholars">PhD Scholars</option>
                         <option value="M.Tech Project Students">M.Tech Project Students</option>
                         <option value="B.Tech Project Students">B.Tech Project Students</option>
                         <option value="Independent Project Students">Independent Project Students</option>
