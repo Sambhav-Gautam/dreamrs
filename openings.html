@@ -30,11 +30,11 @@
             </div>
 
             <!-- Opening Cards -->
-            <div class="max-w-4xl mx-auto w-full">
+            <div class="max-w-5xl mx-auto w-full">
                 <!-- General Opening -->
-                <div class="card-enhanced text-center p-12 flex flex-col items-center shadow-2xl dark:shadow-none border border-gray-100 dark:border-gray-800"
+                <div class="card-enhanced p-8 shadow-2xl dark:shadow-none border border-gray-100 dark:border-gray-800"
                     style="transform: none !important;">
-                    <div id="opening-actions" class="w-full max-w-md space-y-4">
+                    <div id="opening-actions" class="w-full">
                         <!-- Actions will be inserted here by JavaScript -->
                         <div class="animate-pulse flex space-x-4 justify-center">
                             <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
@@ -88,7 +88,7 @@
             if (!container) return;
 
             container.innerHTML = '';
-            container.className = 'w-full space-y-4';
+            container.className = 'w-full grid grid-cols-1 md:grid-cols-2 gap-4';
 
             const categories = [
                 { key: 'phd', title: "PhD Positions", icon: "📚" },

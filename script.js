@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <span class="text-sm text-gray-500 dark:text-gray-400">Human Centred Design Department</span>
                     </div>
                     <p class="text-sm text-gray-400 dark:text-gray-500">
-                        © 2025 DREAMRS Lab. All rights reserved.
+                        © 2026 DREAMRS Lab. All rights reserved.
                     </p>
                 </div>
             </div>
