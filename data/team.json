@@ -19,6 +19,7 @@
       "image": "PS2.png"
     }
   ],
+  "Research Analysts": [],
   "M.Tech Project Students": [],
   "B.Tech Project Students": [
     {
@@ -127,6 +128,22 @@
       "workDescription": "Independent Project",
       "github": "https://github.com/mohitg66",
       "linkedin": "https://www.linkedin.com/in/mohitg66"
+    }
+  ],
+  "Interns": [
+    {
+      "name": "Sambhav Gautam",
+      "title": "Intern",
+      "workDescription": "DREAMRS LAB WEBSITE REVAMP",
+      "github": "https://github.com/Sambhav-Gautam",
+      "linkedin": "https://www.linkedin.com/in/sambhav-gautam-66b0a7253/"
+    },
+    {
+      "name": "Sameer Singh Godara",
+      "title": "Intern",
+      "workDescription": "DREAMRS LAB WEBSITE REVAMP",
+      "github": "https://github.com/sameer-singh-godara",
+      "linkedin": "https://www.linkedin.com/in/sameer-singh-godara/"
     }
   ]
 }
