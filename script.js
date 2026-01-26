@@ -190,10 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <span>Principal Investigator</span>
                             <span class="nav-underline"></span>
                         </a>
-                        <a href="phd.html" class="nav-link-modern group">
-                            <span>PhD</span>
-                            <span class="nav-underline"></span>
-                        </a>
+
                         <a href="openings.html" class="nav-link-modern group">
                             <span>Openings</span>
                             <span class="nav-underline"></span>
@@ -230,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <a href="research.html" class="mobile-nav-link">Research</a>
                 <a href="teaching.html" class="mobile-nav-link">Teaching</a>
                 <a href="team.html" class="mobile-nav-link">Team</a>
-                <a href="phd.html" class="mobile-nav-link">PhD</a>
+
                 <a href="pi.html" class="mobile-nav-link">Principal Investigator</a>
                 <a href="openings.html" class="mobile-nav-link">Openings</a>
             </nav>
