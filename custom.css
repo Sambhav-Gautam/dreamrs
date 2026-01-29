@@ -827,6 +827,106 @@ u a {
     }
 }
 
+/* Blinking/Pulsing animation for Openings nav link when there are active openings */
+@keyframes openings-blink {
+
+    0%,
+    100% {
+        background-color: transparent;
+        box-shadow: none;
+    }
+
+    50% {
+        background-color: rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.15);
+        box-shadow: 0 0 8px rgba(var(--leaf-r), var(--leaf-g), var(--leaf-b), 0.4);
+    }
+}
+
+.nav-link-openings-active {
+    animation: openings-blink 1.5s ease-in-out infinite;
+    border-radius: 8px;
+    position: relative;
+}
+
+.nav-link-openings-active::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 6px;
+    height: 6px;
+    background-color: var(--leaf-color);
+    border-radius: 50%;
+    animation: openings-blink 1.5s ease-in-out infinite;
+}
+
+.dark .nav-link-openings-active::after {
+    background-color: var(--leaf-color-light);
+}
+
+/* Mobile nav version */
+.mobile-nav-link.openings-active {
+    animation: openings-blink 1.5s ease-in-out infinite;
+    position: relative;
+}
+
+.mobile-nav-link.openings-active::after {
+    content: '●';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 8px;
+    color: var(--leaf-color);
+    animation: openings-blink 1.5s ease-in-out infinite;
+}
+
+/* Hidden Resources nav item - invisible for now */
+.nav-resources-hidden {
+    display: none !important;
+}
+
+/* Zero openings indicator - subtle static badge */
+.nav-link-openings-zero {
+    position: relative;
+}
+
+.nav-link-openings-zero::after {
+    content: '0';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 16px;
+    text-align: center;
+    background-color: #9ca3af;
+    color: white;
+    border-radius: 8px;
+}
+
+.dark .nav-link-openings-zero::after {
+    background-color: #6b7280;
+}
+
+/* Mobile zero openings */
+.mobile-nav-link.openings-zero {
+    position: relative;
+}
+
+.mobile-nav-link.openings-zero::after {
+    content: '0 openings';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    color: #9ca3af;
+}
+
 .animate-float {
     animation: float 3s ease-in-out infinite;
 }

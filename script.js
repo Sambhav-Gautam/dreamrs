@@ -191,8 +191,12 @@ document.addEventListener('DOMContentLoaded', function () {
                             <span class="nav-underline"></span>
                         </a>
 
-                        <a href="openings.html" class="nav-link-modern group">
+                        <a href="openings.html" id="nav-openings-desktop" class="nav-link-modern group">
                             <span>Openings</span>
+                            <span class="nav-underline"></span>
+                        </a>
+                        <a href="resources.html" class="nav-link-modern group nav-resources-hidden">
+                            <span>Resources</span>
                             <span class="nav-underline"></span>
                         </a>
                     </nav>
@@ -229,7 +233,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 <a href="team.html" class="mobile-nav-link">Team</a>
 
                 <a href="pi.html" class="mobile-nav-link">Principal Investigator</a>
-                <a href="openings.html" class="mobile-nav-link">Openings</a>
+                <a href="openings.html" id="nav-openings-mobile" class="mobile-nav-link">Openings</a>
+                <a href="resources.html" class="mobile-nav-link nav-resources-hidden">Resources</a>
             </nav>
         </div>
     </header>
@@ -347,6 +352,45 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Load PI content for dynamic sections
     loadPIContent();
+
+    // Check for active openings and apply indicator effect to nav links
+    async function checkOpeningsForBlinking() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/data/openings`);
+            const data = await response.json();
+
+            // Count total openings across all categories
+            let totalOpenings = 0;
+            if (data.phd && Array.isArray(data.phd)) totalOpenings += data.phd.length;
+            if (data.mtech && Array.isArray(data.mtech)) totalOpenings += data.mtech.length;
+            if (data.btech && Array.isArray(data.btech)) totalOpenings += data.btech.length;
+            if (data.analyst && Array.isArray(data.analyst)) totalOpenings += data.analyst.length;
+
+            const desktopOpeningsLink = document.getElementById('nav-openings-desktop');
+            const mobileOpeningsLink = document.getElementById('nav-openings-mobile');
+
+            // Always show indicator (blinking when openings exist, static when 0)
+            if (desktopOpeningsLink) {
+                if (totalOpenings > 0) {
+                    desktopOpeningsLink.classList.add('nav-link-openings-active');
+                } else {
+                    desktopOpeningsLink.classList.add('nav-link-openings-zero');
+                }
+            }
+            if (mobileOpeningsLink) {
+                if (totalOpenings > 0) {
+                    mobileOpeningsLink.classList.add('openings-active');
+                } else {
+                    mobileOpeningsLink.classList.add('openings-zero');
+                }
+            }
+        } catch (error) {
+            console.log('Could not check openings for nav effect:', error);
+        }
+    }
+
+    // Call the function to check openings
+    checkOpeningsForBlinking();
 
     // Mobile Menu Toggle
     const mobileMenuButton = document.getElementById('mobile-menu-button');
