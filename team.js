@@ -62,8 +62,8 @@ document.addEventListener('DOMContentLoaded', function () {
     ];
 
     categoryOrder.forEach(category => {
-      const members = team[category];
-      if (!members || !Array.isArray(members) || members.length === 0) return;
+      const members = team[category] || [];
+      // Show all categories, even those with 0 members
 
       const section = document.createElement('div');
       section.className = 'team-section';
@@ -97,7 +97,11 @@ document.addEventListener('DOMContentLoaded', function () {
       // --- MEMBERS CONTENT ---
       const content = document.createElement('div');
 
-      if (category === "Principal Investigator") {
+      // Handle empty categories
+      if (members.length === 0) {
+        content.className = 'bg-white dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 p-6 text-center';
+        content.innerHTML = `<p class="text-gray-400 dark:text-gray-500 italic">No members yet</p>`;
+      } else if (category === "Principal Investigator") {
         // PI: Featured card layout
         content.className = 'space-y-4';
         members.forEach(member => {

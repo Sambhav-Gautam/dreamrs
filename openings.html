@@ -69,6 +69,35 @@
             return `${API_BASE_URL}/api/files/download/${encodeURIComponent(filename)}`;
         }
 
+        // Get file type label based on extension
+        function getFileTypeLabel(filename) {
+            if (!filename) return { label: 'View File', icon: '📄' };
+            const ext = filename.split('.').pop().toLowerCase();
+
+            // Image types
+            if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) {
+                return { label: 'View Image', icon: '🖼️', isImage: true };
+            }
+            // PDF
+            if (ext === 'pdf') {
+                return { label: 'View PDF', icon: '📕', isPdf: true };
+            }
+            // Word documents
+            if (['doc', 'docx'].includes(ext)) {
+                return { label: 'View Document', icon: '📝' };
+            }
+            // PowerPoint
+            if (['ppt', 'pptx'].includes(ext)) {
+                return { label: 'View Presentation', icon: '📊' };
+            }
+            // Excel
+            if (['xls', 'xlsx'].includes(ext)) {
+                return { label: 'View Spreadsheet', icon: '📗' };
+            }
+            // Default
+            return { label: 'View File', icon: '📄' };
+        }
+
         async function loadOpenings() {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/data/openings`);
@@ -120,10 +149,11 @@
                     items.forEach(item => {
                         const hasFile = item.file && item.file.trim();
                         const hasForm = item.form && item.form.trim();
+                        const fileInfo = hasFile ? getFileTypeLabel(item.file) : null;
 
                         html += `<div class="px-4 py-2 flex items-center gap-3 text-sm">
                             <span class="flex-1 font-medium text-gray-800 dark:text-white truncate">${item.title || 'Untitled'}</span>
-                            ${hasFile ? `<a href="${getFileUrl(item.file)}" target="_blank" class="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-600 hover:bg-gray-50" style="color: #0891B2;">View PDF</a>` : ''}
+                            ${hasFile ? `<a href="${getFileUrl(item.file)}" target="_blank" class="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-600 hover:bg-gray-50 flex items-center gap-1" style="color: #0891B2;">${fileInfo.icon} ${fileInfo.label}</a>` : ''}
                             ${hasForm ? `<a href="${item.form}" target="_blank" class="text-xs px-2.5 py-1 rounded text-white" style="background: #0891B2;">Apply</a>` : ''}
                             ${!hasFile && !hasForm ? '<span class="text-xs text-gray-400">Details pending</span>' : ''}
                         </div>`;

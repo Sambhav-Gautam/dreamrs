@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Load PI content for dynamic sections
     loadPIContent();
 
-    // Check for active openings and apply indicator effect to nav links
+    // Check for active openings and apply blinking effect to nav links
     async function checkOpeningsForBlinking() {
         try {
             const response = await fetch(`${API_BASE_URL}/api/data/openings`);
@@ -366,22 +366,16 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data.btech && Array.isArray(data.btech)) totalOpenings += data.btech.length;
             if (data.analyst && Array.isArray(data.analyst)) totalOpenings += data.analyst.length;
 
-            const desktopOpeningsLink = document.getElementById('nav-openings-desktop');
-            const mobileOpeningsLink = document.getElementById('nav-openings-mobile');
+            // Only add blinking effect when there ARE active openings
+            if (totalOpenings > 0) {
+                const desktopOpeningsLink = document.getElementById('nav-openings-desktop');
+                const mobileOpeningsLink = document.getElementById('nav-openings-mobile');
 
-            // Always show indicator (blinking when openings exist, static when 0)
-            if (desktopOpeningsLink) {
-                if (totalOpenings > 0) {
+                if (desktopOpeningsLink) {
                     desktopOpeningsLink.classList.add('nav-link-openings-active');
-                } else {
-                    desktopOpeningsLink.classList.add('nav-link-openings-zero');
                 }
-            }
-            if (mobileOpeningsLink) {
-                if (totalOpenings > 0) {
+                if (mobileOpeningsLink) {
                     mobileOpeningsLink.classList.add('openings-active');
-                } else {
-                    mobileOpeningsLink.classList.add('openings-zero');
                 }
             }
         } catch (error) {
