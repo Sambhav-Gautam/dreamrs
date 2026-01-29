@@ -56,16 +56,32 @@
     <script src="env.js"></script>
     <script src="script.js"></script>
     <script>
-        // Future: Load and display resources
-        // This will be implemented when the upload functionality is added
         const API_BASE_URL = window.ENV?.API_BASE_URL || window.API_CONFIG?.API_BASE_URL || '';
+
+        function getFileUrl(filename) {
+            if (!filename) return '';
+            if (filename.startsWith('http://') || filename.startsWith('https://')) return filename;
+            return `${API_BASE_URL}/api/files/download/${encodeURIComponent(filename)}`;
+        }
+
+        function getFileTypeInfo(type) {
+            const icons = {
+                'presentation': { icon: '📊', label: 'Presentation' },
+                'video': { icon: '🎥', label: 'Video' },
+                'document': { icon: '📄', label: 'Document' },
+                'other': { icon: '📁', label: 'File' }
+            };
+            return icons[type] || icons['other'];
+        }
 
         async function loadResources() {
             try {
-                // Placeholder for future API call
-                // const response = await fetch(`${API_BASE_URL}/api/data/resources`);
-                // const resources = await response.json();
-                // renderResources(resources);
+                const response = await fetch(`${API_BASE_URL}/api/data/resources`);
+                const resources = await response.json();
+
+                if (resources && resources.length > 0) {
+                    renderResources(resources);
+                }
             } catch (error) {
                 console.log('Resources not yet available');
             }
@@ -73,34 +89,39 @@
 
         function renderResources(resources) {
             const container = document.getElementById('resources-container');
+            const comingSoonDiv = document.querySelector('.flex-1.flex.items-center.justify-center');
+
             if (!container || !resources || resources.length === 0) return;
+
+            // Hide coming soon message
+            if (comingSoonDiv) comingSoonDiv.style.display = 'none';
 
             container.classList.remove('hidden');
             container.innerHTML = '';
 
             resources.forEach(resource => {
+                const typeInfo = getFileTypeInfo(resource.type);
                 const card = document.createElement('div');
-                card.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow';
+                card.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow border border-gray-100 dark:border-gray-700';
 
                 card.innerHTML = `
                     <div class="p-6">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-lg bg-leaf/10 flex items-center justify-center">
-                                ${resource.type === 'video'
-                        ? '<svg class="w-5 h-5 text-leaf" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
-                        : '<svg class="w-5 h-5 text-leaf" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>'
-                    }
+                            <div class="w-12 h-12 rounded-lg bg-leaf/10 flex items-center justify-center text-2xl">
+                                ${typeInfo.icon}
                             </div>
-                            <span class="text-xs uppercase tracking-wider text-gray-400 font-medium">${resource.type || 'Document'}</span>
+                            <span class="text-xs uppercase tracking-wider text-gray-400 font-medium">${typeInfo.label}</span>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">${resource.title}</h3>
-                        ${resource.description ? `<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">${resource.description}</p>` : ''}
-                        <a href="${resource.url}" target="_blank" class="inline-flex items-center gap-2 text-leaf hover:underline text-sm">
-                            View Resource
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                            </svg>
-                        </a>
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">${resource.title || 'Untitled'}</h3>
+                        ${resource.description ? `<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">${resource.description}</p>` : '<p class="mb-4"></p>'}
+                        ${resource.file ? `
+                            <a href="${getFileUrl(resource.file)}" target="_blank" class="inline-flex items-center gap-2 text-leaf hover:underline text-sm font-medium">
+                                View ${typeInfo.label}
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                            </a>
+                        ` : '<span class="text-sm text-gray-400 italic">No file attached</span>'}
                     </div>
                 `;
 

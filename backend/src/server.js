@@ -14,6 +14,7 @@ const courseRoutes = require('./routes/courses');
 const openingRoutes = require('./routes/openings');
 const fileRoutes = require('./routes/files');
 const phdRoutes = require('./routes/phd');
+const resourceRoutes = require('./routes/resources');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -72,6 +73,7 @@ app.use('/api/data/team', teamRoutes);
 app.use('/api/data/courses', courseRoutes);
 app.use('/api/data/openings', openingRoutes);
 app.use('/api/data/phd', phdRoutes);
+app.use('/api/data/resources', resourceRoutes);
 app.use('/api/files', fileRoutes);
 
 // Settings API

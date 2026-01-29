@@ -51,6 +51,7 @@ function openTab(tabName) {
     if (tabName === 'openings') loadOpeningsAdmin();
     if (tabName === 'phd-scholars') loadPhDScholars();
     if (tabName === 'pi-profile') loadPISettings();
+    if (tabName === 'resources') loadResourcesAdmin();
 }
 
 function openModal(id) {
@@ -2182,6 +2183,183 @@ window.saveThemeColor = saveThemeColor;
 window.saveThemeSettings = saveThemeSettings;
 window.applyThemeColor = applyThemeColor;
 window.fetchThemeSettings = fetchThemeSettings;
+
+// --- RESOURCES MANAGEMENT ---
+let resourcesData = [];
+
+async function loadResourcesAdmin() {
+    try {
+        const res = await apiFetch('/api/data/resources');
+        resourcesData = await res.json();
+        renderResourcesList();
+    } catch (e) {
+        console.error('Error loading resources:', e);
+        resourcesData = [];
+        renderResourcesList();
+    }
+}
+
+function renderResourcesList() {
+    const container = document.getElementById('resources-list');
+    if (!container) return;
+
+    if (!resourcesData || resourcesData.length === 0) {
+        container.innerHTML = '<p class="text-gray-400 text-sm italic p-2">No resources added yet. Click "+ Add Resource" to add your first PPT, video, or document.</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+    const table = document.createElement('div');
+    table.className = 'divide-y divide-gray-200 dark:divide-gray-700';
+
+    resourcesData.forEach((resource, index) => {
+        const typeIcons = {
+            'presentation': '📊',
+            'video': '🎥',
+            'document': '📄',
+            'other': '📁'
+        };
+        const icon = typeIcons[resource.type] || '📁';
+
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between py-3 px-2';
+        row.innerHTML = `
+            <div class="flex-1">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg">${icon}</span>
+                    <span class="font-medium text-gray-800 dark:text-white">${resource.title || 'Untitled'}</span>
+                </div>
+                ${resource.description ? `<p class="text-sm text-gray-500 dark:text-gray-400 mt-1 ml-7">${resource.description.substring(0, 100)}${resource.description.length > 100 ? '...' : ''}</p>` : ''}
+                ${resource.file ? `<p class="text-xs text-leaf mt-1 ml-7">📎 ${resource.file}</p>` : ''}
+            </div>
+            <div class="flex gap-2">
+                <button onclick="editResource('${resource.id}')" class="text-blue-500 hover:text-blue-700 text-sm">Edit</button>
+                <button onclick="deleteResource('${resource.id}')" class="text-red-500 hover:text-red-700 text-sm">Delete</button>
+            </div>
+        `;
+        table.appendChild(row);
+    });
+
+    container.appendChild(table);
+}
+
+function openResourceModal() {
+    document.getElementById('resource-form').reset();
+    document.getElementById('resource-id').value = '';
+    document.getElementById('resource-existing-file').value = '';
+    document.getElementById('resource-modal-title').textContent = 'Add Resource';
+    document.getElementById('resource-current-file').innerHTML = '';
+    openModal('resource-modal');
+}
+
+function editResource(id) {
+    const resource = resourcesData.find(r => r.id === id);
+    if (!resource) return;
+
+    document.getElementById('resource-id').value = id;
+    document.getElementById('resource-title').value = resource.title || '';
+    document.getElementById('resource-description').value = resource.description || '';
+    document.getElementById('resource-type').value = resource.type || 'document';
+    document.getElementById('resource-existing-file').value = resource.file || '';
+    document.getElementById('resource-modal-title').textContent = 'Edit Resource';
+
+    const fileDiv = document.getElementById('resource-current-file');
+    if (resource.file) {
+        fileDiv.innerHTML = `<span class="text-green-600">Current file: ${resource.file}</span>`;
+    } else {
+        fileDiv.innerHTML = '';
+    }
+
+    openModal('resource-modal');
+}
+
+document.getElementById('resource-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const id = document.getElementById('resource-id').value;
+    const fileInput = document.getElementById('resource-file');
+    let fileName = document.getElementById('resource-existing-file').value;
+
+    // Upload file if selected
+    if (fileInput.files && fileInput.files.length > 0) {
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        try {
+            const uploadRes = await fetch(`${API_BASE_URL}/api/upload`, {
+                method: 'POST',
+                body: formData
+            });
+            const uploadData = await uploadRes.json();
+            if (uploadData.filename) {
+                fileName = uploadData.filename;
+            }
+        } catch (err) {
+            console.error('File upload error:', err);
+            alert('Failed to upload file');
+            return;
+        }
+    }
+
+    const resourceData = {
+        title: document.getElementById('resource-title').value,
+        description: document.getElementById('resource-description').value,
+        type: document.getElementById('resource-type').value,
+        file: fileName
+    };
+
+    try {
+        let res;
+        if (id) {
+            // Update
+            res = await apiFetch(`/api/data/resources/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify(resourceData)
+            });
+        } else {
+            // Create
+            res = await apiFetch('/api/data/resources', {
+                method: 'POST',
+                body: JSON.stringify(resourceData)
+            });
+        }
+
+        if (res.ok) {
+            await loadResourcesAdmin();
+            closeModal('resource-modal');
+        } else {
+            alert('Failed to save resource');
+        }
+    } catch (err) {
+        console.error('Error saving resource:', err);
+        alert('Error saving resource');
+    }
+});
+
+async function deleteResource(id) {
+    if (!confirm('Delete this resource?')) return;
+
+    try {
+        const res = await apiFetch(`/api/data/resources/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (res.ok) {
+            await loadResourcesAdmin();
+        } else {
+            alert('Failed to delete resource');
+        }
+    } catch (err) {
+        console.error('Error deleting resource:', err);
+        alert('Error deleting resource');
+    }
+}
+
+// Expose resources functions
+window.openResourceModal = openResourceModal;
+window.editResource = editResource;
+window.deleteResource = deleteResource;
+window.loadResourcesAdmin = loadResourcesAdmin;
 
 // Logo Functions
 window.uploadLogo = uploadLogo;
