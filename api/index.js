@@ -16,6 +16,7 @@ const courseRoutes = require('../backend/src/routes/courses');
 const openingRoutes = require('../backend/src/routes/openings');
 const fileRoutes = require('../backend/src/routes/files');
 const phdRoutes = require('../backend/src/routes/phd');
+const resourceRoutes = require('../backend/src/routes/resources');
 const Settings = require('../backend/src/models/Settings');
 
 const app = express();
@@ -75,6 +76,7 @@ app.use('/api/data/team', teamRoutes);
 app.use('/api/data/courses', courseRoutes);
 app.use('/api/data/openings', openingRoutes);
 app.use('/api/data/phd', phdRoutes);
+app.use('/api/data/resources', resourceRoutes);
 app.use('/api/files', fileRoutes);
 
 // Settings API
