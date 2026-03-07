@@ -4,6 +4,7 @@
   "description": "This is a website for the DREAMRS Lab, headed by Dr Sonal Keshwani, at the Indraprastha Institute of Information Technology, Delhi.",
   "main": "script.js",
   "scripts": {
+    "start": "node local-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
