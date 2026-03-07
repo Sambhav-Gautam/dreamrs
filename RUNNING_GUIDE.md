@@ -35,36 +35,32 @@ This guide explains how to set up and run the Dreamrs Lab website and backend.
     ```
     *Note: The backend runs on Port 5001 to avoid conflicts and match frontend config.*
 
-## Running the Project
+## Running the Project Locally (Unified Server)
 
-### 1. Start the Backend Server
+We have created an alternative unified single-server setup that exactly replicates the production Vercel deployment where the API and Website run concurrently on the exact same port.
 
-Open a terminal in the `backend` directory and run:
+Open a terminal in the root project folder (`.../dreamrs`) and run:
 
 ```bash
-npm run dev
+npm start
 ```
+
+This will automatically serve both your frontend assets AND handle your `api/index.js` backend routes via a single server.
+
 You should see:
 ```text
-DREAMRS Backend Server Started
-Port: 5001
-MongoDB: Connected
+🚀 Unified Local Server is running at http://localhost:3000
+Backend is accessible at http://localhost:3000/api/health
+Frontend is accessible at http://localhost:3000
 ```
+Then visit `http://localhost:3000`.
 
-### 2. Run the Frontend
+### Alternative (Legacy Approach): Separate Servers
 
-Since the frontend uses vanilla HTML/JS, you can serve it using any static file server.
+If you still wish to run the backend and frontend separately (e.g., using Live Server):
 
-**Option A: VS Code Live Server**
-- Open `index.html` in VS Code.
-- Click "Go Live" at the bottom right.
-
-**Option B: Python Simple Server**
-In the project root:
-```bash
-python -m http.server 5500
-```
-Then visit `http://localhost:5500`.
+1. **Start Backend**: `cd backend && npm run dev` (Runs on `http://localhost:5001/api/health`) 
+2. **Start Frontend**: Open `index.html` with VS Code Live Server or run `python -m http.server 5500`.
 
 ## Health Check
 To verify the backend is running, visit:
